@@ -71,7 +71,7 @@ def detail(request):
     time_limit = datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=day)
     print(time_limit)
     # get matches in 2 next day, oder_by time
-    matches = MatchUpcoming.objects.filter(time__range=(time_limit, t_now)).order_by('time')
+    matches = MatchUpcoming.objects.filter(time__range=(t_now, time_limit)).order_by('time')
     result = []
     e = Player.objects.all()
     for item in matches:

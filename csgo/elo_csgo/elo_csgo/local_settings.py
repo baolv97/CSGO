@@ -1,9 +1,9 @@
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'db_cs_go_elo',
-        'USER': 'root',
-        'PASSWORD': 'baobao11@a',
+        'NAME': 'elo_csgo',
+        'USER': 'elo_csgo',
+        'PASSWORD': 'elo_csgo',
         'OPTIONS': {
             'charset': 'utf8',
         }
