@@ -102,6 +102,8 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 
 def trainingEloPlayer():
     count = 0
+    for i in range(count_player_id):
+        e[i].elo = 1800;
     while count < count_game:
         count_update_elo = count
 
