@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-
+from ...TrainingElo import trainingEloPlayer
 
 class Command(BaseCommand):
     help = 'Train elo for player.'
@@ -7,6 +7,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Train elo for player ...")
 
+        trainingEloPlayer()
         # 1. tính elo trung bình của cả đội (cộng lại / 5)
 
         # 2. chia elo cho các thành viên trong team

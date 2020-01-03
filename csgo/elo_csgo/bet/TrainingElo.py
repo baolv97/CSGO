@@ -35,14 +35,14 @@ def winRate(elo_a, elo_b):
 
 
 def diffElo(win_rate, ans, k):
-    return abs(k * (ans - win_rate))
+    return abs(k * (ans - win_rate))*5
 
 
-def diffEloPlayer(rating, ans, diff_elo, sum_rating):
+def diffEloPlayer(rating, ans, diff_elo, sum_rating, sum_rating_nd):
     if ans == 1:
-        return diff_elo * rating / sum_rating * 5
+        return diff_elo * rating / sum_rating
     else:
-        return -diff_elo * sum_rating / (5 * rating)
+        return -diff_elo / (sum_rating_nd * rating)
 
 
 def expectedValue(w_a, bet_a):
@@ -62,7 +62,7 @@ def according(expected_value_a, expected_value_b):
     :param expected_value_b:
     :return:
     """
-    if expected_value_a < 0.05 and expected_value_b < 0.05:
+    if expected_value_a < 0 and expected_value_b < 0:
         return -1
 
     if expected_value_a > expected_value_b:
@@ -103,81 +103,66 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 def trainingEloPlayer():
     count = 0
     for i in range(count_player_id):
-        e[i].elo = 1800;
+        e[i].elo = 1800
+    for i in range(count_game):
+        p[i].elo = 1800
+
     while count < count_game:
-        count_update_elo = count
 
-        while True:
-            if count_update_elo > count + 12:
-                break
-
-            if count_update_elo > count_game - 1:
-                break
-
-            p[count_update_elo].elo = e[e_dict[p[count_update_elo].id_player]].elo
-            count_update_elo += 1
+        for i in range(10):
+            p[count+i].elo = e[e_dict[p[count + i].id_player]].elo
 
         hs = 0
         hs1 = 0
 
-        elo_a = 0.0
-        for i in range(5):
-            elo_a += p[count + i].elo
-
         if p[count].team == p[count + 5].team and p[count].match_id == p[count + 5].match_id:
-            elo_a = (elo_a + p[count + 5].elo) / 6
             hs = 1
         else:
-            elo_a /= 5
+            hs = 0
 
-        elo_b = 0.0
-        for i in range(5, 10):
-            elo_b += p[count + i + hs].elo
-
-        if count + 10 + hs < count_game and p[count + 5 + hs].team == p[count + 10 + hs].team and p[
-            count + 5 + hs].match_id == p[count + 10 + hs].match_id:
-            elo_b = (elo_b + p[count + 10 + hs].elo) / 6
+        if count+10+hs < count_game and p[count + 5 + hs].team == p[count + 5 + 5 + hs].team and p[count + 5 + hs].match_id == p[count + 5 + 5 + hs].match_id:
             hs1 = 1
         else:
-            elo_b /= 5
+            hs1 = 0
 
-        sum_rating_a = 0.0
-        for i in range(5):
-            sum_rating_a += p[count + i].rating
+        if hs == 1 or hs1 == 1:
+            count += 10 + hs + hs1
 
-        if hs == 1:
-            sum_rating_a += p[count + 5].rating
+        if hs == 0 or hs1 == 0:
+            elo_a = 0.0
+            elo_b = 0.0
+            for i in range(5):
+                elo_a += p[count + i].elo/5
+            for i in range(5, 10):
+                elo_b += p[count + i].elo/5
 
-        sum_rating_b = 0.0
-        for i in range(5, 10):
-            sum_rating_b += p[count + i + hs].rating
+            sum_rating_a = 0.0
+            sum_rating_b = 0.0
+            for i in range(5):
+                sum_rating_a += p[count + i].rating
+            for i in range(5, 10):
+                sum_rating_b += p[count + i].rating
 
-        if hs1 == 1:
-            sum_rating_b += p[count + 10 + hs].rating
+            sum_rating_a_nd = 0.0
+            sum_rating_b_nd = 0.0
+            for i in range(5):
+                sum_rating_a_nd += 1 / p[count + i].rating
+            for i in range(5, 10):
+                sum_rating_b_nd += 1 / p[count + i].rating
 
-        w_a = winRate(elo_a, elo_b)
-        diff_elo = diffElo(w_a, p[count].result, 25)
-        for i in range(5):
-            p[count + i].elo += diffEloPlayer(p[count + i].rating, p[count].result, diff_elo, sum_rating_a)
-            p[count + (5 + i) + hs].elo += diffEloPlayer(p[count + (5 + i) + hs].rating, p[count + 5 + hs].result,
-                                                         diff_elo, sum_rating_b)
+            w_a = winRate(elo_a, elo_b)
 
-        if hs == 1:
-            p[count + 5].elo += diffEloPlayer(p[count + 5].rating, p[count].result, diff_elo, sum_rating_a)
+            diff_elo_a = diffElo(w_a, p[count].result, 25)
+            diff_elo_b = diffElo(1-w_a, p[count].result, 25)
 
-        if hs1 == 1:
-            p[count + 10 + hs].elo += diffEloPlayer(p[count + 10 + hs].rating, p[count + 5 + hs].result, diff_elo,
-                                                    sum_rating_b)
+            for i in range(5):
+                p[count + i].elo += diffEloPlayer(p[count + i].rating, p[count].result, diff_elo_a, sum_rating_a, sum_rating_a_nd)
+            for i in range(5, 10):
+                p[count + i].elo += diffEloPlayer(p[count + i].rating, 1-p[count].result, diff_elo_b, sum_rating_b, sum_rating_b_nd)
 
-        for i in range(10):
-            update_elo(p[count + i].id_player, p[count + i].elo)
+            for i in range(10):
+                update_elo(p[count + i].id_player, p[count + i].elo)
 
-        if count + 10 < count_player_id:
-            update_elo(p[count + 10].id_player, p[count + 10].elo)
-
-        if count + 11 < count_player_id:
-            update_elo(p[count + 11].id_player, p[count + 11].elo)
-
-        count += 10 + hs1 + hs
+            count += 10
 
     Player.objects.bulk_update(e, ['elo'])
