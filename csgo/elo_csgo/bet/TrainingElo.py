@@ -3,7 +3,6 @@ from .models import *
 e = Player.objects.all()
 p = Performance.objects.all()
 count_player_id = len(e)
-count_game = len(p)
 
 
 def hash_map():
@@ -102,23 +101,19 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 
 def trainingEloPlayer():
     count = 0
+    count_game = len(p)
     for i in range(count_player_id):
         e[i].elo = 1800
     for i in range(count_game):
         p[i].elo = 1800
 
-
-    while count < count_game:
-        if count + 5 > count_game:
-            break
-        if count + 10 > count_game:
-            break
+    while count < count_game-1:
         for i in range(10):
             if count + i < count_game:
                 p[count+i].elo = e[e_dict[p[count + i].id_player]].elo
 
-        hs = 0
-        hs1 = 0
+        hs = 1
+        hs1 = 1
 
         if count + 5 < count_game and p[count].team == p[count + 5].team and p[count].match_id == p[count + 5].match_id:
             hs = 1
@@ -136,37 +131,36 @@ def trainingEloPlayer():
         if hs == 0 or hs1 == 0:
             elo_a = 0.0
             elo_b = 0.0
-            for i in range(5):
-                elo_a += p[count + i].elo/5
-            for i in range(5, 10):
-                elo_b += p[count + i].elo/5
-
             sum_rating_a = 0.0
             sum_rating_b = 0.0
-            for i in range(5):
-                sum_rating_a += p[count + i].rating
-            for i in range(5, 10):
-                sum_rating_b += p[count + i].rating
-
             sum_rating_a_nd = 0.0
             sum_rating_b_nd = 0.0
             for i in range(5):
-                sum_rating_a_nd += 1 / p[count + i].rating
+                if count + i < count_game:
+                    elo_a += p[count + i].elo/5
+                    sum_rating_a += p[count + i].rating
+                    sum_rating_a_nd += 1 / p[count + i].rating
             for i in range(5, 10):
-                sum_rating_b_nd += 1 / p[count + i].rating
+                if count + i < count_game:
+                    elo_b += p[count + i].elo/5
+                    sum_rating_b += p[count + i].rating
+                    sum_rating_b_nd += 1 / p[count + i].rating
 
             w_a = winRate(elo_a, elo_b)
 
             diff_elo_a = diffElo(w_a, p[count].result, 25)
-            diff_elo_b = diffElo(1-w_a, p[count].result, 25)
+            diff_elo_b = diffElo(1-w_a, 1-p[count].result, 25)
 
             for i in range(5):
-                p[count + i].elo += diffEloPlayer(p[count + i].rating, p[count].result, diff_elo_a, sum_rating_a, sum_rating_a_nd)
+                if count + i < count_game:
+                    p[count + i].elo += diffEloPlayer(p[count + i].rating, p[count].result, diff_elo_a, sum_rating_a, sum_rating_a_nd)
             for i in range(5, 10):
-                p[count + i].elo += diffEloPlayer(p[count + i].rating, 1-p[count].result, diff_elo_b, sum_rating_b, sum_rating_b_nd)
+                if count + i < count_game:
+                    p[count + i].elo += diffEloPlayer(p[count + i].rating, 1-p[count].result, diff_elo_b, sum_rating_b, sum_rating_b_nd)
 
             for i in range(10):
-                update_elo(p[count + i].id_player, p[count + i].elo)
+                if count + i < count_game:
+                    update_elo(p[count + i].id_player, p[count + i].elo)
 
             count += 10
 
