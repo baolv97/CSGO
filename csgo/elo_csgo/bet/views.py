@@ -83,10 +83,10 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 def detail(request):
     # set limit time for query: in 2 next day
     t_now = datetime.now()
-    time_limit = datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=day)
+    time_limit = datetime.now().replace(hour=23, minute=59, second=59) - 20 * timedelta(days=day)
     print(time_limit)
     # get matches in 2 next day, oder_by time
-    matches = MatchUpcoming.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+    matches = MatchUpcoming.objects.filter(time__range=(time_limit, t_now)).order_by('time')
     result = []
     e = Player.objects.all()
     for item in matches:
@@ -96,25 +96,32 @@ def detail(request):
             # if match have no bet -> continue
             # else append bet to result
             continue
-        elo_a = 0.0
-        elo_b = 0.0
+        elo_a = -1.0
+        elo_b = -1.0
         count = 0
         for i in e:
             if i.team == item.team_a:
                 elo_a += i.elo
                 count += 1
-        if count > 0:
+        if count >= 5:
             elo_a = elo_a / count
+        else:
+            elo_a = -1
         count = 0
         for i in e:
             if i.team == item.team_b:
                 count += 1
                 elo_b += i.elo
-        if count > 0:
+        if count >= 5:
             elo_b = elo_b / count
-
-        w_a = winRate(elo_a, elo_b)
-        w_b = 1 - w_a
+        else:
+            elo_b = -1
+        if elo_a > 0 and elo_b > 0:
+            w_a = winRate(elo_a, elo_b)
+            w_b = 1 - w_a
+        else:
+            w_a = -1
+            w_b = -1
 
         pin_odds_team_a = "-"
         pin_odds_team_b = "-"
@@ -139,7 +146,7 @@ def detail(request):
         acd_a = according(ev_a, ev_b)
 
         edge_a = edge(w_a, bet.bet_team_a)
-        edge_b = edge(1-w_a, bet.bet_team_b)
+        edge_b = edge(w_b, bet.bet_team_b)
 
         kel = kelly(acd_a, edge_a, edge_b, bet.bet_team_a, bet.bet_team_b)
 
@@ -173,13 +180,13 @@ def detail(request):
             "5e_suggestion_team_b": "-",
 
             "pin_odds_team_a": pin_odds_team_a,
-            "pin_suggestion_team_a": kelly_a,
+            "pin_suggestion_team_a": round(kelly_a, 2),
             "pin_odds_team_b": pin_odds_team_b,
-            "pin_suggestion_team_b": kelly_b,
+            "pin_suggestion_team_b": round(kelly_b, 2),
 
-            "manual_odds_team_a": w_a,
+            "manual_odds_team_a": round(w_a, 2),
             "manual_suggestion_team_a": "-",
-            "manual_odds_team_b": w_b,
+            "manual_odds_team_b":round(w_b, 2),
             "manual_suggestion_team_b": "-",
         })
 
