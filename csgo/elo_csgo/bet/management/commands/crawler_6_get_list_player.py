@@ -14,7 +14,7 @@ class Command(BaseCommand):
             player = Player.objects.filter(id_player=item.id_player).first()
             if player:
                 if item.team not in player.team:
-                    player.team = player.team + "|{}".format(item.team)
+                    player.team = player.team
                     player.save()
             else:
                 Player.objects.create(

@@ -21,7 +21,22 @@ def check_today(time):
 
 
 def refresh(request):
+    call_command('crawler_1_cs_go')
+    print("bao1")
+    call_command('crawler_2_bet')
+    print("bao2")
+    call_command('crawler_4a_sync_team_name_manual')
+    print("bao3")
+    call_command('crawler_5_update_pet_for_match')
+    print("bao4")
+    call_command('crawler_6_get_list_player')
+    print("bao5")
+    call_command('crawler_7_add_column_result')
+    print("bao6")
+    call_command('crawler_8_add_column_bet_for_performance')
+    print("bao7")
     call_command('crawler_9_train_elo_for_player')
+    print("bao8")
     call_command('crawler_10_match_upcoming')
     # import time
     # time.sleep(20)
