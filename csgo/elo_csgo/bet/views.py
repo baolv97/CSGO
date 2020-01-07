@@ -83,10 +83,10 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 def detail(request):
     # set limit time for query: in 2 next day
     t_now = datetime.now()
-    time_limit = datetime.now().replace(hour=23, minute=59, second=59) - 20 * timedelta(days=day)
+    time_limit = datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=day)
     print(time_limit)
     # get matches in 2 next day, oder_by time
-    matches = MatchUpcoming.objects.filter(time__range=(time_limit, t_now)).order_by('time')
+    matches = MatchUpcoming.objects.filter(time__range=(t_now, time_limit)).order_by('time')
     result = []
     e = Player.objects.all()
     for item in matches:
@@ -140,15 +140,15 @@ def detail(request):
                 etop_odds_team_a = bet.bet_team_a
                 etop_odds_team_b = bet.bet_team_b
 
-        ev_a = expectedValue(w_a, bet.bet_team_a)
-        ev_b = expectedValue(w_a, bet.bet_team_b)
+        ev_a = expectedValue(w_a, bet.bet_team_a - 1)
+        ev_b = expectedValue(w_a, bet.bet_team_b - 1)
 
         acd_a = according(ev_a, ev_b)
 
-        edge_a = edge(w_a, bet.bet_team_a)
-        edge_b = edge(w_b, bet.bet_team_b)
+        edge_a = edge(w_a, bet.bet_team_a - 1)
+        edge_b = edge(w_b, bet.bet_team_b - 1)
 
-        kel = kelly(acd_a, edge_a, edge_b, bet.bet_team_a, bet.bet_team_b)
+        kel = kelly(acd_a, edge_a, edge_b, bet.bet_team_a - 1, bet.bet_team_b - 1)
 
         kelly_a = 0
         kelly_b = 0
