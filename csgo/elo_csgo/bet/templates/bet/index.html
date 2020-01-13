@@ -109,7 +109,7 @@
         {% if result %}
         {% for item in result %}
 
-        <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_bottom_dashed">
+        <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_bottom_dashed row_item">
             <td>{{ item.date }}</td>
             <td class="link_hl_tv"><a href="{{ item.source }}" target="_blank">{{ item.team_a }}</a></td>
             <td>{{ item.vp_odds_team_a }}</td>
@@ -120,10 +120,10 @@
             <td class="class-pin">{{ item.pin_suggestion_team_a }}</td>
             <td>{{ item.manual_odds_team_a }}</td>
             <td>{{ item.manual_suggestion_team_a }}</td>
-            <td class="man-odds"><input type="number" class="class-odds"></td>
-            <td class="man-suggestion">0</td>
+            <td class="man-odds"><input type="number" class="class-odds" value= {{ item.manual_odds_team_a }}></td>
+            <td class="man-suggestion">{{ item.pin_suggestion_team_a }}</td>
         </tr>
-        <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid">
+        <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid row_item">
             <td>{{ item.time }}</td>
             <td class="link_hl_tv"><a href="{{ item.source }}" target="_blank">{{ item.team_b }}</a></td>
             <td>{{ item.vp_odds_team_b }}</td>
@@ -132,10 +132,10 @@
             <td>{{ item.5e_suggestion_team_b }}</td>
             <td class="pin-odds">{{ item.pin_odds_team_b }}</td>
             <td class="class-pin">{{ item.pin_suggestion_team_b }}</td>
-            <td>{{ item.manual_odds_team_b }}</td>
+            <td data-key="{{item.}}">{{ item.manual_odds_team_b }}</td>
             <td>{{ item.manual_suggestion_team_b }}</td>
-            <td class="man-odds"><input type="number" class="class-odds"></td>
-            <td class="man-suggestion">0</td>
+            <td class="man-odds"><input type="number" class="class-odds" value= {{ item.manual_odds_team_b }}></td>
+            <td class="man-suggestion">{{ item.pin_suggestion_team_b }}</td>
         </tr>
 
         {% endfor %}
@@ -150,31 +150,9 @@
 
 <!-- add javascript here -->
 <script type="text/javascript">
-<!--function expectedValue(w_a,bet_a){-->
-<!--    return w_a * bet_a - (1 - w_a) * 1;-->
-<!--}-->
-<!--function according(expected_value_a, expected_value_b){-->
-<!--    if (expected_value_a < 0 && expected_value_b < 0)-->
-<!--        return -1;-->
-<!--    if (expected_value_a > expected_value_b)-->
-<!--        return 1;-->
-<!--    else:-->
-<!--        return 0;-->
-<!--}-->
-<!--function edge(w_a, bet_a){-->
-<!--    return (bet_a + 1) / (1 / w_a);-->
-<!--}-->
-<!--function  kelly(according, edge_a, edge_b, bet_a, bet_b){-->
-<!--    if (according == 1)-->
-<!--        return (edge_a - 1) / bet_a;-->
 
-<!--    if (according == 0)-->
-<!--        return (edge_b - 1) / bet_b;-->
 
-<!--    return 0;-->
-<!--}-->
 $(document).ready(function() {
-        console.log(123);
         $("#btn_refresh").click(function() {
         $("#loading_img").show();
 
@@ -185,6 +163,33 @@ $(document).ready(function() {
             }
         });
     });
+
+    function expectedValue(w_a,bet_a){
+        return w_a * bet_a - (1 - w_a) * 1;
+    }
+
+    function according(expected_value_a, expected_value_b){
+        if (expected_value_a < 0 && expected_value_b < 0)
+            return -1;
+        if (expected_value_a > expected_value_b)
+            return 1;
+        else
+            return 0;
+    }
+
+    function edge(w_a, bet_a){
+        return (bet_a + 1) / (1 / w_a);
+    }
+
+    function  kelly(according, edge_a, edge_b, bet_a, bet_b){
+        if (according == 1)
+            return (edge_a - 1) / bet_a;
+
+        if (according == 0)
+            return (edge_b - 1) / bet_b;
+
+        return 0;
+    }
 
     var origin_suggestion = [];
     $(".class-pin").each(function() {
@@ -200,5 +205,54 @@ $(document).ready(function() {
             $(this).text(Math.round(val_pin * bank));
         });
     })
+
+
+    $(".class-odds").change(function() {
+        var man_odds = [];
+        $(".class-odds").each(function(){
+            man_odds.push(parseFloat($(this).val()));
+        });
+
+        var pin_odds = [];
+        $(".pin-odds").each(function() {
+            pin_odds.push(parseFloat($(this).text()));
+        });
+
+        var i = 0;
+        var man_suggestion = [];
+        while(i < man_odds.length ){
+            var exA = expectedValue(man_odds[i], pin_odds[i] - 1);
+            var exB = expectedValue(man_odds[i+1], pin_odds[i+1] - 1);
+            var acd = according(exA, exB);
+            var edgeA = edge(man_odds[i], pin_odds[i] - 1);
+            var edgeB = edge(man_odds[i+1], pin_odds[i+1] - 1);
+            var k = kelly(acd, edgeA, edgeB, pin_odds[i] - 1, pin_odds[i+1] - 1) / 8;
+
+            var bank = $("#id-bank").val();
+            if (bank == 0 ) bank =1;
+            if (acd == 1) {
+                man_suggestion[i]= Math.round(k * bank);
+                man_suggestion[i+1]= 0;
+            }
+            else if (acd == 0) {
+                man_suggestion[i]= 0;
+                man_suggestion[i+1]= Math.round(k * bank);
+            }else {
+                man_suggestion[i]= -1;
+                man_suggestion[i+1]= -1;
+            }
+            i= i +2;
+        }
+        var i = 0;
+        $(".man-suggestion").each(function() {
+            $(this).text(man_suggestion[i]);
+            i++;
+        });
+    })
+
+
+
+
+
 });
 </script>
