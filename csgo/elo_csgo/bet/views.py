@@ -155,11 +155,11 @@ def detail(request):
 
         if kel > 0:
             if acd_a == 1:
-                kelly_a = kel / 8 * 100
+                kelly_a = kel / 8
                 kelly_b = 0
             if acd_a == 0:
                 kelly_a = 0
-                kelly_b = kel / 8 * 100
+                kelly_b = kel / 8
 
         result.append({
             "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
@@ -179,14 +179,14 @@ def detail(request):
             "5e_odds_team_b": etop_odds_team_b,
             "5e_suggestion_team_b": "-",
 
-            "pin_odds_team_a": pin_odds_team_a,
-            "pin_suggestion_team_a": round(kelly_a, 2),
-            "pin_odds_team_b": pin_odds_team_b,
-            "pin_suggestion_team_b": round(kelly_b, 2),
+            "pin_odds_team_a": str(pin_odds_team_a),
+            "pin_suggestion_team_a": str(round(kelly_a, 3)),
+            "pin_odds_team_b": str(pin_odds_team_b),
+            "pin_suggestion_team_b": str(round(kelly_b, 3)),
 
-            "manual_odds_team_a": round(w_a, 2),
+            "manual_odds_team_a": str(round(w_a, 2)),
             "manual_suggestion_team_a": "-",
-            "manual_odds_team_b":round(w_b, 2),
+            "manual_odds_team_b": str(round(w_b, 2)),
             "manual_suggestion_team_b": "-",
         })
 

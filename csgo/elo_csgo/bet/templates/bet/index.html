@@ -73,7 +73,7 @@
         <tbody>
         <tr>
             <th class="col-md-2">Bankroll</th>
-            <th class="col-md-2"><input type="number"></th>
+            <th class="col-md-2"><input type="number" id="id-bank"></th>
             <th class="col-md-2 border_bu_none"></th>
             <th class="col-md-2 btn_link" id="btn_refresh"><a>Refresh</a></th>
             <th class="col-md-4 border_none"></th>
@@ -88,9 +88,12 @@
             <th colspan="2" class="col-md-2">VP</th>
             <th colspan="2" class="col-md-2">5e</th>
             <th colspan="2" class="col-md-2">Pin</th>
+            <th colspan="2" class="col-md-2">Manual AI</th>
             <th colspan="2" class="col-md-2">Manual</th>
         </tr>
         <tr>
+            <th class="col-md-1">odds</th>
+            <th class="col-md-1">suggestion</th>
             <th class="col-md-1">odds</th>
             <th class="col-md-1">suggestion</th>
             <th class="col-md-1">odds</th>
@@ -113,10 +116,12 @@
             <td>{{ item.vp_suggestion_team_a }}</td>
             <td>{{ item.5e_odds_team_a }}</td>
             <td>{{ item.5e_suggestion_team_a }}</td>
-            <td>{{ item.pin_odds_team_a }}</td>
-            <td>{{ item.pin_suggestion_team_a }}</td>
+            <td class="pin-odds">{{ item.pin_odds_team_a }}</td>
+            <td class="class-pin">{{ item.pin_suggestion_team_a }}</td>
             <td>{{ item.manual_odds_team_a }}</td>
             <td>{{ item.manual_suggestion_team_a }}</td>
+            <td class="man-odds"><input type="number" class="class-odds"></td>
+            <td class="man-suggestion">0</td>
         </tr>
         <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid">
             <td>{{ item.time }}</td>
@@ -125,10 +130,12 @@
             <td>{{ item.vp_suggestion_team_b }}</td>
             <td>{{ item.5e_odds_team_b }}</td>
             <td>{{ item.5e_suggestion_team_b }}</td>
-            <td>{{ item.pin_odds_team_b }}</td>
-            <td>{{ item.pin_suggestion_team_b }}</td>
+            <td class="pin-odds">{{ item.pin_odds_team_b }}</td>
+            <td class="class-pin">{{ item.pin_suggestion_team_b }}</td>
             <td>{{ item.manual_odds_team_b }}</td>
             <td>{{ item.manual_suggestion_team_b }}</td>
+            <td class="man-odds"><input type="number" class="class-odds"></td>
+            <td class="man-suggestion">0</td>
         </tr>
 
         {% endfor %}
@@ -143,14 +150,55 @@
 
 <!-- add javascript here -->
 <script type="text/javascript">
-$("#btn_refresh").click(function() {
-    $("#loading_img").show();
+<!--function expectedValue(w_a,bet_a){-->
+<!--    return w_a * bet_a - (1 - w_a) * 1;-->
+<!--}-->
+<!--function according(expected_value_a, expected_value_b){-->
+<!--    if (expected_value_a < 0 && expected_value_b < 0)-->
+<!--        return -1;-->
+<!--    if (expected_value_a > expected_value_b)-->
+<!--        return 1;-->
+<!--    else:-->
+<!--        return 0;-->
+<!--}-->
+<!--function edge(w_a, bet_a){-->
+<!--    return (bet_a + 1) / (1 / w_a);-->
+<!--}-->
+<!--function  kelly(according, edge_a, edge_b, bet_a, bet_b){-->
+<!--    if (according == 1)-->
+<!--        return (edge_a - 1) / bet_a;-->
 
-    $.get('/refresh/', function(data) {
-        if (data == 1) {
-            $("#loading_img").hide();
-            location.reload(true);
-        }
+<!--    if (according == 0)-->
+<!--        return (edge_b - 1) / bet_b;-->
+
+<!--    return 0;-->
+<!--}-->
+$(document).ready(function() {
+        console.log(123);
+        $("#btn_refresh").click(function() {
+        $("#loading_img").show();
+
+        $.get('/refresh/', function(data) {
+            if (data == 1) {
+                $("#loading_img").hide();
+                location.reload(true);
+            }
+        });
     });
+
+    var origin_suggestion = [];
+    $(".class-pin").each(function() {
+        origin_suggestion.push(parseFloat($(this).text()));
+    });
+
+    $("#id-bank").change(function() {
+        var bank = $(this).val();
+        var i = 0;
+        $(".class-pin").each(function() {
+            val_pin = origin_suggestion[i];
+            i++;
+            $(this).text(Math.round(val_pin * bank));
+        });
+    })
 });
 </script>
