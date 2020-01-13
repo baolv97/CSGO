@@ -118,10 +118,10 @@
             <td>{{ item.5e_suggestion_team_a }}</td>
             <td class="pin-odds">{{ item.pin_odds_team_a }}</td>
             <td class="class-pin">{{ item.pin_suggestion_team_a }}</td>
-            <td>{{ item.manual_odds_team_a }}</td>
+            <td class="man-ai-odds">{{item.manual_odds_team_a }}</td>
             <td>{{ item.manual_suggestion_team_a }}</td>
-            <td class="man-odds"><input type="number" class="class-odds" value= {{ item.manual_odds_team_a }}></td>
-            <td class="man-suggestion">{{ item.pin_suggestion_team_a }}</td>
+            <td class="man-odds"><input type="number" class="class-odds" ></td>
+            <td class="man-suggestion">0</td>
         </tr>
         <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid row_item">
             <td>{{ item.time }}</td>
@@ -132,10 +132,10 @@
             <td>{{ item.5e_suggestion_team_b }}</td>
             <td class="pin-odds">{{ item.pin_odds_team_b }}</td>
             <td class="class-pin">{{ item.pin_suggestion_team_b }}</td>
-            <td data-key="{{item.}}">{{ item.manual_odds_team_b }}</td>
+            <td class="man-ai-odds">{{item.manual_odds_team_b }}</td>
             <td>{{ item.manual_suggestion_team_b }}</td>
-            <td class="man-odds"><input type="number" class="class-odds" value= {{ item.manual_odds_team_b }}></td>
-            <td class="man-suggestion">{{ item.pin_suggestion_team_b }}</td>
+            <td class="man-odds"><input type="number" class="class-odds" ></td>
+            <td class="man-suggestion">0</td>
         </tr>
 
         {% endfor %}
@@ -214,20 +214,19 @@ $(document).ready(function() {
         });
 
         var pin_odds = [];
-        $(".pin-odds").each(function() {
+        $(".man-ai-odds").each(function() {
             pin_odds.push(parseFloat($(this).text()));
         });
 
         var i = 0;
         var man_suggestion = [];
         while(i < man_odds.length ){
-            var exA = expectedValue(man_odds[i], pin_odds[i] - 1);
-            var exB = expectedValue(man_odds[i+1], pin_odds[i+1] - 1);
+            var exA = expectedValue(1/pin_odds[i], man_odds[i] - 1);
+            var exB = expectedValue(1/pin_odds[i+1], man_odds[i+1] - 1);
             var acd = according(exA, exB);
-            var edgeA = edge(man_odds[i], pin_odds[i] - 1);
-            var edgeB = edge(man_odds[i+1], pin_odds[i+1] - 1);
-            var k = kelly(acd, edgeA, edgeB, pin_odds[i] - 1, pin_odds[i+1] - 1) / 8;
-
+            var edgeA = edge(1/pin_odds[i], man_odds[i] - 1);
+            var edgeB = edge(1/pin_odds[i+1], man_odds[i+1] - 1);
+            var k = kelly(acd, edgeA, edgeB, man_odds[i] -1, man_odds[i+1] - 1) / 8;
             var bank = $("#id-bank").val();
             if (bank == 0 ) bank =1;
             if (acd == 1) {
