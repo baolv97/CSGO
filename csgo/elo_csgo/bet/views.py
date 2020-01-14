@@ -66,6 +66,8 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 
 
 def detail(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login/')
     # set limit time for query: in 2 next day
     t_now = datetime.now()
     time_limit = datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=day)
