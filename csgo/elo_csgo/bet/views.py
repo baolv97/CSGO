@@ -81,16 +81,12 @@ def detail(request):
             # if match have no bet -> continue
             # else append bet to result
             continue
-        elo_a = -1.0
-        elo_b = -1.0
-        count = 0
-
         # get total elo team_a and team_b
         total_elo_a = 0
         total_elo_b = 0
         players = MatchUpcomingPlayer.objects.filter(match_upcoming=item)
         for p in players:
-            player = Player.objects.filter(name=p.name, team__icontains=p.team)
+            player = Player.objects.filter(name=p.name)
             if player.count() > 1:
                 player = player.filter(id_player=p.id_player)
             player = player.first()
@@ -98,39 +94,23 @@ def detail(request):
 
             if p.team == item.team_a:
                 total_elo_a += player_elo
+                #print(p.team, player_elo)
             else:
                 total_elo_b += player_elo
-
-        for i in e:
-            if i.team == item.team_a:
-                elo_a += i.elo
-                count += 1
-        if count >= 5:
-            elo_a = elo_a / count
-        else:
-            elo_a = -1
-        count = 0
-        for i in e:
-            if i.team == item.team_b:
-                count += 1
-                elo_b += i.elo
-        if count >= 5:
-            elo_b = elo_b / count
-        else:
-            elo_b = -1
-        if elo_a > 0 and elo_b > 0:
-            w_a = winRate(elo_a, elo_b)
-            w_b = 1 - w_a
-        else:
-            w_a = -1
-            w_b = -1
-
-        pin_odds_team_a = "-"
-        pin_odds_team_b = "-"
-        vp_odds_team_a = "-"
-        vp_odds_team_b = "-"
-        etop_odds_team_a = "-"
-        etop_odds_team_b = "-"
+                #print(p.team, player_elo)
+        #print(total_elo_a)
+        #print(total_elo_b)
+        elo_a = total_elo_a / 5
+        elo_b = total_elo_b / 5
+        w_a = winRate(elo_a, elo_b)
+        w_b = 1 - w_a
+        #set up suggestion nha cai pin
+        pin_odds_team_a = 0.0
+        pin_odds_team_b = 0.0
+        vp_odds_team_a = 0.0
+        vp_odds_team_b = 0.0
+        etop_odds_team_a = 0.0
+        etop_odds_team_b = 0.0
         for bet in bets:
             if bet.banker == pinnacle:
                 pin_odds_team_a = bet.bet_team_a
@@ -142,26 +122,47 @@ def detail(request):
                 etop_odds_team_a = bet.bet_team_a
                 etop_odds_team_b = bet.bet_team_b
 
-        ev_a = expectedValue(w_a, bet.bet_team_a - 1)
-        ev_b = expectedValue(w_a, bet.bet_team_b - 1)
+        ev_a_pin = expectedValue(w_a, pin_odds_team_a - 1)
+        ev_b_pin = expectedValue(w_a, pin_odds_team_b - 1)
 
-        acd_a = according(ev_a, ev_b)
+        acd_a = according(ev_a_pin, ev_b_pin)
 
-        edge_a = edge(w_a, bet.bet_team_a - 1)
-        edge_b = edge(w_b, bet.bet_team_b - 1)
+        edge_a_p = edge(w_a, pin_odds_team_a - 1)
+        edge_b_p = edge(w_b, pin_odds_team_b - 1)
 
-        kel = kelly(acd_a, edge_a, edge_b, bet.bet_team_a - 1, bet.bet_team_b - 1)
+        kel_p = kelly(acd_a, edge_a_p, edge_b_p, pin_odds_team_a - 1, pin_odds_team_b - 1)
 
-        kelly_a = 0
-        kelly_b = 0
+        kelly_a_p = 0
+        kelly_b_p = 0
 
-        if kel > 0:
+        if kel_p > 0:
             if acd_a == 1:
-                kelly_a = kel / 8
-                kelly_b = 0
+                kelly_a_p = kel_p / 8
+                kelly_b_p = 0
             if acd_a == 0:
-                kelly_a = 0
-                kelly_b = kel / 8
+                kelly_a_p = 0
+                kelly_b_p = kel_p / 8
+        # set up suggestion nha cai 5etop
+        ev_a_e = expectedValue(w_a, etop_odds_team_a)
+        ev_b_e = expectedValue(w_a, etop_odds_team_b)
+
+        acd_a_e = according(ev_a_e, ev_b_e)
+
+        edge_a_e = edge(w_a, etop_odds_team_a)
+        edge_b_e = edge(w_b, etop_odds_team_b)
+
+        kel_e = kelly(acd_a_e, edge_a_e, edge_b_e, etop_odds_team_a, etop_odds_team_b)
+
+        kelly_a_e = 0
+        kelly_b_e = 0
+
+        if kel_e > 0:
+            if acd_a == 1:
+                kelly_a_e = kel_e / 8
+                kelly_b_e = 0
+            if acd_a == 0:
+                kelly_a_e = 0
+                kelly_b_e = kel_e / 8
 
         result.append({
             "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
@@ -176,15 +177,15 @@ def detail(request):
             "vp_odds_team_b": vp_odds_team_b,
             "vp_suggestion_team_b": "-",
 
-            "5e_odds_team_a": etop_odds_team_a,
-            "5e_suggestion_team_a": "-",
-            "5e_odds_team_b": etop_odds_team_b,
-            "5e_suggestion_team_b": "-",
+            "5e_odds_team_a": str(etop_odds_team_a),
+            "5e_suggestion_team_a": str(round(kelly_a_e, 3)),
+            "5e_odds_team_b": str(etop_odds_team_b),
+            "5e_suggestion_team_b": str(round(kelly_b_e, 3)),
 
             "pin_odds_team_a": str(pin_odds_team_a),
-            "pin_suggestion_team_a": str(round(kelly_a, 3)),
+            "pin_suggestion_team_a": str(round(kelly_a_p, 3)),
             "pin_odds_team_b": str(pin_odds_team_b),
-            "pin_suggestion_team_b": str(round(kelly_b, 3)),
+            "pin_suggestion_team_b": str(round(kelly_b_p, 3)),
 
             "manual_odds_team_a": str(round(1 / w_a, 2)),
             "manual_suggestion_team_a": "-",
