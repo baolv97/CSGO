@@ -1,9 +1,9 @@
-import datetime
+import datetime as my_datetime_1
 
 # HLTV
 max_offset = 8709
-time_now = datetime.datetime.now().strftime("%Y-%m-%d")
-last_year = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+time_now = my_datetime_1.datetime.now().strftime("%Y-%m-%d")
+last_year = (my_datetime_1.datetime.now() - my_datetime_1.timedelta(days=365)).strftime("%Y-%m-%d")
 base_url = "https://www.hltv.org"
 url = base_url + "/results?offset={offset}&startDate=" + last_year + "&endDate=" + time_now + ""
 div_results_all = '.results-all'
@@ -37,3 +37,4 @@ vp_game_url = "https://www.vpgame.com/prediction/match/csgo/parimutuel"
 div_vp_game_match_upcoming = ".prediction-match-list"
 
 # for 5etop
+five_etop_url = "https://www.5etop.com/api/match/list.do?status=run&game=csgo"
