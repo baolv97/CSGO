@@ -123,7 +123,7 @@ def detail(request):
                 etop_odds_team_b = bet.bet_team_b
 
         ev_a_pin = expectedValue(w_a, pin_odds_team_a - 1)
-        ev_b_pin = expectedValue(w_a, pin_odds_team_b - 1)
+        ev_b_pin = expectedValue(w_b, pin_odds_team_b - 1)
 
         acd_a = according(ev_a_pin, ev_b_pin)
 
@@ -144,7 +144,7 @@ def detail(request):
                 kelly_b_p = kel_p / 8
         # set up suggestion nha cai 5etop
         ev_a_e = expectedValue(w_a, etop_odds_team_a)
-        ev_b_e = expectedValue(w_a, etop_odds_team_b)
+        ev_b_e = expectedValue(w_b, etop_odds_team_b)
 
         acd_a_e = according(ev_a_e, ev_b_e)
 
