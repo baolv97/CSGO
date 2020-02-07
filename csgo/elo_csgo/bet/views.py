@@ -29,7 +29,6 @@ def refresh(request):
 
 
 def winRate(elo_a, elo_b):
-
     q_a = pow(10, elo_a / 400)
     q_b = pow(10, elo_b / 400)
 
@@ -55,7 +54,6 @@ def edge(w_a, bet_a):
 
 
 def kelly(according, edge_a, edge_b, bet_a, bet_b):
-
     if according == 1:
         return (edge_a - 1) / bet_a
 
@@ -86,6 +84,23 @@ def detail(request):
         elo_a = -1.0
         elo_b = -1.0
         count = 0
+
+        # get total elo team_a and team_b
+        total_elo_a = 0
+        total_elo_b = 0
+        players = MatchUpcomingPlayer.objects.filter(match_upcoming=item)
+        for p in players:
+            player = Player.objects.filter(name=p.name, team__icontains=p.team)
+            if player.count() > 1:
+                player = player.filter(id_player=p.id_player)
+            player = player.first()
+            player_elo = player.elo if player else 1800
+
+            if p.team == item.team_a:
+                total_elo_a += player_elo
+            else:
+                total_elo_b += player_elo
+
         for i in e:
             if i.team == item.team_a:
                 elo_a += i.elo
@@ -171,9 +186,9 @@ def detail(request):
             "pin_odds_team_b": str(pin_odds_team_b),
             "pin_suggestion_team_b": str(round(kelly_b, 3)),
 
-            "manual_odds_team_a": str(round(1/w_a, 2)),
+            "manual_odds_team_a": str(round(1 / w_a, 2)),
             "manual_suggestion_team_a": "-",
-            "manual_odds_team_b": str(round(1/w_b, 2)),
+            "manual_odds_team_b": str(round(1 / w_b, 2)),
             "manual_suggestion_team_b": "-",
         })
 
