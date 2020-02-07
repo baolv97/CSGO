@@ -83,7 +83,7 @@ def save_info_player(request, match):
                 MatchUpcomingPlayer.objects.update_or_create(
                     match_upcoming=match,
                     team=team_name,
-                    id_player=int(player.get('data-player-id')),
+                    id_player=player.get('data-player-id'),
                     name=player.find("div", {"class": "text-ellipsis"}).text
                 )
 
