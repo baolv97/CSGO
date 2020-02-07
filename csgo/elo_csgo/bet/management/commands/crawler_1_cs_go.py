@@ -3,6 +3,7 @@ from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 from ...models import *
 from ...constant import *
+import datetime
 import dateutil.parser
 import logging
 

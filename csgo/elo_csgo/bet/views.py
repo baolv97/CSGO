@@ -21,7 +21,7 @@ def check_today(time):
 
 
 def refresh(request):
-    call_command('crawler_9_train_elo_for_player')
+    # call_command('crawler_9_train_elo_for_player')
     call_command('crawler_10_match_upcoming')
     # import time
     # time.sleep(20)

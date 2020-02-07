@@ -171,6 +171,21 @@ class MatchUpcoming(models.Model):
         ]
 
 
+class MatchUpcomingPlayer(models.Model):
+    match_upcoming = models.ForeignKey(
+        MatchUpcoming,
+        null=True, blank=True,
+        on_delete=models.CASCADE,
+        verbose_name="Trận đấu"
+    )
+    team = models.CharField(max_length=200, null=True, blank=True, verbose_name="Đội")
+    id_player = models.IntegerField(null=True, blank=True, verbose_name="ID Người chơi")
+    name = models.CharField(max_length=50, null=True, blank=True, verbose_name="Người chơi")
+
+    class Meta:
+        db_table = "d_cs_go_match_upcoming_player"
+
+
 # tỷ lệ BET của các nhà cái với những trận upcoming
 class BetUpcoming(models.Model):
     match = models.ForeignKey(
