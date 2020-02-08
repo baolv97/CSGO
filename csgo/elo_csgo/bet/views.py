@@ -98,12 +98,14 @@ def detail(request):
             else:
                 total_elo_b += player_elo
                 #print(p.team, player_elo)
-        #print(total_elo_a)
-        #print(total_elo_b)
+        print("total_elo team A", total_elo_a)
+        print("total_elo team B", total_elo_b)
         elo_a = total_elo_a / 5
         elo_b = total_elo_b / 5
         w_a = winRate(elo_a, elo_b)
         w_b = 1 - w_a
+        print("win rate team A", w_a)
+        print("win rate team B", w_b)
         #set up suggestion nha cai pin
         pin_odds_team_a = 0.0
         pin_odds_team_b = 0.0
@@ -121,7 +123,11 @@ def detail(request):
             if bet.banker == five_etop:
                 etop_odds_team_a = bet.bet_team_a
                 etop_odds_team_b = bet.bet_team_b
-
+        print("pin ", pin_odds_team_a)
+        print("pin ", pin_odds_team_b)
+        print("5e", etop_odds_team_a)
+        print("5e", etop_odds_team_b)
+        # set up suggestion nha cai pin
         ev_a_pin = expectedValue(w_a, pin_odds_team_a - 1)
         ev_b_pin = expectedValue(w_b, pin_odds_team_b - 1)
 
@@ -131,7 +137,12 @@ def detail(request):
         edge_b_p = edge(w_b, pin_odds_team_b - 1)
 
         kel_p = kelly(acd_a, edge_a_p, edge_b_p, pin_odds_team_a - 1, pin_odds_team_b - 1)
-
+        print("pin ev ", ev_a_pin)
+        print("pin ev ", ev_b_pin)
+        print("pin acd ", acd_a)
+        print("pin edg ", edge_a_p)
+        print("pin edg ", edge_b_p)
+        print("pin kel ", kel_p / 8)
         kelly_a_p = 0
         kelly_b_p = 0
 
@@ -155,6 +166,12 @@ def detail(request):
 
         kelly_a_e = 0
         kelly_b_e = 0
+        print("5e ev ", ev_a_e)
+        print("5e ev ", ev_b_e)
+        print("5e acd ", acd_a_e)
+        print("5e edg ", edge_a_e)
+        print("5e edg ", edge_b_e)
+        print("5e kel ", kel_e/8)
 
         if kel_e > 0:
             if acd_a == 1:
