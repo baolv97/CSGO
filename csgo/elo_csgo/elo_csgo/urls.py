@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
-from bet.views import home_view, detail, refresh
+from bet.views import home_view, detail, refresh, training_elo
 from django.contrib.auth.views import LoginView
 from django.conf.urls.static import static
 from django.conf import settings
@@ -27,5 +27,6 @@ urlpatterns = [
                   path('login/', LoginView.as_view(), name='login'),
                   path('bet/', detail, name='detail'),
                   path('refresh/', refresh, name='refresh'),
+                  path('training_elo/', training_elo, name='training_elo'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
                                                                                            document_root=settings.MEDIA_ROOT)

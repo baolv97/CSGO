@@ -21,10 +21,17 @@ def check_today(time):
 
 
 def refresh(request):
-    call_command('crawler_9_train_elo_for_player')
+    # call_command('crawler_9_train_elo_for_player')
     call_command('crawler_10_match_upcoming')
     # import time
     # time.sleep(20)
+    return HttpResponse(1, content_type='application/json')
+
+
+def training_elo(request):
+    call_command('crawler_1_cs_go')
+    call_command('crawler_6_get_list_player')
+    call_command('crawler_9_train_elo_for_player')
     return HttpResponse(1, content_type='application/json')
 
 
@@ -94,10 +101,10 @@ def detail(request):
 
             if p.team == item.team_a:
                 total_elo_a += player_elo
-                #print(p.team, player_elo)
+                # print(p.team, player_elo)
             else:
                 total_elo_b += player_elo
-                #print(p.team, player_elo)
+                # print(p.team, player_elo)
         print("total_elo team A", total_elo_a)
         print("total_elo team B", total_elo_b)
         elo_a = total_elo_a / 5
@@ -106,7 +113,7 @@ def detail(request):
         w_b = 1 - w_a
         print("win rate team A", w_a)
         print("win rate team B", w_b)
-        #set up suggestion nha cai pin
+        # set up suggestion nha cai pin
         pin_odds_team_a = 0.0
         pin_odds_team_b = 0.0
         vp_odds_team_a = 0.0
@@ -171,7 +178,7 @@ def detail(request):
         print("5e acd ", acd_a_e)
         print("5e edg ", edge_a_e)
         print("5e edg ", edge_b_e)
-        print("5e kel ", kel_e/8)
+        print("5e kel ", kel_e / 8)
 
         if kel_e > 0:
             if acd_a == 1:
@@ -195,14 +202,14 @@ def detail(request):
             "vp_suggestion_team_b": "-",
 
             "5e_odds_team_a": str(etop_odds_team_a),
-            "5e_suggestion_team_a": str(round(kelly_a_e, 3)),
+            "5e_suggestion_team_a": str(round(kelly_a_e, 6)),
             "5e_odds_team_b": str(etop_odds_team_b),
-            "5e_suggestion_team_b": str(round(kelly_b_e, 3)),
+            "5e_suggestion_team_b": str(round(kelly_b_e, 6)),
 
             "pin_odds_team_a": str(pin_odds_team_a),
-            "pin_suggestion_team_a": str(round(kelly_a_p, 3)),
+            "pin_suggestion_team_a": str(round(kelly_a_p, 6)),
             "pin_odds_team_b": str(pin_odds_team_b),
-            "pin_suggestion_team_b": str(round(kelly_b_p, 3)),
+            "pin_suggestion_team_b": str(round(kelly_b_p, 6)),
 
             "manual_odds_team_a": str(round(1 / w_a, 2)),
             "manual_suggestion_team_a": "-",
