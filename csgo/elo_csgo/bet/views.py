@@ -21,7 +21,7 @@ def check_today(time):
 
 
 def refresh(request):
-    # call_command('crawler_9_train_elo_for_player')
+    call_command('crawler_9_train_elo_for_player')
     call_command('crawler_10_match_upcoming')
     # import time
     # time.sleep(20)
@@ -67,7 +67,7 @@ def detail(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
     # set limit time for query: in 2 next day
-    t_now = datetime.now()
+    t_now = datetime.now() - timedelta(days=day)
     time_limit = datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=day)
     print(time_limit)
     # get matches in 2 next day, oder_by time
