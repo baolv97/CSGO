@@ -34,7 +34,7 @@ def winRate(elo_a, elo_b):
 
 
 def diffElo(win_rate, ans, k):
-    return abs(k * (ans - win_rate))*5
+    return abs(k * (ans - win_rate)*5)
 
 
 def diffEloPlayer(rating, ans, diff_elo, sum_rating, sum_rating_nd):
@@ -147,16 +147,19 @@ def trainingEloPlayer():
                     sum_rating_b_nd += 1 / p[count + i].rating
 
             w_a = winRate(elo_a, elo_b)
-
-            diff_elo_a = diffElo(w_a, p[count].result, 25)
-            diff_elo_b = diffElo(1-w_a, 1-p[count].result, 25)
+            if p[count].result == 1:
+                ans = 1.0
+            else:
+                ans = 0.0
+            diff_elo_a = diffElo(w_a, ans, 25.0)
+            diff_elo_b = diffElo(1.0-w_a, 1.0-ans, 25.0)
 
             for i in range(5):
                 if count + i < count_game:
-                    p[count + i].elo += diffEloPlayer(p[count + i].rating, p[count].result, diff_elo_a, sum_rating_a, sum_rating_a_nd)
+                    p[count + i].elo += diffEloPlayer(p[count + i].rating, ans, diff_elo_a, sum_rating_a, sum_rating_a_nd)
             for i in range(5, 10):
                 if count + i < count_game:
-                    p[count + i].elo += diffEloPlayer(p[count + i].rating, 1-p[count].result, diff_elo_b, sum_rating_b, sum_rating_b_nd)
+                    p[count + i].elo += diffEloPlayer(p[count + i].rating, 1.0-ans, diff_elo_b, sum_rating_b, sum_rating_b_nd)
 
             for i in range(10):
                 if count + i < count_game:
