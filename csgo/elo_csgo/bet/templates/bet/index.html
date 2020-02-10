@@ -212,7 +212,8 @@ $(document).ready(function() {
         $(".class-pin").each(function() {
             val_pin = origin_suggestion[i];
             i++;
-            $(this).text(val_pin * bank);
+            var num = val_pin * bank
+            $(this).text(num.toFixed(4));
         });
     })
 
