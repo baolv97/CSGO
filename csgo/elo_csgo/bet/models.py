@@ -154,6 +154,16 @@ class MatchUpcoming(models.Model):
     id_team_b = models.IntegerField(null=True, blank=True, verbose_name="ID đội B")
     source = models.CharField(max_length=500, null=True, blank=True, verbose_name="Nguồn")
     created_at = models.DateTimeField(null=True, blank=True, default=timezone.now)
+    bet_team_a = models.FloatField(null=True, blank=True, default=0.0)
+    bet_team_b = models.FloatField(null=True, blank=True, default=0.0)
+    suggestion_a = models.FloatField(null=True, blank=True, default=0.0)
+    suggestion_b = models.FloatField(null=True, blank=True, default=0.0)
+    bet_team_a_e = models.FloatField(null=True, blank=True, default=0.0)
+    bet_team_b_e = models.FloatField(null=True, blank=True, default=0.0)
+    suggestion_a_e = models.FloatField(null=True, blank=True, default=0.0)
+    suggestion_b_e = models.FloatField(null=True, blank=True, default=0.0)
+    winrate_a = models.FloatField(null=True, blank=True, default=0.0)
+    winrate_b = models.FloatField(null=True, blank=True, default=0.0)
 
     def __str__(self):
         result = "{} ({}) {}".format(self.team_a, self.time, self.team_b)
