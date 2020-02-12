@@ -171,11 +171,9 @@ $(document).ready(function() {
     });
 
     $("#btn_training_elo").click(function() {
-        $("#loading_img").show();
-
+        window.location.href = "/bet";
         $.get('/training_elo/', function(data) {
             if (data == 1) {
-                $("#loading_img").hide();
                 location.reload(true);
             }
         });
