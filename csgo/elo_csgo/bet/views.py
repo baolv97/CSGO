@@ -37,6 +37,10 @@ def training_elo(request):
     return HttpResponse(1, content_type='application/json')
 
 
+def refresh_over(request):
+    return HttpResponse(1, content_type='application/json')
+
+
 def winRate(elo_a, elo_b):
     q_a = pow(10, elo_a / 400)
     q_b = pow(10, elo_b / 400)
@@ -76,7 +80,7 @@ def detail(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
     # set limit time for query: in 2 next day
-    t_now = datetime.now() - timedelta(days=day)
+    t_now = datetime.now()
     time_limit = datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=day)
     print(time_limit)
     # get matches in 2 next day, oder_by time
@@ -230,6 +234,55 @@ def detail(request):
             "manual_odds_team_a": str(round(1 / w_a, 2)),
             "manual_suggestion_team_a": "-",
             "manual_odds_team_b": str(round(1 / w_b, 2)),
+            "manual_suggestion_team_b": "-",
+        })
+
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/index.html', context)
+
+def detail1(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login/')
+
+    matches_all = MatchUpcoming.objects.all()
+    for i in range(len(matches_all)):
+        break
+    result = []
+    for item in matches_all:
+        winrate_a = 0.0
+        winrate_b = 0.0
+        if item.winrate_a != 0 and item.winrate_b != 0:
+            winrate_a = 1 / item.winrate_a
+            winrate_b = 1 / item.winrate_b
+        result.append({
+            "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
+            "time": item.time.strftime("%H:%M"),
+            "source": item.source,
+            "a": 1,
+            "team_a": item.team_a,
+            "team_b": item.team_b,
+
+            "vp_odds_team_a": 0.0,
+            "vp_suggestion_team_a": "-",
+            "vp_odds_team_b": 0.0,
+            "vp_suggestion_team_b": "-",
+
+            "5e_odds_team_a": str(item.bet_team_a_e),
+            "5e_suggestion_team_a": str(round(item.suggestion_a_e, 6)),
+            "5e_odds_team_b": str(item.bet_team_b_e),
+            "5e_suggestion_team_b": str(round(item.suggestion_b_e, 6)),
+
+            "pin_odds_team_a": str(item.bet_team_a),
+            "pin_suggestion_team_a": str(round(item.suggestion_a, 6)),
+            "pin_odds_team_b": str(item.bet_team_b),
+            "pin_suggestion_team_b": str(round(item.suggestion_b, 6)),
+
+            "manual_odds_team_a": str(round(winrate_a, 2)),
+            "manual_suggestion_team_a": "-",
+            "manual_odds_team_b": str(round(winrate_b, 2)),
             "manual_suggestion_team_b": "-",
         })
 

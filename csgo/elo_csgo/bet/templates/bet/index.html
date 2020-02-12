@@ -79,6 +79,9 @@
             <th class="col-md-1 border_bu_none"></th>
             <th class="col-md-2 btn_link" id="btn_training_elo"><a>Training</a></th>
             <th class="col-md-1 border_none"></th>
+            <th class="col-md-1 border_bu_none"></th>
+            <th class="col-md-2 btn_link" id="btn_refresh_over"><a href="{% url 'detail1' %}">Refresh match over</a></th>
+            <th class="col-md-1 border_none"></th>
         </tr>
         </tbody>
     </table>
@@ -160,8 +163,9 @@ $(document).ready(function() {
 
         $.get('/refresh/', function(data) {
             if (data == 1) {
+                console.log('suc');
                 $("#loading_img").hide();
-                location.reload(true);
+                window.location.href = "/bet";
             }
         });
     });
@@ -173,6 +177,17 @@ $(document).ready(function() {
             }
         });
     });
+
+    /*$("#btn_refresh_over").click(function() {
+        $("#loading_img").show();
+
+        $.get('/refresh_over/', function(data) {
+            if (data == 1) {
+                $("#loading_img").hide();
+                location.reload(true);
+            }
+        });
+    });*/
 
     function expectedValue(w_a,bet_a){
         return w_a * bet_a - (1 - w_a) * 1;
