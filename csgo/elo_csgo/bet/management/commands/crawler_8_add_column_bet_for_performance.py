@@ -10,14 +10,15 @@ class Command(BaseCommand):
 
         performances = Performance.objects.all()
 
-        for item in performances:
-            if not item.match.bet_team_a:
+        for i in range(150000, len(performances)):
+            print(performances[i].id)
+            if not performances[i].match.bet_team_a:
                 continue
-            if item.team == item.match.team_a:
-                item.bet = item.match.bet_team_a
+            if performances[i].team == performances[i].match.team_a:
+                performances[i].bet = performances[i].match.bet_team_a
             else:
-                item.bet = item.match.bet_team_b
-            item.save()
-            print(item.id)
+                performances[i].bet = performances[i].match.bet_team_b
+            performances[i].save()
+            print(performances[i].id)
 
         print("Process is was done...")

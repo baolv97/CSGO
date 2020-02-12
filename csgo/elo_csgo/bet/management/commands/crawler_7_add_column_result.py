@@ -13,10 +13,11 @@ class Command(BaseCommand):
 
         performances = Performance.objects.all()
 
-        for item in performances:
-            item.result = 0
-            if item.team == self.get_team_win(item.match):
-                item.result = 1
-            item.save()
+        for i in range(150000, len(performances)):
+            performances[i].result = 0
+            print(performances[i].id)
+            if performances[i].team == self.get_team_win(performances[i].match):
+                performances[i].result = 1
+            performances[i].save()
 
         print("Process is was done...")
