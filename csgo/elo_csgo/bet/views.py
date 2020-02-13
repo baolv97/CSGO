@@ -251,19 +251,20 @@ def detail(request):
 def detail1(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
-
-    matches_all = MatchUpcoming.objects.all()
-    for i in range(len(matches_all)):
-        break
+    t_now = datetime.now()
+    end_time = "2019-02-13 11:34:37.710300"
+    matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
     result = []
     for item in matches_all:
+        if item.bet_team_a == 0:
+            continue
         winrate_a = 0.0
         winrate_b = 0.0
         if item.winrate_a != 0 and item.winrate_b != 0:
             winrate_a = 1 / item.winrate_a
             winrate_b = 1 / item.winrate_b
         result.append({
-            "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
+            "date": item.time.strftime("%d/%m/%Y"),
             "time": item.time.strftime("%H:%M"),
             "source": item.source,
             "a": 1,
