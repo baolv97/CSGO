@@ -255,9 +255,47 @@ def detail1(request):
     end_time = "2019-02-13 11:34:37.710300"
     matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
     result = []
+    total_money = 10000.0
     for item in matches_all:
         if item.bet_team_a == 0:
             continue
+
+        t_now = item.time.strftime("%Y-%m-%d")+" 00:00:00"
+        #print(t_now)
+        time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
+        time_limit = time.replace(hour=23, minute=59, second=59) + 1/2*timedelta(days=day)
+        print(time_limit)
+        match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+        point_team_a = -1
+        point_team_b = -1
+        money_odds_a = 0.0
+        money_odds_b = 0.0
+        for x in match:
+            if x.team_a == item.team_a and x.team_b == item.team_b:
+                if x.point_team_a-x.point_team_b > 0:
+                    point_team_a = 1
+                    point_team_b = 0
+                if x.point_team_a - x.point_team_b < 0:
+                    point_team_a = 0
+                    point_team_b = 1
+                break
+        if item.suggestion_a > 0:
+            if point_team_a == 1:
+                money_odds_a = total_money * item.suggestion_a * (item.bet_team_a - 1)
+                total_money = total_money + money_odds_a
+            if point_team_a == 0:
+                money_odds_a = -total_money * item.suggestion_a
+                total_money = total_money + money_odds_a
+
+        if item.suggestion_b > 0:
+            if point_team_b == 1:
+                money_odds_b = total_money * item.suggestion_b * (item.bet_team_b - 1)
+                total_money = total_money + money_odds_b
+            if point_team_b == 0:
+                money_odds_b = -total_money * item.suggestion_b
+                total_money = total_money + money_odds_b
+
+
         winrate_a = 0.0
         winrate_b = 0.0
         if item.winrate_a != 0 and item.winrate_b != 0:
@@ -287,9 +325,14 @@ def detail1(request):
             "pin_suggestion_team_b": str(round(item.suggestion_b, 6)),
 
             "manual_odds_team_a": str(round(winrate_a, 2)),
-            "manual_suggestion_team_a": "-",
+            "manual_suggestion_team_a": point_team_a,
             "manual_odds_team_b": str(round(winrate_b, 2)),
-            "manual_suggestion_team_b": "-",
+            "manual_suggestion_team_b": point_team_b,
+
+            "money_team_a": str(round(money_odds_a, 2)),
+            "revenue_team_a": str(round(total_money, 2)),
+            "money_team_b": str(round(money_odds_b, 2)),
+            "revenue_team_b": str(round(total_money, 2)),
         })
 
     context = {

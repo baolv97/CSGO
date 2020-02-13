@@ -104,9 +104,9 @@
             <th class="col-md-1">odds</th>
             <th class="col-md-1">suggestion</th>
             <th class="col-md-1">odds</th>
-            <th class="col-md-1">suggestion</th>
-            <th class="col-md-1">odds</th>
-            <th class="col-md-1">suggestion</th>
+            <th class="col-md-1">Result</th>
+            <th class="col-md-1">Money</th>
+            <th class="col-md-1">Total Money</th>
         </tr>
         </thead>
         <tbody>
@@ -125,8 +125,8 @@
             <td class="class-pin">{{ item.pin_suggestion_team_a }}</td>
             <td class="man-ai-odds">{{item.manual_odds_team_a }}</td>
             <td>{{ item.manual_suggestion_team_a }}</td>
-            <td class="man-odds"><input type="number" class="class-odds" ></td>
-            <td class="man-suggestion">0</td>
+            <td class="man-odds">{{ item.money_team_a }}</td>
+            <td class="man-suggestion">{{ item.revenue_team_a }}</td>
         </tr>
         <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid row_item">
             <td>{{ item.time }}</td>
@@ -139,8 +139,8 @@
             <td class="class-pin">{{ item.pin_suggestion_team_b }}</td>
             <td class="man-ai-odds">{{item.manual_odds_team_b }}</td>
             <td>{{ item.manual_suggestion_team_b }}</td>
-            <td class="man-odds"><input type="number" class="class-odds" ></td>
-            <td class="man-suggestion">0</td>
+            <td class="man-odds">{{ item.money_team_b }}</td>
+            <td class="man-suggestion">{{ item.revenue_team_b }}</td>
         </tr>
 
         {% endfor %}
@@ -171,9 +171,11 @@ $(document).ready(function() {
     });
 
     $("#btn_training_elo").click(function() {
-        window.location.href = "/bet";
+        $("#loading_img").show();
         $.get('/training_elo/', function(data) {
             if (data == 1) {
+                $("#loading_img").hide();
+                window.location.href = "/bet";
                 location.reload(true);
             }
         });
@@ -190,33 +192,6 @@ $(document).ready(function() {
         });
     });*/
 
-    function expectedValue(w_a,bet_a){
-        return w_a * bet_a - (1 - w_a) * 1;
-    }
-
-    function according(expected_value_a, expected_value_b){
-        if (expected_value_a < 0 && expected_value_b < 0)
-            return -1;
-        if (expected_value_a > expected_value_b)
-            return 1;
-        else
-            return 0;
-    }
-
-    function edge(w_a, bet_a){
-        return (bet_a + 1) / (1 / w_a);
-    }
-
-    function  kelly(according, edge_a, edge_b, bet_a, bet_b){
-        if (according == 1)
-            return (edge_a - 1) / bet_a;
-
-        if (according == 0)
-            return (edge_b - 1) / bet_b;
-
-        return 0;
-    }
-
     var origin_suggestion = [];
     $(".class-pin").each(function() {
         origin_suggestion.push(parseFloat($(this).text()));
@@ -232,53 +207,5 @@ $(document).ready(function() {
             $(this).text(num.toFixed(4));
         });
     })
-
-
-    $(".class-odds").change(function() {
-        var man_odds = [];
-        $(".class-odds").each(function(){
-            man_odds.push(parseFloat($(this).val()));
-        });
-
-        var pin_odds = [];
-        $(".man-ai-odds").each(function() {
-            pin_odds.push(parseFloat($(this).text()));
-        });
-
-        var i = 0;
-        var man_suggestion = [];
-        while(i < man_odds.length ){
-            var exA = expectedValue(1/pin_odds[i], man_odds[i] - 1);
-            var exB = expectedValue(1/pin_odds[i+1], man_odds[i+1] - 1);
-            var acd = according(exA, exB);
-            var edgeA = edge(1/pin_odds[i], man_odds[i] - 1);
-            var edgeB = edge(1/pin_odds[i+1], man_odds[i+1] - 1);
-            var k = kelly(acd, edgeA, edgeB, man_odds[i] -1, man_odds[i+1] - 1) / 8;
-            var bank = $("#id-bank").val();
-            if (bank == 0 ) bank =1;
-            if (acd == 1) {
-                man_suggestion[i]= Math.round(k * bank);
-                man_suggestion[i+1]= 0;
-            }
-            else if (acd == 0) {
-                man_suggestion[i]= 0;
-                man_suggestion[i+1]= Math.round(k * bank);
-            }else {
-                man_suggestion[i]= -1;
-                man_suggestion[i+1]= -1;
-            }
-            i= i +2;
-        }
-        var i = 0;
-        $(".man-suggestion").each(function() {
-            $(this).text(man_suggestion[i]);
-            i++;
-        });
-    })
-
-
-
-
-
 });
 </script>
