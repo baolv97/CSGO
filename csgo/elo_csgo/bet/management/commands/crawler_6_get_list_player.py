@@ -10,18 +10,19 @@ class Command(BaseCommand):
 
         performances = Performance.objects.all()
 
-        for item in performances:
-            player = Player.objects.filter(id_player=item.id_player).first()
+        for i in range(150000,len(performances)):
+            print(i)
+            player = Player.objects.filter(id_player=performances[i].id_player).first()
             if player:
-                if item.team not in player.team:
+                if performances[i].team not in player.team:
                     player.team = player.team
                     player.save()
             else:
                 Player.objects.create(
-                    team=item.team,
-                    id_player=item.id_player,
-                    name=item.player
+                    team=performances[i].team,
+                    id_player=performances[i].id_player,
+                    name=performances[i].player
                 )
-                print("create new -> ({}) - {} - {}".format(item.team, item.id_player, item.player))
+                print("create new -> ({}) - {} - {}".format(performances[i].team, performances[i].id_player, performances[i].player))
 
         print("Process is was done...")

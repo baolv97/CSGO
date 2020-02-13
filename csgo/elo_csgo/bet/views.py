@@ -52,14 +52,19 @@ def expectedValue(w_a, bet_a):
     return w_a * bet_a - (1 - w_a) * 1
 
 
-def according(expected_value_a, expected_value_b):
+def according(expected_value_a, expected_value_b, bet_team_a, bet_team_b):
     if expected_value_a < 0 and expected_value_b < 0:
         return -1
-
-    if expected_value_a > expected_value_b:
+    if expected_value_a > 0 and expected_value_b < 0:
         return 1
-    else:
+    if expected_value_a < 0 and expected_value_b > 0:
         return 0
+    if expected_value_a > 0 and expected_value_b > 0:
+        if bet_team_a < bet_team_b:
+            return 1;
+        else:
+            return 0;
+
 
 
 def edge(w_a, bet_a):
@@ -114,14 +119,14 @@ def detail(request):
             else:
                 total_elo_b += player_elo
                 # print(p.team, player_elo)
-        #print("total_elo team A", total_elo_a)
-        #print("total_elo team B", total_elo_b)
+        print("total_elo team A", total_elo_a)
+        print("total_elo team B", total_elo_b)
         elo_a = total_elo_a / 5
         elo_b = total_elo_b / 5
         w_a = winRate(elo_a, elo_b)
         w_b = 1 - w_a
-        #print("win rate team A", w_a)
-        #print("win rate team B", w_b)
+        print("win rate team A", w_a)
+        print("win rate team B", w_b)
         # set up suggestion nha cai pin
         pin_odds_team_a = 0.0
         pin_odds_team_b = 0.0
@@ -139,26 +144,26 @@ def detail(request):
             if bet.banker == five_etop:
                 etop_odds_team_a = bet.bet_team_a
                 etop_odds_team_b = bet.bet_team_b
-        #print("pin ", pin_odds_team_a)
-        #print("pin ", pin_odds_team_b)
-        #print("5e", etop_odds_team_a)
-        #print("5e", etop_odds_team_b)
+        print("pin ", pin_odds_team_a)
+        print("pin ", pin_odds_team_b)
+        print("5e", etop_odds_team_a)
+        print("5e", etop_odds_team_b)
         # set up suggestion nha cai pin
         ev_a_pin = expectedValue(w_a, pin_odds_team_a - 1)
         ev_b_pin = expectedValue(w_b, pin_odds_team_b - 1)
 
-        acd_a = according(ev_a_pin, ev_b_pin)
+        acd_a = according(ev_a_pin, ev_b_pin, pin_odds_team_a - 1,  pin_odds_team_b - 1)
 
         edge_a_p = edge(w_a, pin_odds_team_a - 1)
         edge_b_p = edge(w_b, pin_odds_team_b - 1)
 
         kel_p = kelly(acd_a, edge_a_p, edge_b_p, pin_odds_team_a - 1, pin_odds_team_b - 1)
-        #print("pin ev ", ev_a_pin)
-        #print("pin ev ", ev_b_pin)
-        #print("pin acd ", acd_a)
-        #print("pin edg ", edge_a_p)
-        #print("pin edg ", edge_b_p)
-        #print("pin kel ", kel_p / 8)
+        print("pin ev ", ev_a_pin)
+        print("pin ev ", ev_b_pin)
+        print("pin acd ", acd_a)
+        print("pin edg ", edge_a_p)
+        print("pin edg ", edge_b_p)
+        print("pin kel ", kel_p / 8)
         kelly_a_p = 0
         kelly_b_p = 0
 
@@ -173,12 +178,12 @@ def detail(request):
         matches_all[item.id - 109].bet_team_b = pin_odds_team_b
         matches_all[item.id - 109].suggestion_a = kelly_a_p
         matches_all[item.id - 109].suggestion_b = kelly_b_p
-        #print("baobao", matches_all[item.id - 109].bet_team_a, pin_odds_team_a)
+        print("baobao", matches_all[item.id - 109].bet_team_a, pin_odds_team_a)
         # set up suggestion nha cai 5etop
         ev_a_e = expectedValue(w_a, etop_odds_team_a)
         ev_b_e = expectedValue(w_b, etop_odds_team_b)
 
-        acd_a_e = according(ev_a_e, ev_b_e)
+        acd_a_e = according(ev_a_e, ev_b_e, etop_odds_team_a, etop_odds_team_b)
 
         edge_a_e = edge(w_a, etop_odds_team_a)
         edge_b_e = edge(w_b, etop_odds_team_b)
@@ -187,12 +192,12 @@ def detail(request):
 
         kelly_a_e = 0
         kelly_b_e = 0
-        #print("5e ev ", ev_a_e)
-        #print("5e ev ", ev_b_e)
-        #print("5e acd ", acd_a_e)
-        #print("5e edg ", edge_a_e)
-        #print("5e edg ", edge_b_e)
-        #print("5e kel ", kel_e / 8)
+        print("5e ev ", ev_a_e)
+        print("5e ev ", ev_b_e)
+        print("5e acd ", acd_a_e)
+        print("5e edg ", edge_a_e)
+        print("5e edg ", edge_b_e)
+        print("5e kel ", kel_e / 8)
 
         if kel_e > 0:
             if acd_a == 1:
