@@ -252,11 +252,19 @@ def detail1(request):
     matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
     result = []
     total_money = 10000.0
-    for item in matches_all:
-        if item.bet_team_a == 0:
+    for i in range(len(matches_all)):
+        if matches_all[i].bet_team_a == 0:
+            continue
+        check = 0
+        for j in range(i):
+            if matches_all[i].time == matches_all[j].time and matches_all[i].team_a == matches_all[j].team_a and matches_all[i].team_b == matches_all[j].team_b:
+                check = 1
+                break
+        if check == 1:
+            print("baobao")
             continue
 
-        t_now = item.time.strftime("%Y-%m-%d")+" 00:00:00"
+        t_now = matches_all[i].time.strftime("%Y-%m-%d")+" 00:00:00"
         #print(t_now)
         time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
         time_limit = time.replace(hour=23, minute=59, second=59) + 1/2*timedelta(days=day)
@@ -267,7 +275,7 @@ def detail1(request):
         money_odds_a = 0.0
         money_odds_b = 0.0
         for x in match:
-            if x.team_a == item.team_a and x.team_b == item.team_b:
+            if x.team_a == matches_all[i].team_a and x.team_b == matches_all[i].team_b:
                 if x.point_team_a-x.point_team_b > 0:
                     point_team_a = 1
                     point_team_b = 0
@@ -275,50 +283,50 @@ def detail1(request):
                     point_team_a = 0
                     point_team_b = 1
                 break
-        if item.suggestion_a > 0:
+        if matches_all[i].suggestion_a > 0:
             if point_team_a == 1:
-                money_odds_a = total_money * item.suggestion_a * (item.bet_team_a - 1)
+                money_odds_a = total_money * matches_all[i].suggestion_a * (matches_all[i].bet_team_a - 1)
                 total_money = total_money + money_odds_a
             if point_team_a == 0:
-                money_odds_a = -total_money * item.suggestion_a
+                money_odds_a = -total_money * matches_all[i].suggestion_a
                 total_money = total_money + money_odds_a
 
-        if item.suggestion_b > 0:
+        if matches_all[i].suggestion_b > 0:
             if point_team_b == 1:
-                money_odds_b = total_money * item.suggestion_b * (item.bet_team_b - 1)
+                money_odds_b = total_money * matches_all[i].suggestion_b * (matches_all[i].bet_team_b - 1)
                 total_money = total_money + money_odds_b
             if point_team_b == 0:
-                money_odds_b = -total_money * item.suggestion_b
+                money_odds_b = -total_money * matches_all[i].suggestion_b
                 total_money = total_money + money_odds_b
 
 
         winrate_a = 0.0
         winrate_b = 0.0
-        if item.winrate_a != 0 and item.winrate_b != 0:
-            winrate_a = 1 / item.winrate_a
-            winrate_b = 1 / item.winrate_b
+        if matches_all[i].winrate_a != 0 and matches_all[i].winrate_b != 0:
+            winrate_a = 1 / matches_all[i].winrate_a
+            winrate_b = 1 / matches_all[i].winrate_b
         result.append({
-            "date": item.time.strftime("%d/%m/%Y"),
-            "time": item.time.strftime("%H:%M"),
-            "source": item.source,
+            "date": matches_all[i].time.strftime("%d/%m/%Y"),
+            "time": matches_all[i].time.strftime("%H:%M"),
+            "source": matches_all[i].source,
             "a": 1,
-            "team_a": item.team_a,
-            "team_b": item.team_b,
+            "team_a": matches_all[i].team_a,
+            "team_b": matches_all[i].team_b,
 
             "vp_odds_team_a": 0.0,
             "vp_suggestion_team_a": "-",
             "vp_odds_team_b": 0.0,
             "vp_suggestion_team_b": "-",
 
-            "5e_odds_team_a": str(item.bet_team_a_e),
-            "5e_suggestion_team_a": str(round(item.suggestion_a_e, 6)),
-            "5e_odds_team_b": str(item.bet_team_b_e),
-            "5e_suggestion_team_b": str(round(item.suggestion_b_e, 6)),
+            "5e_odds_team_a": str(matches_all[i].bet_team_a_e),
+            "5e_suggestion_team_a": str(round(matches_all[i].suggestion_a_e, 6)),
+            "5e_odds_team_b": str(matches_all[i].bet_team_b_e),
+            "5e_suggestion_team_b": str(round(matches_all[i].suggestion_b_e, 6)),
 
-            "pin_odds_team_a": str(item.bet_team_a),
-            "pin_suggestion_team_a": str(round(item.suggestion_a, 6)),
-            "pin_odds_team_b": str(item.bet_team_b),
-            "pin_suggestion_team_b": str(round(item.suggestion_b, 6)),
+            "pin_odds_team_a": str(matches_all[i].bet_team_a),
+            "pin_suggestion_team_a": str(round(matches_all[i].suggestion_a, 6)),
+            "pin_odds_team_b": str(matches_all[i].bet_team_b),
+            "pin_suggestion_team_b": str(round(matches_all[i].suggestion_b, 6)),
 
             "manual_odds_team_a": str(round(winrate_a, 2)),
             "manual_suggestion_team_a": point_team_a,
