@@ -125,8 +125,8 @@
             <td class="class-pin">{{ item.pin_suggestion_team_a }}</td>
             <td class="man-ai-odds">{{item.manual_odds_team_a }}</td>
             <td>{{ item.manual_suggestion_team_a }}</td>
-            <td class="man-odds">{{ item.money_team_a }}</td>
-            <td class="man-suggestion">{{ item.revenue_team_a }}</td>
+            <td class="man-odds">{{ item.money_team_a }}$</td>
+            <td class="man-suggestion">{{ item.revenue_team_a }}$</td>
         </tr>
         <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid row_item">
             <td>{{ item.time }}</td>
@@ -139,8 +139,8 @@
             <td class="class-pin">{{ item.pin_suggestion_team_b }}</td>
             <td class="man-ai-odds">{{item.manual_odds_team_b }}</td>
             <td>{{ item.manual_suggestion_team_b }}</td>
-            <td class="man-odds">{{ item.money_team_b }}</td>
-            <td class="man-suggestion">{{ item.revenue_team_b }}</td>
+            <td class="man-odds">{{ item.money_team_b }}$</td>
+            <td class="man-suggestion">{{ item.revenue_team_b }}$</td>
         </tr>
 
         {% endfor %}

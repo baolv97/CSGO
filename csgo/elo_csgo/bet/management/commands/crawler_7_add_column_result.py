@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
         performances = Performance.objects.all()
 
-        for i in range(150000, len(performances)):
+        for i in range(170000, len(performances)):
             performances[i].result = 0
             print(performances[i].id)
             if performances[i].team == self.get_team_win(performances[i].match):

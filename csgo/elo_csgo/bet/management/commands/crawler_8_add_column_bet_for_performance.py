@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
         performances = Performance.objects.all()
 
-        for i in range(150000, len(performances)):
+        for i in range(170000, len(performances)):
             print(performances[i].id)
             if not performances[i].match.bet_team_a:
                 continue

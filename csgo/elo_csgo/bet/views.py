@@ -61,9 +61,9 @@ def according(expected_value_a, expected_value_b, bet_team_a, bet_team_b):
         return 0
     if expected_value_a > 0 and expected_value_b > 0:
         if bet_team_a < bet_team_b:
-            return 1;
+            return 1
         else:
-            return 0;
+            return 0
 
 
 
@@ -98,10 +98,10 @@ def detail(request):
     for item in matches:
         # get odds of banker
         bets = BetUpcoming.objects.filter(match_id=item.id)
-        if bets.count() == 0:
-            # if match have no bet -> continue
-            # else append bet to result
-            continue
+        # if bets.count() == 0:
+        #     # if match have no bet -> continue
+        #     # else append bet to result
+        #     continue
         # get total elo team_a and team_b
         total_elo_a = 0
         total_elo_b = 0

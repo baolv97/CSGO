@@ -17,7 +17,10 @@ e_dict = hash_map()
 
 
 def update_elo(id_player, elo):
-    e[e_dict[id_player]].elo = elo
+    for j in range(count_player_id):
+        if id_player == e[j].id_player:
+            e[j].elo = elo
+            break
 
 
 def winRate(elo_a, elo_b):
@@ -109,8 +112,10 @@ def trainingEloPlayer():
 
     while count < count_game-1:
         for i in range(10):
-            if count + i < count_game:
-                p[count+i].elo = e[e_dict[p[count + i].id_player]].elo
+            for j in range(len(e)):
+                if count+i < count_game-1 and p[count+i].id_player == e[j].id_player:
+                    p[count+i].elo = e[j].elo
+                    break
 
         hs = 1
         hs1 = 1
@@ -153,6 +158,7 @@ def trainingEloPlayer():
                 ans = 0.0
             diff_elo_a = diffElo(w_a, ans, 25.0)
             diff_elo_b = diffElo(1.0-w_a, 1.0-ans, 25.0)
+            print(p[count].match_id)
 
             for i in range(5):
                 if count + i < count_game:
