@@ -29,10 +29,6 @@ def refresh(request):
 
 
 def training_elo(request):
-    call_command('crawler_1_cs_go')
-    call_command('crawler_6_get_list_player')
-    call_command('crawler_7_add_column_result')
-    call_command('crawler_8_add_column_bet_for_performance')
     call_command('crawler_9_train_elo_for_player')
     return HttpResponse(1, content_type='application/json')
 
