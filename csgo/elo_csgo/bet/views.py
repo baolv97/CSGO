@@ -253,8 +253,6 @@ def detail1(request):
     result = []
     total_money = 10000.0
     for i in range(len(matches_all)):
-        if matches_all[i].bet_team_a == 0:
-            continue
         check = 0
         for j in range(i):
             if matches_all[i].time == matches_all[j].time and matches_all[i].team_a == matches_all[j].team_a and matches_all[i].team_b == matches_all[j].team_b:
@@ -338,6 +336,9 @@ def detail1(request):
             "money_team_b": str(round(money_odds_b, 2)),
             "revenue_team_b": str(round(total_money, 2)),
         })
+
+
+    result.reverse()
 
     context = {
         "result": result
