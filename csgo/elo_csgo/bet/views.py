@@ -101,6 +101,8 @@ def detail(request):
         # get total elo team_a and team_b
         total_elo_a = 0
         total_elo_b = 0
+        d_team_a = 0
+        d_team_b = 0
         players = MatchUpcomingPlayer.objects.filter(match_upcoming=item)
         for p in players:
             player = Player.objects.filter(name=p.name)
@@ -111,14 +113,18 @@ def detail(request):
 
             if p.team == item.team_a:
                 total_elo_a += player_elo
-                # print(p.team, player_elo)
+                print(p.team, p.name, player_elo)
+                d_team_a += 1
             else:
                 total_elo_b += player_elo
-                # print(p.team, player_elo)
+                print(p.team, p.name, player_elo)
+                d_team_b += 1
         print("total_elo team A", total_elo_a)
         print("total_elo team B", total_elo_b)
-        elo_a = total_elo_a / 5
-        elo_b = total_elo_b / 5
+        print("nguoi A", d_team_a)
+        print("nguoi B", d_team_b)
+        elo_a = total_elo_a / d_team_a
+        elo_b = total_elo_b / d_team_b
         w_a = winRate(elo_a, elo_b)
         w_b = 1 - w_a
         print("win rate team A", w_a)
@@ -253,20 +259,22 @@ def detail1(request):
     result = []
     total_money = 10000.0
     for i in range(len(matches_all)):
+        if matches_all[i].winrate_a == 0:
+            continue
         check = 0
         for j in range(i):
             if matches_all[i].time == matches_all[j].time and matches_all[i].team_a == matches_all[j].team_a and matches_all[i].team_b == matches_all[j].team_b:
                 check = 1
                 break
         if check == 1:
-            print("baobao")
+            # print("baobao")
             continue
 
         t_now = matches_all[i].time.strftime("%Y-%m-%d")+" 00:00:00"
         #print(t_now)
         time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
         time_limit = time.replace(hour=23, minute=59, second=59) + 1/2*timedelta(days=day)
-        print(time_limit)
+        # print(time_limit)
         match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
         point_team_a = -1
         point_team_b = -1
@@ -280,7 +288,20 @@ def detail1(request):
                 if x.point_team_a - x.point_team_b < 0:
                     point_team_a = 0
                     point_team_b = 1
+                if x.id == 9396 or x.id == 9408:
+                    point_team_a = -1
+                    point_team_b = -1
                 break
+        # if point_team_a == 1 and matches_all[i].bet_team_a > 1/matches_all[i].winrate_a and matches_all[i].bet_team_a < matches_all[i].bet_team_b:
+        #     print("win", matches_all[i].bet_team_a, 1/matches_all[i].winrate_a)
+        # if point_team_a == 0 and matches_all[i].bet_team_a > 1 / matches_all[i].winrate_a and matches_all[i].bet_team_a < matches_all[i].bet_team_b:
+        #     print("lose", matches_all[i].bet_team_a, 1/matches_all[i].winrate_a)
+        # if point_team_b == 1 and matches_all[i].bet_team_b > 1/matches_all[i].winrate_b and matches_all[i].bet_team_a > matches_all[i].bet_team_b:
+        #     print("win", matches_all[i].bet_team_b, 1/matches_all[i].winrate_b)
+        # if point_team_b == 0 and matches_all[i].bet_team_b > 1/matches_all[i].winrate_b and matches_all[i].bet_team_a > matches_all[i].bet_team_b:
+        #     print("lose", matches_all[i].bet_team_b, 1/matches_all[i].winrate_b)
+        if matches_all[i].team_a == "HAVU" or matches_all[i].team_b == "HAVU":
+            print(matches_all[i].suggestion_a,  point_team_a)
         if matches_all[i].suggestion_a > 0:
             if point_team_a == 1:
                 money_odds_a = total_money * matches_all[i].suggestion_a * (matches_all[i].bet_team_a - 1)
