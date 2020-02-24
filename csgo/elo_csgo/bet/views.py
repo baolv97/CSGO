@@ -123,8 +123,12 @@ def detail(request):
         print("total_elo team B", total_elo_b)
         print("nguoi A", d_team_a)
         print("nguoi B", d_team_b)
-        elo_a = total_elo_a / d_team_a
-        elo_b = total_elo_b / d_team_b
+        if d_team_a != 0 and d_team_b !=0:
+            elo_a = total_elo_a / d_team_a
+            elo_b = total_elo_b / d_team_b
+        else:
+            elo_a = 0
+            elo_b = 0
         w_a = winRate(elo_a, elo_b)
         w_b = 1 - w_a
         print("win rate team A", w_a)
