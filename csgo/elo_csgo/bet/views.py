@@ -257,10 +257,6 @@ def detail(request):
 def detail1(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
-    call_command('crawler_1_cs_go')
-    call_command('crawler_6_get_list_player')
-    call_command('crawler_7_add_column_result')
-    call_command('crawler_8_add_column_bet_for_performance')
     t_now = datetime.now()
     end_time = "2019-02-13 11:34:37.710300"
     matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
