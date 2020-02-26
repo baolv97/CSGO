@@ -109,11 +109,15 @@ def trainingEloPlayer():
         e[i].elo = 1800
     for i in range(count_game):
         p[i].elo = 1800
+        p[i].check = 0
 
-    while count < count_game-1:
+    while count < count_game:
+        if p[count].check == 1:
+            count += 1
+            continue
         for i in range(10):
             for j in range(len(e)):
-                if count+i < count_game-1 and p[count+i].id_player == e[j].id_player:
+                if count+i < count_game and p[count+i].id_player == e[j].id_player:
                     p[count+i].elo = e[j].elo
                     break
 
@@ -131,6 +135,10 @@ def trainingEloPlayer():
             hs1 = 0
 
         if hs == 1 or hs1 == 1:
+            for i in range(count, count + 10 + hs + hs1):
+                if i < count_game:
+                    p[i].check = 1
+                    p[i].save()
             count += 10 + hs + hs1
 
         if hs == 0 or hs1 == 0:
@@ -170,7 +178,10 @@ def trainingEloPlayer():
             for i in range(10):
                 if count + i < count_game:
                     update_elo(p[count + i].id_player, p[count + i].elo)
-
+            for i in range(count, count + 10):
+                if i < count_game:
+                    p[i].check = 1
+                    p[i].save()
             count += 10
 
     Player.objects.bulk_update(e, ['elo'])

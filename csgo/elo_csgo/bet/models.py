@@ -119,6 +119,7 @@ class Performance(models.Model):
     result = models.IntegerField(null=True, blank=True)
     bet = models.FloatField(null=True, blank=True, default=0)
     elo = models.FloatField(null=True, blank=True, default=ELO)
+    check = models.FloatField(null=True, blank=True, default=0)
 
     def __str__(self):
         return self.player if self.player else "-"
