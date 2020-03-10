@@ -7,6 +7,8 @@ from datetime import timedelta, datetime
 from .constant import day, pinnacle, five_etop, vp_game
 from django.core.management import call_command
 from .models import *
+import threading
+import time
 
 
 def home_view(request):
@@ -29,7 +31,13 @@ def refresh(request):
 
 
 def training_elo(request):
-    call_command('crawler_9_train_elo_for_player')
+    try:
+        t1 = threading.Thread(target=call_command, args=('crawler_9_train_elo_for_player',))
+        t1.start()
+    except:
+        print("err")
+
+    # call_command('crawler_9_train_elo_for_player')
     return HttpResponse(1, content_type='application/json')
 
 
