@@ -82,6 +82,8 @@
             <th class="col-md-1 border_bu_none"></th>
             <th class="col-md-2 btn_link" id="btn_refresh_over"><a href="{% url 'detail1' %}">Result</a></th>
             <th class="col-md-1 border_none"></th>
+            <th class="col-md-2 btn_link" id="btn_list_player"><a>ListPlayer</a></th>
+            <th class="col-md-1 border_none"></th>
         </tr>
         </tbody>
     </table>
@@ -179,6 +181,10 @@ $(document).ready(function() {
                 location.reload(true);
             }
         });
+    });
+
+    $("#btn_list_player").click(function() {
+        window.location.href = "/list_player";
     });
 
     /*$("#btn_refresh_over").click(function() {

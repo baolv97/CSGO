@@ -378,3 +378,23 @@ def detail1(request):
     }
 
     return render(request, 'bet/index.html', context)
+
+def eloplayer(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login/')
+    players = Player.objects.all()
+    result = []
+    for item in players:
+        result.append({
+            "id": item.id,
+            "team": item.team,
+            "id_game": item.id_player,
+            "name": item.name,
+            "elo": item.elo,
+        })
+
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/eloPlayer.html', context)

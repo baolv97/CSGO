@@ -23,4 +23,4 @@ class Command(BaseCommand):
         # chỉ cần tính độ tăng elo đội A -> đội B tự trừ
         # k = 25
 
-        print("Process is was done...")
+        print("Process is was done...elo")
