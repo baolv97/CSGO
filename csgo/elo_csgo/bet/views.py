@@ -314,7 +314,7 @@ def detail1(request):
         #     print("lose", matches_all[i].bet_team_b, 1/matches_all[i].winrate_b)
         if matches_all[i].team_a == "HAVU" or matches_all[i].team_b == "HAVU":
             print(matches_all[i].suggestion_a,  point_team_a)
-        if matches_all[i].suggestion_a > 0:
+        if matches_all[i].suggestion_a > 0.005 and matches_all[i].suggestion_a < 0.05:
             if point_team_a == 1:
                 money_odds_a = total_money * matches_all[i].suggestion_a * (matches_all[i].bet_team_a - 1)
                 total_money = total_money + money_odds_a
@@ -322,7 +322,7 @@ def detail1(request):
                 money_odds_a = -total_money * matches_all[i].suggestion_a
                 total_money = total_money + money_odds_a
 
-        if matches_all[i].suggestion_b > 0:
+        if matches_all[i].suggestion_b > 0.005 and matches_all[i].suggestion_b < 0.05:
             if point_team_b == 1:
                 money_odds_b = total_money * matches_all[i].suggestion_b * (matches_all[i].bet_team_b - 1)
                 total_money = total_money + money_odds_b
