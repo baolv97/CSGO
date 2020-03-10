@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
-from bet.views import home_view, detail, refresh, training_elo, refresh_over, detail1
+from bet.views import home_view, detail, refresh, training_elo, refresh_over, detail1, eloplayer
 from django.contrib.auth.views import LoginView
 from django.conf.urls.static import static
 from django.conf import settings
@@ -29,6 +29,7 @@ urlpatterns = [
                   path('betOver/', detail1, name='detail1'),
                   path('refresh/', refresh, name='refresh'),
                   path('training_elo/', training_elo, name='training_elo'),
+                  path('list_player/', eloplayer, name='list_player'),
                   path('refresh_over/', refresh_over, name='refresh_over'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
                                                                                            document_root=settings.MEDIA_ROOT)
