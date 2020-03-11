@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>BET</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<!-- add css here -->
+<style>
+    h2{
+        color: blue;
+    }
+    .table-bordered>tbody>tr>.border_bu_none {
+        border-top: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+    }
+    .table-bordered>tbody>tr>.border_none {
+        border: 1px solid #fff;
+    }
+    .table-bordered>tbody>tr>th>a {
+        color: #000;
+        padding: 12px 60px;
+    }
+    .btn_link:hover {
+        background: #3d7e9a;
+    }
+    .btn_link>a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+    th, td {
+        text-align: center;
+    }
+    .bg_gray {
+        background: #f1f1f1;
+    }
+    .table td {
+        border-top: none !important;
+        border-bottom: none !important;
+    }
+    .border_bottom_dashed {
+        border-bottom: 1px dashed #ddd;
+    }
+    .border_top_solid {
+        border-bottom: 1px solid #ddd;
+    }
+    .vertical_middle {
+        vertical-align: middle !important;
+    }
+    .link_hl_tv a:hover {
+        text-decoration: none;
+        color: #333;
+    }
+    #loading_img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0.3;
+        display: none;
+    }
+</style>
+
+<body>
+<div class="container">
+    <br>
+    <img src="../media/images/loading.gif" id="loading_img">
+    <table class="table table-bordered">
+        <tbody>
+        </tbody>
+    </table>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th rowspan="2" class="col-md-2 vertical_middle">ID</th>
+            <th colspan="2" class="col-md-2">Team</th>
+            <th colspan="2" class="col-md-2">Player</th>
+            <th colspan="2" class="col-md-2">Time</th>
+            <th colspan="2" class="col-md-2">elo</th>
+        </thead>
+        <tbody>
+
+        {% if result %}
+        {% for item in result %}
+
+        <tr >
+            <th rowspan="2" class="col-md-2 vertical_middle">{{ item.id }}</th>
+            <th colspan="2" class="col-md-2">{{ item.team }}</th>
+            <th colspan="2" class="col-md-2">{{ item.player }}</th>
+            <th colspan="2" class="col-md-2">{{ item.time }}</th>
+            <th colspan="2" class="col-md-2">{{ item.elo }}</th>
+        </thead>
+        </tbody>
+        {% endfor %}
+        {% endif %}
+
+    </table>
+</div>
+
+</body>
+</html>
+
+<!-- add javascript here -->
+<script type="text/javascript">
+
+</script>

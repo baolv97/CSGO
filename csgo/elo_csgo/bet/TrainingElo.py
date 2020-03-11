@@ -1,7 +1,7 @@
 from .models import *
-
+from operator import itemgetter, attrgetter, methodcaller
 e = Player.objects.all()
-p = Performance.objects.all()
+p1 = Performance.objects.all()
 count_player_id = len(e)
 
 
@@ -104,13 +104,16 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 
 def trainingEloPlayer():
     count = 0
-    count_game = len(p)
-    # for i in range(count_player_id):
-    #     e[i].elo = 1800
-    # for i in range(count_game):
-    #     p[i].elo = 1800
-    #     p[i].check = 0
-
+    count_game = len(p1)
+    for i in range(count_player_id):
+        e[i].elo = 1800
+    for i in range(count_game):
+        p1[i].elo = 1800
+        p1[i].check = 0
+    p = sorted(p1, key=lambda Performance: Performance.time)
+    for i in range(count_game):
+        p[i].elo = 1800
+        p[i].check = 0
     while count < count_game:
         if p[count].check == 1:
             count += 1
@@ -138,7 +141,7 @@ def trainingEloPlayer():
             for i in range(count, count + 10 + hs + hs1):
                 if i < count_game:
                     p[i].check = 1
-                    p[i].save()
+                    # p[i].save()
             count += 10 + hs + hs1
 
         if hs == 0 or hs1 == 0:
@@ -181,7 +184,7 @@ def trainingEloPlayer():
             for i in range(count, count + 10):
                 if i < count_game:
                     p[i].check = 1
-                    p[i].save()
+                    # p[i].save()
             count += 10
 
     Player.objects.bulk_update(e, ['elo'])

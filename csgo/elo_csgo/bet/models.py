@@ -120,6 +120,7 @@ class Performance(models.Model):
     bet = models.FloatField(null=True, blank=True, default=0)
     elo = models.FloatField(null=True, blank=True, default=ELO)
     check = models.FloatField(null=True, blank=True, default=0)
+    time = models.DateTimeField(null=True, blank=True, verbose_name="Thời gian thi đấu")
 
     def __str__(self):
         return self.player if self.player else "-"

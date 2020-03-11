@@ -9,12 +9,15 @@ from django.core.management import call_command
 from .models import *
 import threading
 import time
-
+from operator import itemgetter, attrgetter, methodcaller
 
 def home_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('/bet/')
     return HttpResponseRedirect('/login/')
+
+def takeSecond(elem):
+    return elem[3]
 
 
 def check_today(time):
@@ -383,6 +386,10 @@ def eloplayer(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
     players = Player.objects.all()
+    for i in range(len(players)):
+        print(players[i].elo)
+        break
+    players = sorted(players, key=lambda Player: Player.elo, reverse=True)
     result = []
     for item in players:
         result.append({
@@ -398,3 +405,46 @@ def eloplayer(request):
     }
 
     return render(request, 'bet/eloPlayer.html', context)
+
+class perfor:
+    def __init__(self, id, team, player, time, elo):
+        self.id = id
+        self.team = team
+        self.player = player
+        self.time = time
+        self.elo = elo
+
+
+def listperformance(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login/')
+    p = Performance.objects.all()
+    count_game = len(p)
+    for i in range(count_game):
+        p[i].check = 0
+        break
+    p = sorted(p, key=lambda Performance: Performance.time)
+    result = []
+    i = 0
+    for item in p:
+        result.append(
+            # {
+            # "id": item.id,
+            # "team": item.team,
+            # "player": item.player,
+            # "time": item.time,
+            # "elo": item.elo
+            # }
+            perfor(item.match_id, item.team, item.player, item.time, item.elo)
+            )
+        i += 1
+        if i > 10000:
+            break
+    print(result)
+    # result = sorted(result, key=lambda perfor: perfor.time)
+    # result.sort(key=result.time)
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/performance.html', context)
