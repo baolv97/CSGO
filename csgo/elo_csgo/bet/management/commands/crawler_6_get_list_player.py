@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
         performances = Performance.objects.all()
 
-        for i in range(170000, len(performances)):
+        for i in range(176000, len(performances)):
             print(i)
             player = Player.objects.filter(id_player=performances[i].id_player).first()
             if player:
