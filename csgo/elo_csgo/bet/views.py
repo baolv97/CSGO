@@ -270,11 +270,15 @@ def detail1(request):
         return HttpResponseRedirect('/login/')
     t_now = datetime.now()
     end_time = "2019-02-13 11:34:37.710300"
+    end_time1 = "2020-03-10"
+    time1 = datetime.strftime(end_time1, "%Y-%m-%d")
     matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
     result = []
     total_money = 0.0
     for i in range(len(matches_all)):
         if matches_all[i].winrate_a == 0:
+            continue
+        if matches_all[i].winrate_a > time1:
             continue
         check = 0
         for j in range(i):
@@ -317,7 +321,7 @@ def detail1(request):
         #     print("lose", matches_all[i].bet_team_b, 1/matches_all[i].winrate_b)
         if matches_all[i].team_a == "HAVU" or matches_all[i].team_b == "HAVU":
             print(matches_all[i].suggestion_a,  point_team_a)
-        if matches_all[i].suggestion_a > 0.005 and matches_all[i].suggestion_a < 0.035:
+        if matches_all[i].suggestion_a > 0.005 and matches_all[i].suggestion_a < 0.055:
             if point_team_a == 1:
                 money_odds_a = brankroll * matches_all[i].suggestion_a * (matches_all[i].bet_team_a - 1)
                 total_money = total_money + money_odds_a
@@ -325,7 +329,7 @@ def detail1(request):
                 money_odds_a = -brankroll * matches_all[i].suggestion_a
                 total_money = total_money + money_odds_a
 
-        if matches_all[i].suggestion_b > 0.005 and matches_all[i].suggestion_b < 0.035:
+        if matches_all[i].suggestion_b > 0.005 and matches_all[i].suggestion_b < 0.055:
             if point_team_b == 1:
                 money_odds_b = brankroll * matches_all[i].suggestion_b * (matches_all[i].bet_team_b - 1)
                 total_money = total_money + money_odds_b
