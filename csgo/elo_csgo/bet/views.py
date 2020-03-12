@@ -271,7 +271,7 @@ def detail1(request):
     t_now = datetime.now()
     end_time = "2019-02-13 11:34:37.710300"
     end_time1 = "2020-03-10"
-    time1 = datetime.strftime(end_time1, "%Y-%m-%d")
+    time1 = datetime.strptime(end_time1, "%Y-%m-%d")
     matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
     result = []
     total_money = 0.0
