@@ -278,7 +278,7 @@ def detail1(request):
     for i in range(len(matches_all)):
         if matches_all[i].winrate_a == 0:
             continue
-        if matches_all[i].winrate_a > time1:
+        if matches_all[i].time > time1:
             continue
         check = 0
         for j in range(i):
