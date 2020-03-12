@@ -10,7 +10,7 @@ from .models import *
 import threading
 import time
 from operator import itemgetter, attrgetter, methodcaller
-
+brankroll = 10000.0
 def home_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('/bet/')
@@ -244,14 +244,14 @@ def detail(request):
             "vp_suggestion_team_b": "-",
 
             "5e_odds_team_a": str(etop_odds_team_a+1),
-            "5e_suggestion_team_a": str(round(kelly_a_e, 6)),
+            "5e_suggestion_team_a": str(round(kelly_a_e * brankroll, 2)),
             "5e_odds_team_b": str(etop_odds_team_b+1),
-            "5e_suggestion_team_b": str(round(kelly_b_e, 6)),
+            "5e_suggestion_team_b": str(round(kelly_b_e * brankroll, 2)),
 
             "pin_odds_team_a": str(pin_odds_team_a),
-            "pin_suggestion_team_a": str(round(kelly_a_p, 6)),
+            "pin_suggestion_team_a": str(round(kelly_a_p * brankroll, 2)),
             "pin_odds_team_b": str(pin_odds_team_b),
-            "pin_suggestion_team_b": str(round(kelly_b_p, 6)),
+            "pin_suggestion_team_b": str(round(kelly_b_p * brankroll, 2)),
 
             "manual_odds_team_a": str(round(1 / w_a, 2)),
             "manual_suggestion_team_a": "-",
@@ -272,7 +272,7 @@ def detail1(request):
     end_time = "2019-02-13 11:34:37.710300"
     matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
     result = []
-    total_money = 10000.0
+    total_money = 0.0
     for i in range(len(matches_all)):
         if matches_all[i].winrate_a == 0:
             continue
@@ -319,18 +319,18 @@ def detail1(request):
             print(matches_all[i].suggestion_a,  point_team_a)
         if matches_all[i].suggestion_a > 0.005 and matches_all[i].suggestion_a < 0.035:
             if point_team_a == 1:
-                money_odds_a = total_money * matches_all[i].suggestion_a * (matches_all[i].bet_team_a - 1)
+                money_odds_a = brankroll * matches_all[i].suggestion_a * (matches_all[i].bet_team_a - 1)
                 total_money = total_money + money_odds_a
             if point_team_a == 0:
-                money_odds_a = -total_money * matches_all[i].suggestion_a
+                money_odds_a = -brankroll * matches_all[i].suggestion_a
                 total_money = total_money + money_odds_a
 
         if matches_all[i].suggestion_b > 0.005 and matches_all[i].suggestion_b < 0.035:
             if point_team_b == 1:
-                money_odds_b = total_money * matches_all[i].suggestion_b * (matches_all[i].bet_team_b - 1)
+                money_odds_b = brankroll * matches_all[i].suggestion_b * (matches_all[i].bet_team_b - 1)
                 total_money = total_money + money_odds_b
             if point_team_b == 0:
-                money_odds_b = -total_money * matches_all[i].suggestion_b
+                money_odds_b = -brankroll * matches_all[i].suggestion_b
                 total_money = total_money + money_odds_b
 
 
@@ -353,14 +353,14 @@ def detail1(request):
             "vp_suggestion_team_b": "-",
 
             "5e_odds_team_a": str(matches_all[i].bet_team_a_e),
-            "5e_suggestion_team_a": str(round(matches_all[i].suggestion_a_e, 6)),
+            "5e_suggestion_team_a": str(round(matches_all[i].suggestion_a_e * brankroll, 2)),
             "5e_odds_team_b": str(matches_all[i].bet_team_b_e),
-            "5e_suggestion_team_b": str(round(matches_all[i].suggestion_b_e, 6)),
+            "5e_suggestion_team_b": str(round(matches_all[i].suggestion_b_e * brankroll, 2)),
 
             "pin_odds_team_a": str(matches_all[i].bet_team_a),
-            "pin_suggestion_team_a": str(round(matches_all[i].suggestion_a, 6)),
+            "pin_suggestion_team_a": str(round(matches_all[i].suggestion_a * brankroll, 2)),
             "pin_odds_team_b": str(matches_all[i].bet_team_b),
-            "pin_suggestion_team_b": str(round(matches_all[i].suggestion_b, 6)),
+            "pin_suggestion_team_b": str(round(matches_all[i].suggestion_b * brankroll, 2)),
 
             "manual_odds_team_a": str(round(winrate_a, 2)),
             "manual_suggestion_team_a": point_team_a,
