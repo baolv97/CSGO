@@ -267,10 +267,12 @@ def save_performance(match, request):
 
             for i in range(1, len(map_names)):
                 map_name = map_names[i].text
-                tables = performances[i].find_all("table", {"class": "table"})
+                tables = performances[i].find_all("table", {"class": "table totalstats"})
+
                 if len(tables) == 2:
                     save_info_table_performance(match, map_name, team_a, tables[0])
                     save_info_table_performance(match, map_name, team_b, tables[1])
+
         else:
             logger.error('else - performance: (match_id={})Failed to request html Performance'.format(match.id))
     except Exception as e:
@@ -298,10 +300,10 @@ class Command(BaseCommand):
                     href = match.find('a')['href']
                     source = base_url + href
 
-                    skip = Match.objects.filter(source=source).first() if source else True
-                    if skip:
-                        print("existed -> {}".format(source))
-                        continue
+                    # skip = Match.objects.filter(source=source).first() if source else True
+                    # if skip:
+                    #     print("existed -> {}".format(source))
+                    #     continue
 
                     print(source)
                     req_detail = session.get(source)
@@ -309,10 +311,10 @@ class Command(BaseCommand):
                     save_ban_pick(match, req_detail)
                     get_info_results(match, req_detail)
                     save_performance(match, req_detail)
-
                     # break
             except Exception as e:
                 logger.error('(offset={})Failed to request html HLTV: {}'.format(offset, str(e)))
                 continue
+            # break
 
         print("Process is was done...")
