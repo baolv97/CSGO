@@ -300,10 +300,10 @@ class Command(BaseCommand):
                     href = match.find('a')['href']
                     source = base_url + href
 
-                    # skip = Match.objects.filter(source=source).first() if source else True
-                    # if skip:
-                    #     print("existed -> {}".format(source))
-                    #     continue
+                    skip = Match.objects.filter(source=source).first() if source else True
+                    if skip:
+                        print("existed -> {}".format(source))
+                        continue
 
                     print(source)
                     req_detail = session.get(source)
