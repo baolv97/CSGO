@@ -20,7 +20,7 @@ class Command(BaseCommand):
         #         performances[i].bet = performances[i].match.bet_team_b
         #     performances[i].save()
         #     print(performances[i].id)
-        for i in range(0, len(performances)):
+        for i in range(150000, len(performances)):
             for j in range(0, len(match)):
                 if performances[i].match_id == match[j].id:
                     performances[i].time = match[j].time

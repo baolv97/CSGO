@@ -105,15 +105,15 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 def trainingEloPlayer():
     count = 0
     count_game = len(p1)
-    for i in range(count_player_id):
-        e[i].elo = 1800
-    for i in range(count_game):
-        p1[i].elo = 1800
-        p1[i].check = 0
+    # for i in range(count_player_id):
+    #     e[i].elo = 1800
+    # for i in range(count_game):
+    #     p1[i].elo = 1800
+    #     p1[i].check = 0
     p = sorted(p1, key=lambda Performance: Performance.time)
-    for i in range(count_game):
-        p[i].elo = 1800
-        p[i].check = 0
+    # for i in range(count_game):
+    #     p[i].elo = 1800
+    #     p[i].check = 0
     while count < count_game:
         if p[count].check == 1:
             count += 1
