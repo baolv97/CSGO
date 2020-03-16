@@ -19,7 +19,7 @@ class Match(models.Model):
     bet_team_a = models.FloatField(null=True, blank=True)
     bet_team_b = models.FloatField(null=True, blank=True)
     source_bet = models.CharField(max_length=500, null=True, blank=True, verbose_name="Nguồn bet")
-    w_a = models.IntegerField(null=True, blank=True, verbose_name="Tỷ lệ thắng đội A", default=0)
+    w_a = models.FloatField(null=True, blank=True, verbose_name="Tỷ lệ thắng đội A", default=0)
 
     def __str__(self):
         result = "{} ({}:{}) {}".format(self.team_a, self.point_team_a, self.point_team_b, self.team_b)

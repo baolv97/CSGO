@@ -278,8 +278,8 @@ def detail1(request):
     for i in range(len(matches_all)):
         if matches_all[i].winrate_a == 0:
             continue
-        if matches_all[i].time < time1:
-            continue
+        # if matches_all[i].time < time1:
+        #     continue
         check = 0
         for j in range(i):
             if matches_all[i].time == matches_all[j].time and matches_all[i].team_a == matches_all[j].team_a and matches_all[i].team_b == matches_all[j].team_b:

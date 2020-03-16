@@ -1,4 +1,6 @@
 from .models import *
+from datetime import timedelta, datetime
+from .constant import day
 from operator import itemgetter, attrgetter, methodcaller
 e = Player.objects.all()
 p1 = Performance.objects.all()
@@ -57,20 +59,19 @@ def expectedValue(w_a, bet_a):
     return w_a * bet_a - (1 - w_a) * 1
 
 
-def according(expected_value_a, expected_value_b):
-    """
-    hàm quyết định thoe đội nào dựa vào expected_Value
-    :param expected_value_a:
-    :param expected_value_b:
-    :return:
-    """
+def according(expected_value_a, expected_value_b, bet_team_a, bet_team_b):
     if expected_value_a < 0 and expected_value_b < 0:
         return -1
-
-    if expected_value_a > expected_value_b:
+    if expected_value_a > 0 and expected_value_b < 0:
         return 1
-    else:
+    if expected_value_a < 0 and expected_value_b > 0:
         return 0
+    if expected_value_a > 0 and expected_value_b > 0:
+        if bet_team_a < bet_team_b:
+            return 1
+        else:
+            return 0
+
 
 
 def edge(w_a, bet_a):
@@ -80,7 +81,10 @@ def edge(w_a, bet_a):
     :param bet_a:
     :return:
     """
-    return (bet_a + 1) / (1 / w_a)
+    if w_a != 0:
+        return (bet_a + 1) / (1 / w_a)
+    return  -1
+
 
 
 def kelly(according, edge_a, edge_b, bet_a, bet_b):
@@ -105,15 +109,15 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 def trainingEloPlayer():
     count = 0
     count_game = len(p1)
-    # for i in range(count_player_id):
-    #     e[i].elo = 1800
-    # for i in range(count_game):
-    #     p1[i].elo = 1800
-    #     p1[i].check = 0
+    for i in range(count_player_id):
+        e[i].elo = 1800
+    for i in range(count_game):
+        p1[i].elo = 1800
+        p1[i].check = 0
     p = sorted(p1, key=lambda Performance: Performance.time)
-    # for i in range(count_game):
-    #     p[i].elo = 1800
-    #     p[i].check = 0
+    for i in range(count_game):
+        p[i].elo = 1800
+        p[i].check = 0
     while count < count_game:
         if p[count].check == 1:
             count += 1
@@ -135,6 +139,7 @@ def trainingEloPlayer():
             for i in range(count, count + dem):
                 if i < count_game:
                     p[i].check = 1
+                    p[i].bet = 0
                     # p[i].save()
             count = count + dem
             # print(count)
@@ -169,10 +174,11 @@ def trainingEloPlayer():
             for i in range(5):
                 if count + i < count_game:
                     p[count + i].elo += diffEloPlayer(p[count + i].rating, ans, diff_elo_a, sum_rating_a, sum_rating_a_nd)
+                    p[count + i].bet = w_a
             for i in range(5, 10):
                 if count + i < count_game:
                     p[count + i].elo += diffEloPlayer(p[count + i].rating, 1.0-ans, diff_elo_b, sum_rating_b, sum_rating_b_nd)
-
+                    p[count + i].bet = 1 - w_a
             for i in range(10):
                 if count + i < count_game:
                     update_elo(p[count + i].id_player, p[count + i].elo)
@@ -187,12 +193,63 @@ def trainingEloPlayer():
         if p3[i].check == 0:
             print(p3[i].id)
             p3[i].elo = p2[i].elo
+            p3[i].bet = p2[i].bet
             p3[i].check = 1
             p3[i].save()
     Player.objects.bulk_update(e, ['elo'])
 
 
 
-def save_bet_pin():
+def save_winrate():
     match = Match.objects.all()
-    match_upcoming = MatchUpcoming.object.all()
+    p = Performance.objects.all()
+    for i in range(len(p)):
+        print(p[i].id)
+        break
+    for i in range(len(match)):
+        print(match[i].id)
+        break
+    p1 = sorted(p, key=lambda Performance: Performance.time)
+    bo_game = -1
+    for i in range(len(p1)):
+        if p1[i].match_id != bo_game:
+            print(p1[i].match_id)
+            bo_game = p1[i].match_id
+            match[p1[i].match_id-1].w_a = p1[i].bet
+            print(match[p1[i].match_id-1].w_a)
+    Match.objects.bulk_update(match, ['w_a'])
+
+    # match_upcoming = MatchUpcoming.objects.all()
+    # for item in match_upcoming:
+    #     print(item.id)
+    #     t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
+    #     # print(t_now)
+    #     time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
+    #     time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
+    #     # print(time_limit)
+    #     match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+    #     for x in match:
+    #         if x.team_a == item.team_a and x.team_b == item.team_b:
+    #             item.winrate_a = x.w_a
+    #             item.winrate_b = 1-x.w_a
+    #             # item.save()
+    #             break
+    #     ev_a_pin = expectedValue(item.winrate_a, item.bet_team_a - 1)
+    #     ev_b_pin = expectedValue(1 - item.winrate_a, item.bet_team_b - 1)
+    #
+    #     acd_a = according(ev_a_pin, ev_b_pin,  item.bet_team_a - 1, item.bet_team_b - 1)
+    #
+    #     edge_a_p = edge(item.winrate_a, item.bet_team_a - 1)
+    #     edge_b_p = edge(1 - item.winrate_a, item.bet_team_b - 1)
+    #
+    #     kel_p = kelly(acd_a, edge_a_p, edge_b_p, item.bet_team_a - 1, item.bet_team_b - 1)
+    #
+    #     if kel_p > 0:
+    #         if acd_a == 1:
+    #             item.suggestion_a = kel_p / 8
+    #             item.suggestion_b = 0
+    #         if acd_a == 0:
+    #             item.suggestion_a = 0
+    #             item.suggestion_b = kel_p / 8
+    #
+    #     item.save()
