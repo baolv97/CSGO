@@ -123,28 +123,23 @@ def trainingEloPlayer():
                 if count+i < count_game and p[count+i].id_player == e[j].id_player:
                     p[count+i].elo = e[j].elo
                     break
-
-        hs = 1
-        hs1 = 1
-
-        if count + 5 < count_game and p[count].team == p[count + 5].team and p[count].match_id == p[count + 5].match_id:
-            hs = 1
-        else:
-            hs = 0
-
-        if count+10+hs < count_game and p[count + 5 + hs].team == p[count + 5 + 5 + hs].team and p[count + 5 + hs].match_id == p[count + 5 + 5 + hs].match_id:
-            hs1 = 1
-        else:
-            hs1 = 0
-
-        if hs == 1 or hs1 == 1:
-            for i in range(count, count + 10 + hs + hs1):
+        dem = 1
+        for i in range(1, 15):
+            if count + i < count_game and p[count].match_id == p[count + i].match_id and p[count].map == p[count + i].map:
+                dem += 1
+            else:
+                break
+        # print(dem, "baobao")
+        if dem != 10:
+            # print(p[count].match_id)
+            for i in range(count, count + dem):
                 if i < count_game:
                     p[i].check = 1
                     # p[i].save()
-            count += 10 + hs + hs1
+            count = count + dem
+            # print(count)
 
-        if hs == 0 or hs1 == 0:
+        if dem == 10:
             elo_a = 0.0
             elo_b = 0.0
             sum_rating_a = 0.0
@@ -186,7 +181,18 @@ def trainingEloPlayer():
                     p[i].check = 1
                     # p[i].save()
             count += 10
-
+    p2 = sorted(p, key=lambda Performance: Performance.id)
+    p3 = Performance.objects.all()
+    for i in range(len(p3)):
+        if p3[i].check == 0:
+            print(p3[i].id)
+            p3[i].elo = p2[i].elo
+            p3[i].check = 1
+            p3[i].save()
     Player.objects.bulk_update(e, ['elo'])
 
 
+
+def save_bet_pin():
+    match = Match.objects.all()
+    match_upcoming = MatchUpcoming.object.all()

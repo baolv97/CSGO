@@ -191,11 +191,11 @@ def detail(request):
             if acd_a == 0:
                 kelly_a_p = 0
                 kelly_b_p = kel_p / 8
-        matches_all[item.id - 109].bet_team_a = pin_odds_team_a
-        matches_all[item.id - 109].bet_team_b = pin_odds_team_b
-        matches_all[item.id - 109].suggestion_a = kelly_a_p
-        matches_all[item.id - 109].suggestion_b = kelly_b_p
-        print("baobao", matches_all[item.id - 109].bet_team_a, pin_odds_team_a)
+        matches_all[item.id-1].bet_team_a = pin_odds_team_a
+        matches_all[item.id-1].bet_team_b = pin_odds_team_b
+        matches_all[item.id-1].suggestion_a = kelly_a_p
+        matches_all[item.id-1].suggestion_b = kelly_b_p
+        print("baobao", matches_all[item.id-1].bet_team_a, pin_odds_team_a)
         # set up suggestion nha cai 5etop
         ev_a_e = expectedValue(w_a, etop_odds_team_a)
         ev_b_e = expectedValue(w_b, etop_odds_team_b)
@@ -223,13 +223,13 @@ def detail(request):
             if acd_a == 0:
                 kelly_a_e = 0
                 kelly_b_e = kel_e / 8
-        matches_all[item.id - 109].bet_team_a_e = etop_odds_team_a
-        matches_all[item.id - 109].bet_team_b_e = etop_odds_team_b
-        matches_all[item.id - 109].suggestion_a_e = kelly_a_e
-        matches_all[item.id - 109].suggestion_b_e = kelly_b_e
-        matches_all[item.id - 109].winrate_a = w_a
-        matches_all[item.id - 109].winrate_b = w_b
-        matches_all[item.id - 109].save()
+        matches_all[item.id-1].bet_team_a_e = etop_odds_team_a
+        matches_all[item.id-1].bet_team_b_e = etop_odds_team_b
+        matches_all[item.id-1].suggestion_a_e = kelly_a_e
+        matches_all[item.id-1].suggestion_b_e = kelly_b_e
+        matches_all[item.id-1].winrate_a = w_a
+        matches_all[item.id-1].winrate_b = w_b
+        matches_all[item.id-1].save()
         result.append({
             "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
             "time": item.time.strftime("%H:%M"),
