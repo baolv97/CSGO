@@ -534,7 +534,7 @@ def vpgame(request):
     result = []
     match_upcoming1 = BetMatch.objects.all()
     total = 0.0
-    money = 5000
+    money = 10000
     match_upcoming = sorted(match_upcoming1, key=lambda BetMatch: BetMatch.time)
     end_time1 = "2020-02-01"
     time1 = datetime.strptime(end_time1, "%Y-%m-%d")
@@ -563,11 +563,11 @@ def vpgame(request):
             money_odds_b = 0.0
             if kel_p > 0:
                 if acd_a == 1:
-                    suggestion_a = kel_p / 8
+                    suggestion_a = kel_p / 16
                     suggestion_b = 0
                 if acd_a == 0:
                     suggestion_a = 0
-                    suggestion_b = kel_p / 8
+                    suggestion_b = kel_p / 16
             if ans == 1 and acd_a == 1:
                 total += suggestion_a * money * item.bet_team_a
                 money_odds_a = suggestion_a * money * item.bet_team_a
@@ -589,14 +589,14 @@ def vpgame(request):
                 "team_b": item.team_b,
 
                 "vp_odds_team_a": item.bet_team_a,
-                "vp_suggestion_team_a": suggestion_a,
+                "vp_suggestion_team_a": suggestion_a * money,
                 "vp_odds_team_b": item.bet_team_b,
-                "vp_suggestion_team_b": suggestion_b,
+                "vp_suggestion_team_b": suggestion_b * money,
 
 
                 "manual_odds_team_a": str(round(1 / item.w_a, 2)),
                 "manual_suggestion_team_a": ans,
-                "manual_odds_team_b": str(round(1 / 1- item.w_a, 2)),
+                "manual_odds_team_b": str(round(1 / (1 - item.w_a), 2)),
                 "manual_suggestion_team_b": 1-ans,
 
                 "money_team_a": str(round(money_odds_a, 2)),

@@ -8,13 +8,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print("Train elo for player ...")
-        # call_command('crawler_1_cs_go')
-        # call_command('crawler_6_get_list_player')
-        # call_command('crawler_7_add_column_result')
-        # call_command('crawler_8_add_column_bet_for_performance')
-        # trainingEloPlayer()
-        save_winrate()
-        save_winrate_vp()
+        call_command('crawler_1_cs_go')
+        call_command('crawler_6_get_list_player')
+        call_command('crawler_7_add_column_result')
+        call_command('crawler_8_add_column_bet_for_performance')
+        trainingEloPlayer()
+        # save_winrate()
+        # save_winrate_vp()
         # 1. tính elo trung bình của cả đội (cộng lại / 5)
 
         # 2. chia elo cho các thành viên trong team
