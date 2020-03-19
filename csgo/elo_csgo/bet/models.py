@@ -50,6 +50,7 @@ class BetMatch(models.Model):
     bet_team_a = models.FloatField(null=True, blank=True)
     bet_team_b = models.FloatField(null=True, blank=True)
     source = models.CharField(max_length=500, null=True, blank=True, verbose_name="Nguồn")
+    w_a = models.FloatField(null=True, blank=True, verbose_name="Tỷ lệ thắng đội A", default=0)
 
     class Meta:
         db_table = "d_cs_go_bet_match"

@@ -17,6 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
 from bet.views import home_view, detail, refresh, training_elo, refresh_over, detail1, eloplayer,  listperformance
+from bet.views import vpgame
 from django.contrib.auth.views import LoginView
 from django.conf.urls.static import static
 from django.conf import settings
@@ -31,6 +32,7 @@ urlpatterns = [
                   path('training_elo/', training_elo, name='training_elo'),
                   path('list_player/', eloplayer, name='list_player'),
                   path('list_p/',  listperformance, name='list_p'),
+                  path('vpgame/', vpgame, name='vpgame'),
                   path('refresh_over/', refresh_over, name='refresh_over'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
                                                                                            document_root=settings.MEDIA_ROOT)

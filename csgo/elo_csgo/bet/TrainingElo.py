@@ -5,7 +5,8 @@ from operator import itemgetter, attrgetter, methodcaller
 e = Player.objects.all()
 p1 = Performance.objects.all()
 count_player_id = len(e)
-
+hs = 35.0
+q_hs = 450
 
 def hash_map():
     tmp = {}
@@ -32,13 +33,21 @@ def winRate(elo_a, elo_b):
     :param elo_b:
     :return: %
     """
-    q_a = pow(10, elo_a / 400)
-    q_b = pow(10, elo_b / 400)
+    q_a = pow(10, elo_a / q_hs)
+    q_b = pow(10, elo_b / q_hs)
 
     return q_a / (q_a + q_b)
 
 
 def diffElo(win_rate, ans, k):
+    # if elo <= 1600:
+    #     k = 35
+    # if elo > 1600 and elo <= 2000:
+    #     k = 30
+    # if elo > 2000 and elo <= 2400:
+    #     k = 25
+    # if elo > 2400:
+    #     k = 20
     return abs(k * (ans - win_rate)*5)
 
 
@@ -83,7 +92,7 @@ def edge(w_a, bet_a):
     """
     if w_a != 0:
         return (bet_a + 1) / (1 / w_a)
-    return  -1
+    return -1
 
 
 
@@ -110,13 +119,13 @@ def trainingEloPlayer():
     count = 0
     count_game = len(p1)
     for i in range(count_player_id):
-        e[i].elo = 1800
+        e[i].elo = 1600
     for i in range(count_game):
-        p1[i].elo = 1800
+        p1[i].elo = 1600
         p1[i].check = 0
     p = sorted(p1, key=lambda Performance: Performance.time)
     for i in range(count_game):
-        p[i].elo = 1800
+        p[i].elo = 1600
         p[i].check = 0
     while count < count_game:
         if p[count].check == 1:
@@ -167,8 +176,8 @@ def trainingEloPlayer():
                 ans = 1.0
             else:
                 ans = 0.0
-            diff_elo_a = diffElo(w_a, ans, 25.0)
-            diff_elo_b = diffElo(1.0-w_a, 1.0-ans, 25.0)
+            diff_elo_a = diffElo(w_a, ans, hs)
+            diff_elo_b = diffElo(1.0-w_a, 1.0-ans, hs)
             print(p[count].match_id)
 
             for i in range(5):
@@ -190,7 +199,9 @@ def trainingEloPlayer():
     p2 = sorted(p, key=lambda Performance: Performance.id)
     p3 = Performance.objects.all()
     for i in range(len(p3)):
-        if p3[i].check == 0:
+        p3[i].check = 1
+    for i in range(len(p3)):
+        if p3[i].check == 1:
             print(p3[i].id)
             p3[i].elo = p2[i].elo
             p3[i].bet = p2[i].bet
@@ -201,6 +212,7 @@ def trainingEloPlayer():
 
 
 def save_winrate():
+    # map winrate vao match theo bogame
     match = Match.objects.all()
     p = Performance.objects.all()
     for i in range(len(p)):
@@ -215,41 +227,75 @@ def save_winrate():
         if p1[i].match_id != bo_game:
             print(p1[i].match_id)
             bo_game = p1[i].match_id
+            bo = 1
+            if match[p1[i].match_id-1].type == "Best of 3":
+                bo = 3
+            if match[p1[i].match_id-1].type == "Best of 5":
+                bo = 5
+            n = p1[i].bet
+            if bo == 3:
+                match[p1[i].match_id - 1].w_a = 3 * n * n - 2 * n * n * n
+            if bo == 5:
+                match[p1[i].match_id - 1].w_a = 6 * pow(n, 5) - 15 * pow(n, 4) + 10 * pow(n, 3)
+
+            else:
+                match[p1[i].match_id - 1].w_a = n
+
             match[p1[i].match_id-1].w_a = p1[i].bet
             print(match[p1[i].match_id-1].w_a)
     Match.objects.bulk_update(match, ['w_a'])
 
-    # match_upcoming = MatchUpcoming.objects.all()
-    # for item in match_upcoming:
-    #     print(item.id)
-    #     t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
-    #     # print(t_now)
-    #     time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
-    #     time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
-    #     # print(time_limit)
-    #     match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
-    #     for x in match:
-    #         if x.team_a == item.team_a and x.team_b == item.team_b:
-    #             item.winrate_a = x.w_a
-    #             item.winrate_b = 1-x.w_a
-    #             # item.save()
-    #             break
-    #     ev_a_pin = expectedValue(item.winrate_a, item.bet_team_a - 1)
-    #     ev_b_pin = expectedValue(1 - item.winrate_a, item.bet_team_b - 1)
-    #
-    #     acd_a = according(ev_a_pin, ev_b_pin,  item.bet_team_a - 1, item.bet_team_b - 1)
-    #
-    #     edge_a_p = edge(item.winrate_a, item.bet_team_a - 1)
-    #     edge_b_p = edge(1 - item.winrate_a, item.bet_team_b - 1)
-    #
-    #     kel_p = kelly(acd_a, edge_a_p, edge_b_p, item.bet_team_a - 1, item.bet_team_b - 1)
-    #
-    #     if kel_p > 0:
-    #         if acd_a == 1:
-    #             item.suggestion_a = kel_p / 8
-    #             item.suggestion_b = 0
-    #         if acd_a == 0:
-    #             item.suggestion_a = 0
-    #             item.suggestion_b = kel_p / 8
-    #
-    #     item.save()
+    # map cái win rate tu Match sang mat_upcomming de tinh loi lai
+    match_upcoming = MatchUpcoming.objects.all()
+    for item in match_upcoming:
+        print(item.id)
+        t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
+        # print(t_now)
+        time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
+        time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
+        # print(time_limit)
+        match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+        for x in match:
+            if x.team_a == item.team_a and x.team_b == item.team_b:
+                n = x.w_a
+                item.winrate_a = n
+                item.winrate_b = 1 - item.winrate_a
+                break
+        ev_a_pin = expectedValue(item.winrate_a, item.bet_team_a - 1)
+        ev_b_pin = expectedValue(1 - item.winrate_a, item.bet_team_b - 1)
+
+        acd_a = according(ev_a_pin, ev_b_pin,  item.bet_team_a - 1, item.bet_team_b - 1)
+
+        edge_a_p = edge(item.winrate_a, item.bet_team_a - 1)
+        edge_b_p = edge(1 - item.winrate_a, item.bet_team_b - 1)
+
+        kel_p = kelly(acd_a, edge_a_p, edge_b_p, item.bet_team_a - 1, item.bet_team_b - 1)
+
+        if kel_p > 0:
+            if acd_a == 1:
+                item.suggestion_a = kel_p / 8
+                item.suggestion_b = 0
+            if acd_a == 0:
+                item.suggestion_a = 0
+                item.suggestion_b = kel_p / 8
+
+        item.save()
+
+
+def save_winrate_vp():
+    match = Match.objects.all()
+    match_upcoming = BetMatch.objects.all()
+    # map winrate tu map sang bet mâp vpgame
+    for item in match_upcoming:
+        print(item.id)
+        t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
+        # print(t_now)
+        time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
+        time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
+        # print(time_limit)
+        match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+        for x in match:
+            if x.team_a == item.team_a and x.team_b == item.team_b:
+                item.w_a = x.w_a
+                break
+        item.save()
