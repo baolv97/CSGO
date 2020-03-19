@@ -140,8 +140,21 @@ def detail(request):
         else:
             elo_a = 0
             elo_b = 0
+
         w_a = winRate(elo_a, elo_b)
-        w_b = 1 - w_a
+        bo = 1
+        if item.type == "Best of 3":
+            bo = 3
+        if item.type == "Best of 5":
+            bo = 5
+        n = w_a
+        if bo == 3:
+            w_a = 3 * n * n - 2 * n * n * n
+        if bo == 5:
+            w_a = 6 * pow(n, 5) - 15 * pow(n, 4) + 10 * pow(n, 3)
+        else:
+            w_a = n
+        w_b = 1-w_a
         print("win rate team A", w_a)
         print("win rate team B", w_b)
         # set up suggestion nha cai pin
