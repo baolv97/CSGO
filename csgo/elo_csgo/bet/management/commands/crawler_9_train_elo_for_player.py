@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 from ...TrainingElo import trainingEloPlayer
-from ...TrainingElo import save_winrate, save_winrate_vp
 from django.core.management import call_command
 
 class Command(BaseCommand):
