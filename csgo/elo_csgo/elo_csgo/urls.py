@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
 from bet.views import home_view, detail, refresh, training_elo, refresh_over, detail1, eloplayer,  listperformance
-from bet.views import vpgame, changeodds_pin
+from bet.views import vpgame
 from django.contrib.auth.views import LoginView
 from django.conf.urls.static import static
 from django.conf import settings
