@@ -654,15 +654,15 @@ def changeodds_pin(request):
             bet_team_a = (matches_all[i].bet_team_a + matches_all[i].bet_team_b) / matches_all[i].bet_team_b
             bet_team_b = (matches_all[i].bet_team_a + matches_all[i].bet_team_b) / matches_all[i].bet_team_a
         if matches_all[i].winrate_a > 0 and matches_all[i].winrate_b > 0:
-            ev_a = expectedValue(matches_all[i].winrate_a, bet_team_a)
-            ev_b = expectedValue(1 - matches_all[i].winrate_a,  bet_team_b)
+            ev_a = expectedValue(matches_all[i].winrate_a, bet_team_a - 1)
+            ev_b = expectedValue(1 - matches_all[i].winrate_a,  bet_team_b - 1)
 
-            acd_a = according(ev_a, ev_b, bet_team_a, bet_team_b)
+            acd_a = according(ev_a, ev_b, bet_team_a, bet_team_b - 1)
 
-            edge_a_p = edge(matches_all[i].winrate_a, bet_team_a)
-            edge_b_p = edge(1 - matches_all[i].winrate_a, bet_team_b)
+            edge_a_p = edge(matches_all[i].winrate_a, bet_team_a - 1)
+            edge_b_p = edge(1 - matches_all[i].winrate_a, bet_team_b - 1)
 
-            kel_p = kelly(acd_a, edge_a_p, edge_b_p, bet_team_a, bet_team_b)
+            kel_p = kelly(acd_a, edge_a_p, edge_b_p, bet_team_a - 1, bet_team_b - 1)
             suggestion_a = 0.0
             suggestion_b = 0.0
             money_odds_a = 0.0
@@ -675,8 +675,8 @@ def changeodds_pin(request):
                     suggestion_a = 0
                     suggestion_b = kel_p / 16
             if ans == 1 and acd_a == 1:
-                total += suggestion_a * money * matches_all[i].bet_team_a
-                money_odds_a = suggestion_a * money * matches_all[i].bet_team_a
+                total += suggestion_a * money * (matches_all[i].bet_team_a -1)
+                money_odds_a = suggestion_a * money * (matches_all[i].bet_team_a-1)
             if ans == 1 and acd_a == 0:
                 total -= suggestion_b * money
                 money_odds_b = -suggestion_b * money
@@ -684,8 +684,8 @@ def changeodds_pin(request):
                 total -= suggestion_a * money
                 money_odds_a = -suggestion_a * money
             if ans == 0 and acd_a == 0:
-                total += suggestion_b * money * matches_all[i].bet_team_b
-                money_odds_b = suggestion_b * money * matches_all[i].bet_team_b
+                total += suggestion_b * money * (matches_all[i].bet_team_b - 1)
+                money_odds_b = suggestion_b * money * (matches_all[i].bet_team_b- 1)
             # print("so tien choi ",total)
             result.append({
                 "date": "Today" if check_today(matches_all[i].time) else matches_all[i].time.strftime("%d/%m/%Y"),
