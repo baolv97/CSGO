@@ -609,111 +609,111 @@ def vpgame(request):
 
     return render(request, 'bet/vpgame.html', context)
 
-def changeodds_pin(request):
-    t_now = datetime.now()
-    end_time = "2019-02-13 11:34:37.710300"
-    end_time1 = "2020-03-18"
-    time1 = datetime.strptime(end_time1, "%Y-%m-%d")
-    matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
-    result = []
-    total = 0.0
-    money = 10000
-    for i in range(len(matches_all)):
-        if matches_all[i].winrate_a == 0:
-            continue
-        # if matches_all[i].time < time1:
-        #     continue
-        check = 0
-        for j in range(i):
-            if matches_all[i].time == matches_all[j].time and matches_all[i].team_a == matches_all[j].team_a and \
-                    matches_all[i].team_b == matches_all[j].team_b:
-                check = 1
-                break
-        if check == 1:
-            continue
-
-        # map cai result cua cac game
-        t_now = matches_all[i].time.strftime("%Y-%m-%d") + " 00:00:00"
-        # print(t_now)
-        time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
-        time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
-        # print(time_limit)
-        match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
-        money_odds_a = 0.0
-        money_odds_b = 0.0
-        for x in match:
-            if x.team_a == matches_all[i].team_a and x.team_b == matches_all[i].team_b:
-                if x.point_team_a - x.point_team_b > 0:
-                    ans = 1
-                if x.point_team_a - x.point_team_b < 0:
-                    ans = 0
-                break
-        bet_team_a = 0.0
-        bet_team_b = 0.0
-        if matches_all[i].bet_team_a > 0 and matches_all[i].bet_team_b > 0:
-            bet_team_a = (matches_all[i].bet_team_a + matches_all[i].bet_team_b) / matches_all[i].bet_team_b
-            bet_team_b = (matches_all[i].bet_team_a + matches_all[i].bet_team_b) / matches_all[i].bet_team_a
-        if matches_all[i].winrate_a > 0 and matches_all[i].winrate_b > 0:
-            ev_a = expectedValue(matches_all[i].winrate_a, bet_team_a - 1)
-            ev_b = expectedValue(1 - matches_all[i].winrate_a,  bet_team_b - 1)
-
-            acd_a = according(ev_a, ev_b, bet_team_a, bet_team_b - 1)
-
-            edge_a_p = edge(matches_all[i].winrate_a, bet_team_a - 1)
-            edge_b_p = edge(1 - matches_all[i].winrate_a, bet_team_b - 1)
-
-            kel_p = kelly(acd_a, edge_a_p, edge_b_p, bet_team_a - 1, bet_team_b - 1)
-            suggestion_a = 0.0
-            suggestion_b = 0.0
-            money_odds_a = 0.0
-            money_odds_b = 0.0
-            if kel_p > 0:
-                if acd_a == 1:
-                    suggestion_a = kel_p / 16
-                    suggestion_b = 0
-                if acd_a == 0:
-                    suggestion_a = 0
-                    suggestion_b = kel_p / 16
-            if ans == 1 and acd_a == 1:
-                total += suggestion_a * money * (matches_all[i].bet_team_a -1)
-                money_odds_a = suggestion_a * money * (matches_all[i].bet_team_a-1)
-            if ans == 1 and acd_a == 0:
-                total -= suggestion_b * money
-                money_odds_b = -suggestion_b * money
-            if ans == 0 and acd_a == 1:
-                total -= suggestion_a * money
-                money_odds_a = -suggestion_a * money
-            if ans == 0 and acd_a == 0:
-                total += suggestion_b * money * (matches_all[i].bet_team_b - 1)
-                money_odds_b = suggestion_b * money * (matches_all[i].bet_team_b- 1)
-            # print("so tien choi ",total)
-            result.append({
-                "date": "Today" if check_today(matches_all[i].time) else matches_all[i].time.strftime("%d/%m/%Y"),
-                "time": matches_all[i].time.strftime("%H:%M"),
-                "source": matches_all[i].source,
-                "a": 1,
-                "team_a": matches_all[i].team_a,
-                "team_b": matches_all[i].team_b,
-
-                "vp_odds_team_a": bet_team_a,
-                "vp_suggestion_team_a": suggestion_a * money,
-                "vp_odds_team_b": bet_team_b,
-                "vp_suggestion_team_b": suggestion_b * money,
-
-                "manual_odds_team_a": str(round(1 / matches_all[i].winrate_a, 2)),
-                "manual_suggestion_team_a": ans,
-                "manual_odds_team_b": str(round(1 / (1 - matches_all[i].winrate_a), 2)),
-                "manual_suggestion_team_b": 1 - ans,
-
-                "money_team_a": str(round(money_odds_a, 2)),
-                "revenue_team_a": str(round(total, 2)),
-                "money_team_b": str(round(money_odds_b, 2)),
-                "revenue_team_b": str(round(total, 2)),
-            })
-
-    result.reverse()
-    context = {
-        "result": result
-    }
-
-    return render(request, 'bet/vpgame.html', context)
+# def changeodds_pin(request):
+#     t_now = datetime.now()
+#     end_time = "2019-02-13 11:34:37.710300"
+#     end_time1 = "2020-03-18"
+#     time1 = datetime.strptime(end_time1, "%Y-%m-%d")
+#     matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
+#     result = []
+#     total = 0.0
+#     money = 10000
+#     for i in range(len(matches_all)):
+#         if matches_all[i].winrate_a == 0:
+#             continue
+#         # if matches_all[i].time < time1:
+#         #     continue
+#         check = 0
+#         for j in range(i):
+#             if matches_all[i].time == matches_all[j].time and matches_all[i].team_a == matches_all[j].team_a and \
+#                     matches_all[i].team_b == matches_all[j].team_b:
+#                 check = 1
+#                 break
+#         if check == 1:
+#             continue
+#
+#         # map cai result cua cac game
+#         t_now = matches_all[i].time.strftime("%Y-%m-%d") + " 00:00:00"
+#         # print(t_now)
+#         time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
+#         time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
+#         # print(time_limit)
+#         match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+#         money_odds_a = 0.0
+#         money_odds_b = 0.0
+#         for x in match:
+#             if x.team_a == matches_all[i].team_a and x.team_b == matches_all[i].team_b:
+#                 if x.point_team_a - x.point_team_b > 0:
+#                     ans = 1
+#                 if x.point_team_a - x.point_team_b < 0:
+#                     ans = 0
+#                 break
+#         bet_team_a = 0.0
+#         bet_team_b = 0.0
+#         if matches_all[i].bet_team_a > 0 and matches_all[i].bet_team_b > 0:
+#             bet_team_a = (matches_all[i].bet_team_a + matches_all[i].bet_team_b) / matches_all[i].bet_team_b
+#             bet_team_b = (matches_all[i].bet_team_a + matches_all[i].bet_team_b) / matches_all[i].bet_team_a
+#         if matches_all[i].winrate_a > 0 and matches_all[i].winrate_b > 0:
+#             ev_a = expectedValue(matches_all[i].winrate_a, bet_team_a - 1)
+#             ev_b = expectedValue(1 - matches_all[i].winrate_a,  bet_team_b - 1)
+#
+#             acd_a = according(ev_a, ev_b, bet_team_a, bet_team_b - 1)
+#
+#             edge_a_p = edge(matches_all[i].winrate_a, bet_team_a - 1)
+#             edge_b_p = edge(1 - matches_all[i].winrate_a, bet_team_b - 1)
+#
+#             kel_p = kelly(acd_a, edge_a_p, edge_b_p, bet_team_a - 1, bet_team_b - 1)
+#             suggestion_a = 0.0
+#             suggestion_b = 0.0
+#             money_odds_a = 0.0
+#             money_odds_b = 0.0
+#             if kel_p > 0:
+#                 if acd_a == 1:
+#                     suggestion_a = kel_p / 16
+#                     suggestion_b = 0
+#                 if acd_a == 0:
+#                     suggestion_a = 0
+#                     suggestion_b = kel_p / 16
+#             if ans == 1 and acd_a == 1:
+#                 total += suggestion_a * money * (matches_all[i].bet_team_a -1)
+#                 money_odds_a = suggestion_a * money * (matches_all[i].bet_team_a-1)
+#             if ans == 1 and acd_a == 0:
+#                 total -= suggestion_b * money
+#                 money_odds_b = -suggestion_b * money
+#             if ans == 0 and acd_a == 1:
+#                 total -= suggestion_a * money
+#                 money_odds_a = -suggestion_a * money
+#             if ans == 0 and acd_a == 0:
+#                 total += suggestion_b * money * (matches_all[i].bet_team_b - 1)
+#                 money_odds_b = suggestion_b * money * (matches_all[i].bet_team_b- 1)
+#             # print("so tien choi ",total)
+#             result.append({
+#                 "date": "Today" if check_today(matches_all[i].time) else matches_all[i].time.strftime("%d/%m/%Y"),
+#                 "time": matches_all[i].time.strftime("%H:%M"),
+#                 "source": matches_all[i].source,
+#                 "a": 1,
+#                 "team_a": matches_all[i].team_a,
+#                 "team_b": matches_all[i].team_b,
+#
+#                 "vp_odds_team_a": bet_team_a,
+#                 "vp_suggestion_team_a": suggestion_a * money,
+#                 "vp_odds_team_b": bet_team_b,
+#                 "vp_suggestion_team_b": suggestion_b * money,
+#
+#                 "manual_odds_team_a": str(round(1 / matches_all[i].winrate_a, 2)),
+#                 "manual_suggestion_team_a": ans,
+#                 "manual_odds_team_b": str(round(1 / (1 - matches_all[i].winrate_a), 2)),
+#                 "manual_suggestion_team_b": 1 - ans,
+#
+#                 "money_team_a": str(round(money_odds_a, 2)),
+#                 "revenue_team_a": str(round(total, 2)),
+#                 "money_team_b": str(round(money_odds_b, 2)),
+#                 "revenue_team_b": str(round(total, 2)),
+#             })
+#
+#     result.reverse()
+#     context = {
+#         "result": result
+#     }
+#
+#     return render(request, 'bet/vpgame.html', context)
