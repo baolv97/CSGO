@@ -585,9 +585,9 @@ def vpgame(request):
                 "team_a": item.team_a,
                 "team_b": item.team_b,
 
-                "vp_odds_team_a": item.bet_team_a,
+                "vp_odds_team_a": item.bet_team_a+1,
                 "vp_suggestion_team_a": suggestion_a * money,
-                "vp_odds_team_b": item.bet_team_b,
+                "vp_odds_team_b": item.bet_team_b+1,
                 "vp_suggestion_team_b": suggestion_b * money,
 
 

@@ -200,8 +200,8 @@ def trainingEloPlayer():
             count += 10
     p2 = sorted(p, key=lambda Performance: Performance.id)
     p3 = Performance.objects.all()
-    for i in range(len(p3)):
-        p3[i].check = 1
+    # for i in range(len(p3)):
+    #     p3[i].check = 1
     for i in range(len(p3)):
         if p3[i].check == 0:
             print(p3[i].id)
