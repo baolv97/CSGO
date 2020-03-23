@@ -734,12 +734,16 @@ def over(request):
                 "odds_a": round(1/item.winrate_a, 2),
                 "odds_b": round(1/item.winrate_b, 2),
 
-                "vp_odds_team_a": vp_odds_team_a,
-                "vp_suggestion_team_a": round(suggestion_a, 2),
+                "result_a": ans,
+                "result_b": 1-ans,
+
+
+                "vp_odds_team_a": round(vp_odds_team_a+1, 2),
+                "vp_suggestion_team_a": round(suggestion_a * money, 2),
                 "vp_result_a": round(vp_result_a, 2),
                 "vp_money_a": round(vp_money, 2),
-                "vp_odds_team_b": round(vp_odds_team_b, 2),
-                "vp_suggestion_team_b": round(suggestion_b, 2),
+                "vp_odds_team_b": round(vp_odds_team_b+1, 2),
+                "vp_suggestion_team_b": round(suggestion_b * money, 2),
                 "vp_result_b": round(vp_result_b, 2),
                 "vp_money_b": round(vp_money, 2),
 
