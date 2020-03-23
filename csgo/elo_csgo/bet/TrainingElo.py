@@ -262,6 +262,7 @@ def save_winrate():
                 n = x.w_a
                 item.winrate_a = n
                 item.winrate_b = 1 - item.winrate_a
+                item.match_id = x.id
                 break
         ev_a_pin = expectedValue(item.winrate_a, item.bet_team_a - 1)
         ev_b_pin = expectedValue(1 - item.winrate_a, item.bet_team_b - 1)
@@ -299,5 +300,6 @@ def save_winrate_vp():
         for x in match:
             if x.team_a == item.team_a and x.team_b == item.team_b:
                 item.w_a = x.w_a
+                item.match_id = x.id
                 break
         item.save()

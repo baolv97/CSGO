@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from ...TrainingElo import trainingEloPlayer
+from ...TrainingElo import trainingEloPlayer, save_winrate, save_winrate_vp
 from django.core.management import call_command
 
 class Command(BaseCommand):
@@ -12,8 +12,8 @@ class Command(BaseCommand):
         call_command('crawler_7_add_column_result')
         call_command('crawler_8_add_column_bet_for_performance')
         trainingEloPlayer()
-        # save_winrate()
-        # save_winrate_vp()
+        save_winrate()
+        save_winrate_vp()
         # 1. tính elo trung bình của cả đội (cộng lại / 5)
 
         # 2. chia elo cho các thành viên trong team

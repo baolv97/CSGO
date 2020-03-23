@@ -33,6 +33,26 @@ def refresh(request):
     return HttpResponse(1, content_type='application/json')
 
 
+def crawlmatch(request):
+    call_command('crawler_1_cs_go')
+    return HttpResponse(1, content_type='application/json')
+
+
+def listplayer(request):
+    call_command('crawler_6_get_list_player')
+    return HttpResponse(1, content_type='application/json')
+
+
+def resultmatch(request):
+    call_command('crawler_7_add_column_result')
+    return HttpResponse(1, content_type='application/json')
+
+
+def mapbet(request):
+    call_command('crawler_8_add_column_bet_for_performance')
+    return HttpResponse(1, content_type='application/json')
+
+
 def training_elo(request):
     try:
         t1 = threading.Thread(target=call_command, args=('crawler_9_train_elo_for_player',))
@@ -533,7 +553,7 @@ def vpgame(request):
     total = 0.0
     money = 10000
     match_upcoming = sorted(match_upcoming1, key=lambda BetMatch: BetMatch.time)
-    end_time1 = "2020-02-01"
+    end_time1 = "2019-11-01"
     time1 = datetime.strptime(end_time1, "%Y-%m-%d")
     for item in match_upcoming:
         if item.time < time1:
@@ -717,3 +737,126 @@ def vpgame(request):
 #     }
 #
 #     return render(request, 'bet/vpgame.html', context)
+
+
+def over(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login/')
+    t_now = datetime.now()
+    end_time = "2019-02-13 11:34:37.710300"
+    end_time1 = "2020-03-18"
+    time1 = datetime.strptime(end_time1, "%Y-%m-%d")
+    matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
+    result = []
+    money = 10000
+    pin_money = 0.0
+    vp_money = 0.0
+    for item in matches_all:
+        if item.match_id and item.winrate_a > 0 and item.winrate_b > 0:
+            pin_result_a = 0.0
+            pin_result_b = 0.0
+            vpgame = BetMatch.objects.filter(match_id=item.match_id)
+            match = Match.objects.filter(id=item.match_id)
+            ans = -1
+            for x in match:
+                if x.point_team_a - x.point_team_b > 0:
+                    ans = 1
+                if x.point_team_b - x.point_team_a > 0:
+                    ans = 0
+                break
+            if ans == 1 and item.suggestion_a > 0:
+                pin_money += item.suggestion_a * money * (item.bet_team_a - 1)
+                pin_result_a = item.suggestion_a * money * (item.bet_team_a - 1)
+            if ans == 1 and item.suggestion_a == 0:
+                pin_money -= item.suggestion_b * money
+                pin_result_b = -item.suggestion_b * money
+            if ans == 0 and item.suggestion_a > 0:
+                pin_money -= item.suggestion_a * money
+                pin_result_a = -item.suggestion_a * money
+            if ans == 0 and item.suggestion_a == 0:
+                pin_money += item.suggestion_b * money * (item.bet_team_b - 1)
+                pin_result_b = item.suggestion_b * money * (item.bet_team_b - 1)
+
+
+            vp_odds_team_a = 0.0
+            vp_odds_team_b = 0.0
+            vp_result_a = 0.0
+            vp_result_b = 0.0
+            # tinh kelly and suggets nha cai vpgame
+            for x in vpgame:
+                vp_odds_team_a = x.bet_team_a
+                vp_odds_team_b = x.bet_team_b
+                break
+
+            ev_a = expectedValue(item.winrate_a, vp_odds_team_a)
+            ev_b = expectedValue(1 - item.winrate_a, vp_odds_team_b)
+
+            acd_a = according(ev_a, ev_b, vp_odds_team_a, vp_odds_team_b)
+
+            edge_a_p = edge(item.winrate_a, vp_odds_team_a)
+            edge_b_p = edge(1 - item.winrate_a, vp_odds_team_b)
+
+            kel_p = kelly(acd_a, edge_a_p, edge_b_p,  vp_odds_team_a,  vp_odds_team_b)
+            suggestion_a = 0.0
+            suggestion_b = 0.0
+
+            if kel_p > 0:
+                if acd_a == 1:
+                    suggestion_a = kel_p / 16
+                    suggestion_b = 0
+                if acd_a == 0:
+                    suggestion_a = 0
+                    suggestion_b = kel_p / 16
+            if ans == 1 and acd_a == 1:
+                vp_money += suggestion_a * money * vp_odds_team_a
+                vp_result_a = suggestion_a * money * vp_odds_team_a
+            if ans == 1 and acd_a == 0:
+                vp_money -= suggestion_b * money
+                vp_result_b = -suggestion_b * money
+            if ans == 0 and acd_a == 1:
+                vp_money -= suggestion_a * money
+                vp_result_a = -suggestion_a * money
+            if ans == 0 and acd_a == 0:
+                vp_money += suggestion_b * money * vp_odds_team_b
+                vp_result_b = suggestion_b * money * vp_odds_team_b
+
+
+
+
+            result.append({
+                "date": item.time.strftime("%d/%m/%Y"),
+                "time": item.time.strftime("%H:%M"),
+
+                "team_a": item.team_a,
+                "team_b": item.team_b,
+
+                "odds_a": round(1/item.winrate_a, 2),
+                "odds_b": round(1/item.winrate_b, 2),
+
+                "vp_odds_team_a": vp_odds_team_a,
+                "vp_suggestion_team_a": round(suggestion_a, 2),
+                "vp_result_a": round(vp_result_a, 2),
+                "vp_money_a": round(vp_money, 2),
+                "vp_odds_team_b": round(vp_odds_team_b, 2),
+                "vp_suggestion_team_b": round(suggestion_b, 2),
+                "vp_result_b": round(vp_result_b, 2),
+                "vp_money_b": round(vp_money, 2),
+
+
+                "pin_odds_team_a": str(item.bet_team_a),
+                "pin_suggestion_team_a": str(round(item.suggestion_a * money, 2)),
+                "pin_result_a": round(pin_result_a, 2),
+                "pin_money_a": round(pin_money, 2),
+                "pin_odds_team_b": str(item.bet_team_b),
+                "pin_suggestion_team_b": str(round(item.suggestion_b * money, 2)),
+                "pin_result_b": round(pin_result_b, 2),
+                "pin_money_b": round(pin_money, 2),
+            })
+
+    result.reverse()
+    context = {
+            "result": result
+        }
+
+    return render(request, 'bet/over.html', context)
+

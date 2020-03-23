@@ -51,6 +51,7 @@ class BetMatch(models.Model):
     bet_team_b = models.FloatField(null=True, blank=True)
     source = models.CharField(max_length=500, null=True, blank=True, verbose_name="Nguồn")
     w_a = models.FloatField(null=True, blank=True, verbose_name="Tỷ lệ thắng đội A", default=0)
+    match_id = models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "d_cs_go_bet_match"
@@ -167,6 +168,7 @@ class MatchUpcoming(models.Model):
     suggestion_b_e = models.FloatField(null=True, blank=True, default=0.0)
     winrate_a = models.FloatField(null=True, blank=True, default=0.0)
     winrate_b = models.FloatField(null=True, blank=True, default=0.0)
+    match_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         result = "{} ({}) {}".format(self.team_a, self.time, self.team_b)
