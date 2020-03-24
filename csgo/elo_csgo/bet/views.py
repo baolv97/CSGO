@@ -10,7 +10,7 @@ from .models import *
 import threading
 import time
 from operator import itemgetter, attrgetter, methodcaller
-brankroll = 5000.0
+brankroll = 10000.0
 def home_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('/bet/')
@@ -213,17 +213,17 @@ def detail(request):
         print("pin acd ", acd_a)
         print("pin edg ", edge_a_p)
         print("pin edg ", edge_b_p)
-        print("pin kel ", kel_p / 8)
+        print("pin kel ", kel_p / 16)
         kelly_a_p = 0
         kelly_b_p = 0
 
         if kel_p > 0:
             if acd_a == 1:
-                kelly_a_p = kel_p / 8
+                kelly_a_p = kel_p / 16
                 kelly_b_p = 0
             if acd_a == 0:
                 kelly_a_p = 0
-                kelly_b_p = kel_p / 8
+                kelly_b_p = kel_p / 16
         matches_all[item.id-1].bet_team_a = pin_odds_team_a
         matches_all[item.id-1].bet_team_b = pin_odds_team_b
         matches_all[item.id-1].suggestion_a = kelly_a_p
@@ -247,15 +247,15 @@ def detail(request):
         print("5e acd ", acd_a_e)
         print("5e edg ", edge_a_e)
         print("5e edg ", edge_b_e)
-        print("5e kel ", kel_e / 8)
+        print("5e kel ", kel_e / 16)
 
         if kel_e > 0:
             if acd_a == 1:
-                kelly_a_e = kel_e / 8
+                kelly_a_e = kel_e / 16
                 kelly_b_e = 0
             if acd_a == 0:
                 kelly_a_e = 0
-                kelly_b_e = kel_e / 8
+                kelly_b_e = kel_e / 16
         matches_all[item.id-1].bet_team_a_e = etop_odds_team_a
         matches_all[item.id-1].bet_team_b_e = etop_odds_team_b
         matches_all[item.id-1].suggestion_a_e = kelly_a_e
