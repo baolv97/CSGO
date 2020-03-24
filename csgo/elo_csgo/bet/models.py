@@ -66,6 +66,33 @@ class BetMatch(models.Model):
         ]
 
 
+class BetMatchEGame(models.Model):
+    time = models.DateTimeField(null=True, blank=True, verbose_name="Thời gian thi đấu")
+    team_a = models.CharField(max_length=50, null=True, blank=True, verbose_name="Đội A")
+    id_team_a = models.IntegerField(null=True, blank=True, verbose_name="ID đội A")
+    point_team_a = models.IntegerField(null=True, blank=True, verbose_name="Điểm đội A")
+    team_b = models.CharField(max_length=50, null=True, blank=True, verbose_name="Đội B")
+    id_team_b = models.IntegerField(null=True, blank=True, verbose_name="ID đội B")
+    point_team_b = models.IntegerField(null=True, blank=True, verbose_name="Điểm đội B")
+    bet_team_a = models.FloatField(null=True, blank=True)
+    bet_team_b = models.FloatField(null=True, blank=True)
+    source = models.CharField(max_length=500, null=True, blank=True, verbose_name="Nguồn")
+    w_a = models.FloatField(null=True, blank=True, verbose_name="Tỷ lệ thắng đội A", default=0)
+    match_id = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = "d_cs_go_bet_match_egame"
+        verbose_name = "BET"
+        verbose_name_plural = "BET"
+        indexes = [
+            models.Index(fields=['time', ]),
+            models.Index(fields=['team_a', ]),
+            models.Index(fields=['point_team_a', ]),
+            models.Index(fields=['team_b', ]),
+            models.Index(fields=['point_team_b', ]),
+        ]
+
+
 class BanPick(models.Model):
     match = models.ForeignKey(
         Match,

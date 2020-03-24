@@ -1,7 +1,11 @@
 from .models import *
 from datetime import timedelta, datetime
 from .constant import day
-from operator import itemgetter, attrgetter, methodcaller
+from datetime import timedelta, datetime as my_datetime
+
+
+
+import requests
 e = Player.objects.all()
 p1 = Performance.objects.all()
 count_player_id = len(e)
@@ -288,6 +292,69 @@ def save_winrate():
 def save_winrate_vp():
     match = Match.objects.all()
     match_upcoming = BetMatch.objects.all()
+    # map winrate tu map sang bet mâp vpgame
+    for item in match_upcoming:
+        print(item.id)
+        t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
+        # print(t_now)
+        time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
+        time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
+        # print(time_limit)
+        match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+        for x in match:
+            if x.team_a == item.team_a and x.team_b == item.team_b:
+                item.w_a = x.w_a
+                item.match_id = x.id
+                break
+        item.save()
+
+def crawler_over_5etop():
+    """
+    function crawl data match upcoming 5etop
+    :return:
+    """
+    s = 'https://www.5etop.com/api/match/list.do?status=end&page='
+    s1 = '&game=csgo'
+    for i in range(1, 50):
+        s2 = s+str(i)+s1
+        five_etop_url = s2
+        r = requests.get(five_etop_url)
+        if r.ok:
+            data = r.json().get("datas").get("list")
+            for item in data:
+                try:
+                    match = item.get("offerMatch")
+                    time = int(match.get("time"))
+                    time = my_datetime.fromtimestamp(time / 1000.0)
+
+                    team_a = match.get("vs1").get("name")
+                    team_b = match.get("vs2").get("name")
+
+                    odds_team_a = match.get("vs1").get("odds")
+                    odds_team_b = match.get("vs2").get("odds")
+
+                    point_team_a = match.get("vs1").get("score")
+                    point_team_b = match.get("vs2").get("score")
+
+                    # print(team_a, team_b)
+                    BetMatchEGame.objects.create(
+                        time=time,
+                        team_a=team_a,
+                        team_b=team_b,
+                        bet_team_a=odds_team_a,
+                        bet_team_b=odds_team_b,
+                        point_team_a=point_team_a,
+                        point_team_b=point_team_b,
+                    )
+
+
+
+                except Exception as e:
+                    print('5etop: {}'.format(str(e)))
+
+def save_winrate_5e():
+    match = Match.objects.all()
+    match_upcoming = BetMatchEGame.objects.all()
     # map winrate tu map sang bet mâp vpgame
     for item in match_upcoming:
         print(item.id)

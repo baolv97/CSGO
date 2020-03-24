@@ -459,6 +459,8 @@ def vpgame(request):
     for item in match_upcoming:
         if item.time < time1:
             continue
+        if item.point_team_a is None:
+            continue
         if item.point_team_a - item.point_team_b > 0:
             ans = 1
         else:
@@ -764,4 +766,91 @@ def over(request):
         }
 
     return render(request, 'bet/over.html', context)
+
+def egame(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login/')
+
+    result = []
+    match_upcoming1 = BetMatchEGame.objects.all()
+    total = 0.0
+    money = 10000
+    match_upcoming = sorted(match_upcoming1, key=lambda BetMatch: BetMatch.time)
+    end_time1 = "2019-11-01"
+    time1 = datetime.strptime(end_time1, "%Y-%m-%d")
+    for item in match_upcoming:
+        if item.time < time1:
+            continue
+        if item.point_team_a is None:
+            continue
+        if item.point_team_a - item.point_team_b > 0:
+            ans = 1
+        else:
+            ans = 0
+        kel_p = -1
+        acd_a = -1
+        if item.w_a > 0:
+            ev_a = expectedValue(item.w_a, item.bet_team_a)
+            ev_b = expectedValue(1 - item.w_a, item.bet_team_b)
+
+            acd_a = according(ev_a, ev_b, item.bet_team_a, item.bet_team_b)
+
+            edge_a_p = edge(item.w_a, item.bet_team_a)
+            edge_b_p = edge(1 - item.w_a, item.bet_team_b)
+
+            kel_p = kelly(acd_a, edge_a_p, edge_b_p, item.bet_team_a, item.bet_team_b)
+            suggestion_a = 0.0
+            suggestion_b = 0.0
+            money_odds_a = 0.0
+            money_odds_b = 0.0
+            if kel_p > 0:
+                if acd_a == 1:
+                    suggestion_a = kel_p / 16
+                    suggestion_b = 0
+                if acd_a == 0:
+                    suggestion_a = 0
+                    suggestion_b = kel_p / 16
+            if ans == 1 and acd_a == 1:
+                total += suggestion_a * money * item.bet_team_a
+                money_odds_a = suggestion_a * money * item.bet_team_a
+            if ans == 1 and acd_a == 0:
+                total -= suggestion_b * money
+                money_odds_b = -suggestion_b * money
+            if ans == 0 and acd_a == 1:
+                total -= suggestion_a * money
+                money_odds_a = -suggestion_a * money
+            if ans == 0 and acd_a == 0:
+                total += suggestion_b * money * item.bet_team_b
+                money_odds_b = suggestion_b * money * item.bet_team_b
+            result.append({
+                "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
+                "time": item.time.strftime("%H:%M"),
+                "source": item.source,
+                "a": 1,
+                "team_a": item.team_a,
+                "team_b": item.team_b,
+
+                "vp_odds_team_a": item.bet_team_a+1,
+                "vp_suggestion_team_a": suggestion_a * money,
+                "vp_odds_team_b": item.bet_team_b+1,
+                "vp_suggestion_team_b": suggestion_b * money,
+
+
+                "manual_odds_team_a": str(round(1 / item.w_a, 2)),
+                "manual_suggestion_team_a": ans,
+                "manual_odds_team_b": str(round(1 / (1 - item.w_a), 2)),
+                "manual_suggestion_team_b": 1-ans,
+
+                "money_team_a": str(round(money_odds_a, 2)),
+                "revenue_team_a": str(round(total, 2)),
+                "money_team_b": str(round(money_odds_b, 2)),
+                "revenue_team_b": str(round(total, 2)),
+            })
+
+    result.reverse()
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/vpgame.html', context)
 
