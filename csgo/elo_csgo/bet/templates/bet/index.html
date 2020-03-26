@@ -80,7 +80,7 @@
             <th class="col-md-2 btn_link" id="btn_training_elo"><a>RefreshElo</a></th>
             <th class="col-md-1 border_none"></th>
             <th class="col-md-1 border_bu_none"></th>
-            <th class="col-md-2 btn_link" id="btn_refresh_over"><a href="{% url 'detail1' %}">Result</a></th>
+            <th class="col-md-2 btn_link" id="btn_refresh_over"><a>Result</a></th>
             <th class="col-md-1 border_none"></th>
             <th class="col-md-2 btn_link" id="btn_list_player"><a>ListPlayer</a></th>
             <th class="col-md-1 border_none"></th>
@@ -187,16 +187,9 @@ $(document).ready(function() {
         window.location.href = "/list_player";
     });
 
-    /*$("#btn_refresh_over").click(function() {
-        $("#loading_img").show();
-
-        $.get('/refresh_over/', function(data) {
-            if (data == 1) {
-                $("#loading_img").hide();
-                location.reload(true);
-            }
-        });
-    });*/
+    $("#btn_refresh_over").click(function() {
+        window.location.href = "/over";
+    });
 
     var origin_suggestion = [];
     $(".class-pin").each(function() {

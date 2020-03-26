@@ -335,8 +335,9 @@ def crawler_over_5etop():
 
                     point_team_a = match.get("vs1").get("score")
                     point_team_b = match.get("vs2").get("score")
-
-                    # print(team_a, team_b)
+                    egame = BetMatchEGame.objects.filter(time=time, team_a=team_a, team_b=team_b)
+                    if len(egame) > 0:
+                        continue
                     BetMatchEGame.objects.create(
                         time=time,
                         team_a=team_a,

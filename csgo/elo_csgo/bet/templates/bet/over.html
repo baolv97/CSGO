@@ -77,10 +77,15 @@
             <th colspan="2" class="col-md-2">Model</th>
             <th colspan="4" class="col-md-2">Pinnacle</th>
             <th colspan="4" class="col-md-2">VP</th>
+            <th colspan="4" class="col-md-2">5egame</th>
         </tr>
         <tr>
             <th class="col-md-1">odds</th>
             <th class="col-md-1">Result</th>
+            <th class="col-md-1">odds</th>
+            <th class="col-md-1">bet</th>
+            <th class="col-md-1">Result</th>
+            <th class="col-md-1">Money</th>
             <th class="col-md-1">odds</th>
             <th class="col-md-1">bet</th>
             <th class="col-md-1">Result</th>
@@ -109,6 +114,10 @@
             <td>{{ item.vp_suggestion_team_a }}</td>
             <td>{{ item.vp_result_a }}</td>
             <td>{{ item.vp_money_a }}</td>
+            <td>{{ item.e_odds_team_a }}</td>
+            <td>{{ item.e_suggestion_team_a }}</td>
+            <td>{{ item.e_result_a }}</td>
+            <td>{{ item.e_money_a }}</td>
 
         </tr>
         <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid row_item">
@@ -124,6 +133,10 @@
             <td>{{ item.vp_suggestion_team_b }}</td>
             <td>{{ item.vp_result_b }}</td>
             <td>{{ item.vp_money_b }}</td>
+            <td>{{ item.e_odds_team_b }}</td>
+            <td>{{ item.e_suggestion_team_b }}</td>
+            <td>{{ item.e_result_b }}</td>
+            <td>{{ item.e_money_b }}</td>
         </tr>
 
         {% endfor %}

@@ -8,6 +8,7 @@ from .constant import day, pinnacle, five_etop, vp_game
 from django.core.management import call_command
 from .models import *
 import threading
+from rest_framework.views import APIView
 import time
 from operator import itemgetter, attrgetter, methodcaller
 brankroll = 10000.0
@@ -654,11 +655,13 @@ def over(request):
     money = 10000
     pin_money = 0.0
     vp_money = 0.0
+    e_money = 0.0
     for item in matches_all:
         if item.match_id and item.winrate_a > 0 and item.winrate_b > 0:
             pin_result_a = 0.0
             pin_result_b = 0.0
             vpgame = BetMatch.objects.filter(match_id=item.match_id)
+            egame = BetMatchEGame.objects.filter(match_id=item.match_id)
             match = Match.objects.filter(id=item.match_id)
             ans = -1
             for x in match:
@@ -723,6 +726,49 @@ def over(request):
                 vp_money += suggestion_b * money * vp_odds_team_b
                 vp_result_b = suggestion_b * money * vp_odds_team_b
 
+            e_odds_team_a = 0.0
+            e_odds_team_b = 0.0
+            e_result_a = 0.0
+            e_result_b = 0.0
+
+            # tinh kelly and suggets nha cai 5egane
+            for x in egame:
+                e_odds_team_a = x.bet_team_a
+                e_odds_team_b = x.bet_team_b
+                break
+
+            ev_a = expectedValue(item.winrate_a, e_odds_team_a)
+            ev_b = expectedValue(1 - item.winrate_a, e_odds_team_b)
+
+            acd_e = according(ev_a, ev_b, e_odds_team_a, e_odds_team_b)
+
+            edge_a_e = edge(item.winrate_a, e_odds_team_a)
+            edge_b_e = edge(1 - item.winrate_a, e_odds_team_b)
+
+            kel_e = kelly(acd_e, edge_a_e, edge_b_e, e_odds_team_a, e_odds_team_b)
+            suggestion_a_e = 0.0
+            suggestion_b_e = 0.0
+
+            if kel_e > 0:
+                if acd_e == 1:
+                    suggestion_a_e = kel_e / 16
+                    suggestion_b_e = 0
+                if acd_e == 0:
+                    suggestion_a_e = 0
+                    suggestion_b_e = kel_e / 16
+            if ans == 1 and acd_e == 1:
+                e_money += suggestion_a_e * money * e_odds_team_a
+                e_result_a = suggestion_a_e * money * e_odds_team_a
+            if ans == 1 and acd_e == 0:
+                e_money -= suggestion_b_e * money
+                e_result_b = -suggestion_b_e * money
+            if ans == 0 and acd_e == 1:
+                e_money -= suggestion_a_e * money
+                e_result_a = -suggestion_a_e * money
+            if ans == 0 and acd_e == 0:
+                e_money += suggestion_b_e * money * e_odds_team_b
+                e_result_b = suggestion_b_e * money * e_odds_team_b
+
 
 
 
@@ -758,6 +804,15 @@ def over(request):
                 "pin_suggestion_team_b": str(round(item.suggestion_b * money, 2)),
                 "pin_result_b": round(pin_result_b, 2),
                 "pin_money_b": round(pin_money, 2),
+
+                "e_odds_team_a": round(e_odds_team_a + 1, 2),
+                "e_suggestion_team_a": round(suggestion_a_e * money, 2),
+                "e_result_a": round(e_result_a, 2),
+                "e_money_a": round(e_money, 2),
+                "e_odds_team_b": round(e_odds_team_b + 1, 2),
+                "e_suggestion_team_b": round(suggestion_b_e * money, 2),
+                "e_result_b": round(e_result_b, 2),
+                "e_money_b": round(e_money, 2),
             })
 
     result.reverse()
@@ -853,4 +908,3 @@ def egame(request):
     }
 
     return render(request, 'bet/vpgame.html', context)
-
