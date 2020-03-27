@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 r = requests.get(link)
                 if not r.ok:
                     print("(offset = {}) - Request failed.".format(offset))
-                    continue
+                    break
 
                 data = r.json().get("data")
                 if not data:

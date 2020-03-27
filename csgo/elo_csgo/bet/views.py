@@ -7,7 +7,9 @@ from datetime import timedelta, datetime
 from .constant import day, pinnacle, five_etop, vp_game
 from django.core.management import call_command
 from .models import *
+import os
 import threading
+from .forms import crawl_upcomming
 from rest_framework.views import APIView
 import time
 from operator import itemgetter, attrgetter, methodcaller
@@ -908,3 +910,12 @@ def egame(request):
     }
 
     return render(request, 'bet/vpgame.html', context)
+
+def crawlvp(request):
+    form = crawl_upcomming()
+    if request.method == 'POST':
+        form = crawl_upcomming(request.POST)
+        s ='python3 manage.py crawler_2_bet'+' -as '+form.data['at']+' -cp '+form.data['cp']+' -t '+form.data['t']
+        os.system(s)
+        return HttpResponseRedirect('/')
+    return render(request, 'bet/crawlvp.html', {'form': form})

@@ -72,17 +72,19 @@
     <table class="table table-bordered">
         <tbody>
         <tr>
-            <th class="col-md-2">Bankroll</th>
-            <th class="col-md-2"><input type="number" id="id-bank"></th>
-            <th class="col-md-2 border_bu_none"></th>
-            <th class="col-md-2 btn_link" id="btn_refresh"><a>Upcoming</a></th>
+            <th class="col-md-1">Bankroll</th>
+            <th class="col-md-1"><input type="number" id="id-bank"></th>
             <th class="col-md-1 border_bu_none"></th>
-            <th class="col-md-2 btn_link" id="btn_training_elo"><a>RefreshElo</a></th>
+            <th class="col-md-1 btn_link" id="btn_refresh"><a>Upcoming</a></th>
+            <th class="col-md-1 border_bu_none"></th>
+            <th class="col-md-1 btn_link" id="btn_training_elo"><a>RefreshElo</a></th>
             <th class="col-md-1 border_none"></th>
             <th class="col-md-1 border_bu_none"></th>
-            <th class="col-md-2 btn_link" id="btn_refresh_over"><a>Result</a></th>
+            <th class="col-md-1 btn_link" id="btn_refresh_over"><a>Result</a></th>
             <th class="col-md-1 border_none"></th>
-            <th class="col-md-2 btn_link" id="btn_list_player"><a>ListPlayer</a></th>
+            <th class="col-md-1 btn_link" id="btn_list_player"><a>ListPlayer</a></th>
+            <th class="col-md-1 border_none"></th>
+            <th class="col-md-1 btn_link" id="btn_crawlvp"><a>crawlVp</a></th>
             <th class="col-md-1 border_none"></th>
         </tr>
         </tbody>
@@ -185,6 +187,10 @@ $(document).ready(function() {
 
     $("#btn_list_player").click(function() {
         window.location.href = "/list_player";
+    });
+
+    $("#btn_crawlvp").click(function() {
+        window.location.href = "/crawlvp";
     });
 
     $("#btn_refresh_over").click(function() {
