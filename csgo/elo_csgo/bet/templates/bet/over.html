@@ -75,9 +75,9 @@
             <th rowspan="2" class="col-md-2 vertical_middle">Time</th>
             <th rowspan="2" class="col-md-2 vertical_middle">Team</th>
             <th colspan="2" class="col-md-2">Model</th>
-            <th colspan="4" class="col-md-2">Pinnacle</th>
             <th colspan="4" class="col-md-2">VP</th>
             <th colspan="4" class="col-md-2">5egame</th>
+            <th colspan="4" class="col-md-2">Pinnacle</th>
         </tr>
         <tr>
             <th class="col-md-1">odds</th>
@@ -106,10 +106,6 @@
             <td class="link_hl_tv"><a href="{{ item.source }}" target="_blank">{{ item.team_a }}</a></td>
             <td>{{ item.odds_a }}</td>
             <td>{{ item.result_a }}</td>
-            <td>{{ item.pin_odds_team_a }}</td>
-            <td>{{ item.pin_suggestion_team_a }}</td>
-            <td>{{ item.pin_result_a }}</td>
-            <td>{{ item.pin_money_a }}</td>
             <td>{{ item.vp_odds_team_a }}</td>
             <td>{{ item.vp_suggestion_team_a }}</td>
             <td>{{ item.vp_result_a }}</td>
@@ -118,6 +114,10 @@
             <td>{{ item.e_suggestion_team_a }}</td>
             <td>{{ item.e_result_a }}</td>
             <td>{{ item.e_money_a }}</td>
+            <td>{{ item.pin_odds_team_a }}</td>
+            <td>{{ item.pin_suggestion_team_a }}</td>
+            <td>{{ item.pin_result_a }}</td>
+            <td>{{ item.pin_money_a }}</td>
 
         </tr>
         <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid row_item">
@@ -125,10 +125,6 @@
             <td class="link_hl_tv"><a href="{{ item.source }}" target="_blank">{{ item.team_b }}</a></td>
             <td>{{ item.odds_b }}</td>
             <td>{{ item.result_b }}</td>
-            <td>{{ item.pin_odds_team_b }}</td>
-            <td>{{ item.pin_suggestion_team_b }}</td>
-            <td>{{ item.pin_result_b }}</td>
-            <td>{{ item.pin_money_b }}</td>
             <td>{{ item.vp_odds_team_b }}</td>
             <td>{{ item.vp_suggestion_team_b }}</td>
             <td>{{ item.vp_result_b }}</td>
@@ -137,6 +133,10 @@
             <td>{{ item.e_suggestion_team_b }}</td>
             <td>{{ item.e_result_b }}</td>
             <td>{{ item.e_money_b }}</td>
+            <td>{{ item.pin_odds_team_b }}</td>
+            <td>{{ item.pin_suggestion_team_b }}</td>
+            <td>{{ item.pin_result_b }}</td>
+            <td>{{ item.pin_money_b }}</td>
         </tr>
 
         {% endfor %}

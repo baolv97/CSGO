@@ -37,34 +37,54 @@ def refresh(request):
 
 
 def crawlmatch(request):
-    call_command('crawler_1_cs_go')
-    return HttpResponse(1, content_type='application/json')
 
+    call_command('crawler_1_cs_go')
+    result = 'Done crawl match - click add list player'
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/training.html', context)
 
 def listplayer(request):
+    result = 'null'
     call_command('crawler_6_get_list_player')
-    return HttpResponse(1, content_type='application/json')
+    result = 'Done Get new Player - click result match'
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/training.html', context)
 
 
 def resultmatch(request):
     call_command('crawler_7_add_column_result')
-    return HttpResponse(1, content_type='application/json')
+    result = 'Done Result match - click Add bet macth'
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/training.html', context)
 
 
 def mapbet(request):
     call_command('crawler_8_add_column_bet_for_performance')
-    return HttpResponse(1, content_type='application/json')
+    call_command('crawler_9_train_elo_for_player')
+    result = 'Done Map bet match - Done training elo'
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/training.html', context)
 
 
 def training_elo(request):
-    try:
-        t1 = threading.Thread(target=call_command, args=('crawler_9_train_elo_for_player',))
-        t1.start()
-    except:
-        print("err")
+    result = 'click crawlmatch'
+    context = {
+        "result": result
+    }
 
-    # call_command('crawler_9_train_elo_for_player')
-    return HttpResponse(1, content_type='application/json')
+    return render(request, 'bet/training.html', context)
 
 
 def refresh_over(request):
@@ -787,7 +807,8 @@ def over(request):
             result.append({
                 "date": item.time.strftime("%d/%m/%Y"),
                 "time": item.time.strftime("%H:%M"),
-
+                "source": item.source,
+                "a": 1,
                 "team_a": item.team_a,
                 "team_b": item.team_b,
 

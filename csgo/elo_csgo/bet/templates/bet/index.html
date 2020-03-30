@@ -72,20 +72,11 @@
     <table class="table table-bordered">
         <tbody>
         <tr>
-            <th class="col-md-1">Bankroll</th>
-            <th class="col-md-1"><input type="number" id="id-bank"></th>
-            <th class="col-md-1 border_bu_none"></th>
-            <th class="col-md-1 btn_link" id="btn_refresh"><a>Upcoming</a></th>
-            <th class="col-md-1 border_bu_none"></th>
-            <th class="col-md-1 btn_link" id="btn_training_elo"><a>RefreshElo</a></th>
-            <th class="col-md-1 border_none"></th>
-            <th class="col-md-1 border_bu_none"></th>
-            <th class="col-md-1 btn_link" id="btn_refresh_over"><a>Result</a></th>
-            <th class="col-md-1 border_none"></th>
-            <th class="col-md-1 btn_link" id="btn_list_player"><a>ListPlayer</a></th>
-            <th class="col-md-1 border_none"></th>
-            <th class="col-md-1 btn_link" id="btn_crawlvp"><a>crawlVp</a></th>
-            <th class="col-md-1 border_none"></th>
+            <input type="submit" value="Upcomming" id="btn_refresh">
+            <input type="submit" value="Refresh Elo" id="btn_training_elo">
+            <input type="submit" value="Result" id="btn_refresh_over">
+            <input type="submit" value="Ranking Player" id="btn_list_player">
+            <input type="submit" value="Crawl Over VPGame" id="btn_crawlvp">
         </tr>
         </tbody>
     </table>
@@ -167,7 +158,6 @@ $(document).ready(function() {
 
         $.get('/refresh/', function(data) {
             if (data == 1) {
-                console.log('suc');
                 $("#loading_img").hide();
                 window.location.href = "/bet";
             }
@@ -175,14 +165,7 @@ $(document).ready(function() {
     });
 
     $("#btn_training_elo").click(function() {
-        $("#loading_img").show();
-        $.get('/training_elo/', function(data) {
-            if (data == 1) {
-                $("#loading_img").hide();
-                window.location.href = "/bet";
-                location.reload(true);
-            }
-        });
+         window.location.href = "/training_elo";
     });
 
     $("#btn_list_player").click(function() {

@@ -17,26 +17,29 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
 from bet.views import home_view, detail, refresh, training_elo, refresh_over, detail1, eloplayer,  listperformance
-from bet.views import vpgame, over, egame, crawlvp
+from bet.views import vpgame, over, egame, crawlvp, crawlmatch, listplayer, resultmatch, mapbet
 from django.contrib.auth.views import LoginView
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-                  url(r'^admin/', admin.site.urls),
-                  path('', home_view, name='home'),
-                  path('login/', LoginView.as_view(), name='login'),
-                  path('bet/', detail, name='detail'),
-                  path('betOver/', detail1, name='detail1'),
-                  path('refresh/', refresh, name='refresh'),
-                  path('training_elo/', training_elo, name='training_elo'),
-                  path('list_player/', eloplayer, name='list_player'),
-                  path('list_p/',  listperformance, name='list_p'),
-                  path('vpgame/', vpgame, name='vpgame'),
-                  path('egame/', egame, name='egame'),
-                  path('over/', over, name='over'),
-                  path('crawlvp/', crawlvp, name='crawlvp'),
-                  # path('pin/', changeodds_pin, name='pin'),
-                  path('refresh_over/', refresh_over, name='refresh_over'),
-              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
-                                                                                           document_root=settings.MEDIA_ROOT)
+          url(r'^admin/', admin.site.urls),
+          path('', home_view, name='home'),
+          path('login/', LoginView.as_view(), name='login'),
+          path('bet/', detail, name='detail'),
+          path('betOver/', detail1, name='detail1'),
+          path('refresh/', refresh, name='refresh'),
+          path('training_elo/', training_elo, name='training_elo'),
+          path('list_player/', eloplayer, name='list_player'),
+          path('list_p/',  listperformance, name='list_p'),
+          path('vpgame/', vpgame, name='vpgame'),
+          path('crawlmatch/', crawlmatch, name='crawlmatch'),
+          path('listplayer/', listplayer, name='listplayer'),
+          path('resultmatch/', resultmatch, name='resultmatch'),
+          path('mapbet/', mapbet, name='mapbet'),
+          path('egame/', egame, name='egame'),
+          path('over/', over, name='over'),
+          path('crawlvp/', crawlvp, name='crawlvp'),
+          path('refresh_over/', refresh_over, name='refresh_over'),
+      ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
+                                                                                   document_root=settings.MEDIA_ROOT)

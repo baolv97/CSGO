@@ -22,7 +22,7 @@ class Command(BaseCommand):
         #     print(performances[i].id)
         for i in range(150000, len(performances)):
             for j in range(0, len(match)):
-                if performances[i].match_id == match[j].id:
+                if performances[i].match_id == match[j].id and performances[i].time is None :
                     performances[i].time = match[j].time
                     break
             performances[i].save()
