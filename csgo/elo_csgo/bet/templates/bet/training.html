@@ -73,6 +73,7 @@
         <tbody>
         <tr>
             <tr>
+            <input type="submit" value="Home" id="btn_home">
             <input type="submit" value="Crawlmatch" id="btn_crawl">
             <input type="submit" value="ADD list Player" id="btn_listp">
             <input type="submit" value="ResultMatch" id="btn_result">
@@ -98,6 +99,10 @@ $(document).ready(function() {
 
     $("#btn_crawl").click(function() {
          window.location.href = "/crawlmatch";
+    });
+
+    $("#btn_home").click(function() {
+         window.location.href = "/bet";
     });
 
     $("#btn_listp").click(function() {

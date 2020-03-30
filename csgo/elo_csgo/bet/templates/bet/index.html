@@ -75,6 +75,8 @@
             <input type="submit" value="Upcomming" id="btn_refresh">
             <input type="submit" value="Refresh Elo" id="btn_training_elo">
             <input type="submit" value="Result" id="btn_refresh_over">
+            <input type="submit" value="Result-Vpgame" id="btn_vp">
+            <input type="submit" value="Result-5eGame" id="btn_egame">
             <input type="submit" value="Ranking Player" id="btn_list_player">
             <input type="submit" value="Crawl Over VPGame" id="btn_crawlvp">
         </tr>
@@ -178,6 +180,14 @@ $(document).ready(function() {
 
     $("#btn_refresh_over").click(function() {
         window.location.href = "/over";
+    });
+
+    $("#btn_vp").click(function() {
+        window.location.href = "/vpgame";
+    });
+
+     $("#btn_egame").click(function() {
+        window.location.href = "/egame";
     });
 
     var origin_suggestion = [];

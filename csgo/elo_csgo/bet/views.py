@@ -8,11 +8,8 @@ from .constant import day, pinnacle, five_etop, vp_game
 from django.core.management import call_command
 from .models import *
 import os
-import threading
 from .forms import crawl_upcomming
-from rest_framework.views import APIView
-import time
-from operator import itemgetter, attrgetter, methodcaller
+from .TrainingElo import save_winrate_vp, crawler_over_5etop, save_winrate_5e
 brankroll = 10000.0
 def home_view(request):
     if request.user.is_authenticated:
@@ -668,6 +665,9 @@ def vpgame(request):
 def over(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
+    save_winrate_vp()
+    crawler_over_5etop()
+    save_winrate_5e()
     t_now = datetime.now()
     end_time = "2019-02-13 11:34:37.710300"
     end_time1 = "2020-03-18"
