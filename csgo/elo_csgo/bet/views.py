@@ -470,7 +470,7 @@ def vpgame(request):
             ans = 0
         kel_p = -1
         acd_a = -1
-        if item.w_a > 0:
+        if item.w_a > 0 and item.w_a < 1:
             ev_a = expectedValue(item.w_a, item.bet_team_a)
             ev_b = expectedValue(1 - item.w_a, item.bet_team_b)
 
@@ -691,20 +691,25 @@ def over(request):
             vp_result_a = 0.0
             vp_result_b = 0.0
             # tinh kelly and suggets nha cai vpgame
+            w_a_vp = -1
             for x in vpgame:
                 vp_odds_team_a = x.bet_team_a
                 vp_odds_team_b = x.bet_team_b
+                w_a_vp = x.w_a
                 break
+            kel_p = 0.0
+            acd_a = -1
+            if w_a_vp > 0 and w_a_vp < 1:
+                ev_a = expectedValue(w_a_vp, vp_odds_team_a)
+                ev_b = expectedValue(1 - w_a_vp, vp_odds_team_b)
 
-            ev_a = expectedValue(item.winrate_a, vp_odds_team_a)
-            ev_b = expectedValue(1 - item.winrate_a, vp_odds_team_b)
+                acd_a = according(ev_a, ev_b, vp_odds_team_a, vp_odds_team_b)
 
-            acd_a = according(ev_a, ev_b, vp_odds_team_a, vp_odds_team_b)
+                edge_a_p = edge(w_a_vp, vp_odds_team_a)
+                edge_b_p = edge(1 - w_a_vp, vp_odds_team_b)
 
-            edge_a_p = edge(item.winrate_a, vp_odds_team_a)
-            edge_b_p = edge(1 - item.winrate_a, vp_odds_team_b)
+                kel_p = kelly(acd_a, edge_a_p, edge_b_p,  vp_odds_team_a,  vp_odds_team_b)
 
-            kel_p = kelly(acd_a, edge_a_p, edge_b_p,  vp_odds_team_a,  vp_odds_team_b)
             suggestion_a = 0.0
             suggestion_b = 0.0
 
@@ -734,20 +739,25 @@ def over(request):
             e_result_b = 0.0
 
             # tinh kelly and suggets nha cai 5egane
+            w_a_e = -1
             for x in egame:
                 e_odds_team_a = x.bet_team_a
                 e_odds_team_b = x.bet_team_b
+                w_a_e = x.w_a
                 break
 
-            ev_a = expectedValue(item.winrate_a, e_odds_team_a)
-            ev_b = expectedValue(1 - item.winrate_a, e_odds_team_b)
+            acd_e = -1
+            kel_e = 0.0
+            if w_a_e > 0 and w_a_e < 1:
+                ev_a = expectedValue(w_a_e, e_odds_team_a)
+                ev_b = expectedValue(1 - w_a_e, e_odds_team_b)
 
-            acd_e = according(ev_a, ev_b, e_odds_team_a, e_odds_team_b)
+                acd_e = according(ev_a, ev_b, e_odds_team_a, e_odds_team_b)
 
-            edge_a_e = edge(item.winrate_a, e_odds_team_a)
-            edge_b_e = edge(1 - item.winrate_a, e_odds_team_b)
+                edge_a_e = edge(w_a_e, e_odds_team_a)
+                edge_b_e = edge(1 - w_a_e, e_odds_team_b)
 
-            kel_e = kelly(acd_e, edge_a_e, edge_b_e, e_odds_team_a, e_odds_team_b)
+                kel_e = kelly(acd_e, edge_a_e, edge_b_e, e_odds_team_a, e_odds_team_b)
             suggestion_a_e = 0.0
             suggestion_b_e = 0.0
 
@@ -846,7 +856,7 @@ def egame(request):
             ans = 0
         kel_p = -1
         acd_a = -1
-        if item.w_a > 0:
+        if item.w_a > 0 and item.w_a < 1:
             ev_a = expectedValue(item.w_a, item.bet_team_a)
             ev_b = expectedValue(1 - item.w_a, item.bet_team_b)
 

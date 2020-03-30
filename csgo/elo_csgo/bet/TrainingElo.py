@@ -302,8 +302,12 @@ def save_winrate_vp():
         # print(time_limit)
         match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
         for x in match:
-            if x.team_a == item.team_a and x.team_b == item.team_b:
+            if x.team_a.lower() == item.team_a.lower() and x.team_b.lower() == item.team_b.lower():
                 item.w_a = x.w_a
+                item.match_id = x.id
+                break
+            if x.team_a.lower() == item.team_b.lower() and x.team_b.lower() == item.team_a.lower():
+                item.w_a = 1 - x.w_a
                 item.match_id = x.id
                 break
         item.save()
@@ -366,8 +370,13 @@ def save_winrate_5e():
         # print(time_limit)
         match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
         for x in match:
-            if x.team_a == item.team_a and x.team_b == item.team_b:
+            if x.team_a.lower() == item.team_a.lower() and x.team_b.lower() == item.team_b.lower():
                 item.w_a = x.w_a
                 item.match_id = x.id
                 break
+            if x.team_a.lower() == item.team_b.lower() and x.team_b.lower() == item.team_a.lower():
+                item.w_a = 1-x.w_a
+                item.match_id = x.id
+                break
+
         item.save()
