@@ -959,5 +959,5 @@ def crawlvp(request):
         form = crawl_upcomming(request.POST)
         s ='python3 manage.py crawler_2_bet'+' -as '+form.data['at']+' -cp '+form.data['cp']+' -t '+form.data['t']
         os.system(s)
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/vpgame')
     return render(request, 'bet/crawlvp.html', {'form': form})

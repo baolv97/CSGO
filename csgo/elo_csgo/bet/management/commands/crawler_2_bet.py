@@ -43,7 +43,7 @@ class Command(BaseCommand):
             while loop:
                 offset = LIMIT * i
                 i += 1
-                if offset == 1000:
+                if offset > 1000:
                     break
                 params.update({
                     'offset': offset

@@ -14,7 +14,7 @@ class Command(BaseCommand):
             print(i)
             player = Player.objects.filter(id_player=performances[i].id_player).first()
             if player:
-                player.save()
+                print(player)
             else:
                 Player.objects.create(
                     team=performances[i].team,
