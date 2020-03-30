@@ -665,9 +665,9 @@ def vpgame(request):
 def over(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
-    save_winrate_vp()
-    crawler_over_5etop()
-    save_winrate_5e()
+    # save_winrate_vp()
+    # crawler_over_5etop()
+    # save_winrate_5e()
     t_now = datetime.now()
     end_time = "2019-02-13 11:34:37.710300"
     end_time1 = "2020-03-18"
@@ -712,10 +712,15 @@ def over(request):
             vp_result_b = 0.0
             # tinh kelly and suggets nha cai vpgame
             w_a_vp = -1
+            ans_vp = -1
             for x in vpgame:
                 vp_odds_team_a = x.bet_team_a
                 vp_odds_team_b = x.bet_team_b
                 w_a_vp = x.w_a
+                if x.point_team_a - x.point_team_b > 0:
+                    ans_vp = 1
+                else:
+                    ans_vp = 0
                 break
             kel_p = 0.0
             acd_a = -1
@@ -740,16 +745,16 @@ def over(request):
                 if acd_a == 0:
                     suggestion_a = 0
                     suggestion_b = kel_p / 16
-            if ans == 1 and acd_a == 1:
+            if ans_vp == 1 and acd_a == 1:
                 vp_money += suggestion_a * money * vp_odds_team_a
                 vp_result_a = suggestion_a * money * vp_odds_team_a
-            if ans == 1 and acd_a == 0:
+            if ans_vp == 1 and acd_a == 0:
                 vp_money -= suggestion_b * money
                 vp_result_b = -suggestion_b * money
-            if ans == 0 and acd_a == 1:
+            if ans_vp == 0 and acd_a == 1:
                 vp_money -= suggestion_a * money
                 vp_result_a = -suggestion_a * money
-            if ans == 0 and acd_a == 0:
+            if ans_vp == 0 and acd_a == 0:
                 vp_money += suggestion_b * money * vp_odds_team_b
                 vp_result_b = suggestion_b * money * vp_odds_team_b
 
@@ -760,10 +765,18 @@ def over(request):
 
             # tinh kelly and suggets nha cai 5egane
             w_a_e = -1
+            ans_e = -1
             for x in egame:
                 e_odds_team_a = x.bet_team_a
                 e_odds_team_b = x.bet_team_b
                 w_a_e = x.w_a
+                if x.point_team_a is None:
+                    ans_e = -1
+                else:
+                    if x.point_team_a - x.point_team_b > 0:
+                        ans_e = 1
+                    else:
+                        ans_e = 0
                 break
 
             acd_e = -1
@@ -788,16 +801,16 @@ def over(request):
                 if acd_e == 0:
                     suggestion_a_e = 0
                     suggestion_b_e = kel_e / 16
-            if ans == 1 and acd_e == 1:
+            if ans_e == 1 and acd_e == 1:
                 e_money += suggestion_a_e * money * e_odds_team_a
                 e_result_a = suggestion_a_e * money * e_odds_team_a
-            if ans == 1 and acd_e == 0:
+            if ans_e == 1 and acd_e == 0:
                 e_money -= suggestion_b_e * money
                 e_result_b = -suggestion_b_e * money
-            if ans == 0 and acd_e == 1:
+            if ans_e == 0 and acd_e == 1:
                 e_money -= suggestion_a_e * money
                 e_result_a = -suggestion_a_e * money
-            if ans == 0 and acd_e == 0:
+            if ans_e == 0 and acd_e == 0:
                 e_money += suggestion_b_e * money * e_odds_team_b
                 e_result_b = suggestion_b_e * money * e_odds_team_b
 
