@@ -21,11 +21,8 @@ class Command(BaseCommand):
         #     performances[i].save()
         #     print(performances[i].id)
         for i in range(150000, len(performances)):
-            if performances[i].time is None:
-                match = Match.objects.filter(id=performances[i].match_id).first()
-                print(match.time)
-                performances[i].time = match.time
-                break
+            match = Match.objects.filter(id=performances[i].match_id).first()
+            print(match.time)
+            performances[i].time = match.time
             performances[i].save()
-            print(performances[i].id)
         print("Process is was done...")

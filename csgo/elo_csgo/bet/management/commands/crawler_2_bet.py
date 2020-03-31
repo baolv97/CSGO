@@ -19,7 +19,7 @@ class Command(BaseCommand):
     help = 'Start create CS:GO - BET data'
 
     def add_arguments(self, parser):
-        parser.add_argument('-as', '--as', type=str)
+        parser.add_argument('-at', '--at', type=str)
         parser.add_argument('-cp', '--cp', type=str)
         parser.add_argument('-t', '--t', type=str)
 
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         print("Crawler data CS:GO - BET starting...")
 
         # update new info as, cp, t for command
-        p_as = options['as']
+        p_as = options['at']
         p_cp = options['cp']
         p_t = options['t']
 

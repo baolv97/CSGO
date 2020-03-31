@@ -8,6 +8,7 @@ from .constant import day, pinnacle, five_etop, vp_game
 from django.core.management import call_command
 from .models import *
 import os
+import subprocess
 from .forms import crawl_upcomming
 from .TrainingElo import save_winrate_vp, crawler_over_5etop, save_winrate_5e
 brankroll = 10000.0
@@ -957,7 +958,6 @@ def crawlvp(request):
     form = crawl_upcomming()
     if request.method == 'POST':
         form = crawl_upcomming(request.POST)
-        s ='python3 manage.py crawler_2_bet'+' -as '+form.data['at']+' -cp '+form.data['cp']+' -t '+form.data['t']
-        os.system(s)
+        call_command('crawler_2_bet', at=form.data['at'], cp=form.data['cp'], t=form.data['t'])
         return HttpResponseRedirect('/vpgame')
     return render(request, 'bet/crawlvp.html', {'form': form})
