@@ -9,7 +9,7 @@ class Command(BaseCommand):
         print("Add column result starting...")
 
         performances = Performance.objects.all()
-        for i in range(156000, len(performances)):
+        for i in range(150000, len(performances)):
             match = Match.objects.filter(id=performances[i].match_id).first()
             print(match.time)
             performances[i].time = match.time
