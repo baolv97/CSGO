@@ -10,8 +10,11 @@ class Command(BaseCommand):
 
         performances = Performance.objects.all()
         for i in range(150000, len(performances)):
-            match = Match.objects.filter(id=performances[i].match_id).first()
-            print(match.time)
-            performances[i].time = match.time
-            performances[i].save()
+            if performances[i].time:
+                continue
+            else:
+                match = Match.objects.filter(id=performances[i].match_id).first()
+                print(match.time)
+                performances[i].time = match.time
+                performances[i].save()
         print("Process is was done...")
