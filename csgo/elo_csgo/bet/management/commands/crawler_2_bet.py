@@ -40,11 +40,12 @@ class Command(BaseCommand):
 
             loop = True
             i = 0
+            vp_game = BetMatch.objects.all()
             while loop:
                 offset = LIMIT * i
                 i += 1
-                if offset > 1000:
-                    break
+                # if offset > 1000:
+                #     break
                 params.update({
                     'offset': offset
                 })
@@ -62,10 +63,12 @@ class Command(BaseCommand):
 
                 # add info bet for match
                 for item in data:
+
                     if not item.get("predictions"):
                         print("(offset = {}) - Predictions not found.".format(offset))
                         continue
-
+                    print(item.get("predictions")[0]['id'])
+                    link = 'https://www.vpgame.com/match/'+str(item.get("predictions")[0]['id'])+'.html'
                     time = datetime.fromtimestamp(item.get("start_time"))
                     time = time.replace(minute=0, second=0, microsecond=0)
 
@@ -86,29 +89,33 @@ class Command(BaseCommand):
                     match_winner = item.get("predictions")[0]
                     bet_team_a = match_winner.get("option").get("left").get("odds")
                     bet_team_b = match_winner.get("option").get("right").get("odds")
-
-                    if match_winner.get("mode_name") == WINNER:
-                        b, created = BetMatch.objects.get_or_create(
-                            time=time,
-                            team_a=team_a.strip(),
-                            point_team_a=point_team_a,
-                            team_b=team_b.strip(),
-                            point_team_b=point_team_b,
-                            bet_team_a=bet_team_a,
-                            bet_team_b=bet_team_b,
-                            defaults={
-                                'id_team_a': id_team_a,
-                                'id_team_b': id_team_b,
-                                'source': link
-                            },
-                        )
-
-                        if created:
-                            print("OK -> ({}) {} {}:{} {} ({}-{})".format(time.strftime("%Y-%m-%d"), team_a,
-                                                                          point_team_a, point_team_b, team_b,
-                                                                          bet_team_a, bet_team_b))
-                        else:
-                            print("existed -> ({}) bet_id = {}".format(b.time.strftime("%Y-%m-%d"), b.id))
+                    for x in vp_game:
+                        if x.time == time and x.team_a == team_a and x.team_b == team_b:
+                            x.source = link
+                            x.save()
+                            break
+                    # if match_winner.get("mode_name") == WINNER:
+                    #     b, created = BetMatch.objects.get_or_create(
+                    #         time=time,
+                    #         team_a=team_a.strip(),
+                    #         point_team_a=point_team_a,
+                    #         team_b=team_b.strip(),
+                    #         point_team_b=point_team_b,
+                    #         bet_team_a=bet_team_a,
+                    #         bet_team_b=bet_team_b,
+                    #         defaults={
+                    #             'id_team_a': id_team_a,
+                    #             'id_team_b': id_team_b,
+                    #             'source': link
+                    #         },
+                    #     )
+                    #
+                    #     if created:
+                    #         print("OK -> ({}) {} {}:{} {} ({}-{})".format(time.strftime("%Y-%m-%d"), team_a,
+                    #                                                       point_team_a, point_team_b, team_b,
+                    #                                                       bet_team_a, bet_team_b))
+                    #     else:
+                    #         print("existed -> ({}) bet_id = {}".format(b.time.strftime("%Y-%m-%d"), b.id))
 
         else:
             print("Info incorrect! Please add new value for as, cp, t in command.")
