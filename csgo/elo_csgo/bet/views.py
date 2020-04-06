@@ -733,7 +733,7 @@ def over(request):
                     ans_vp = 1
                 if x.point_team_b - x.point_team_a > 0:
                     ans_vp = 0
-                if x.point_team_b - x.point_team_a > 0:
+                if x.point_team_b - x.point_team_a == 0:
                     ans_vp = -1
                 break
             kel_p = 0.0
