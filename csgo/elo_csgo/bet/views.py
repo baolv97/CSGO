@@ -729,8 +729,10 @@ def over(request):
                 source_vp = x.source
                 if x.point_team_a - x.point_team_b > 0:
                     ans_vp = 1
-                else:
+                if x.point_team_b - x.point_team_a > 0:
                     ans_vp = 0
+                if x.point_team_b - x.point_team_a > 0:
+                    ans_vp = -1
                 break
             kel_p = 0.0
             acd_a = -1
@@ -786,8 +788,10 @@ def over(request):
                 else:
                     if x.point_team_a - x.point_team_b > 0:
                         ans_e = 1
-                    else:
+                    if x.point_team_b - x.point_team_a > 0:
                         ans_e = 0
+                    if x.point_team_b - x.point_team_a == 0:
+                        ans_e = -1
                 break
 
             acd_e = -1

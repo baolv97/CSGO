@@ -294,6 +294,8 @@ def save_winrate_vp():
     match_upcoming = BetMatch.objects.all()
     # map winrate tu map sang bet mâp vpgame
     for item in match_upcoming:
+        if item.match_id is not None:
+            continue
         print(item.id)
         t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
         # print(t_now)
@@ -373,6 +375,8 @@ def save_winrate_5e():
     match_upcoming = BetMatchEGame.objects.all()
     # map winrate tu map sang bet mâp vpgame
     for item in match_upcoming:
+        if item.match_id is not None:
+            continue
         print(item.id)
         t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
         # print(t_now)
