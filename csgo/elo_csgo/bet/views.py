@@ -329,77 +329,78 @@ def detail(request):
 
     return render(request, 'bet/index.html', context)
 
+
+
 def detail1(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
     t_now = datetime.now()
-    end_time = "2019-02-13 11:34:37.710300"
-    end_time1 = "2020-03-18"
-    time1 = datetime.strptime(end_time1, "%Y-%m-%d")
-    matches_all = MatchUpcoming.objects.filter(time__range=(end_time, t_now)).order_by('time')
+    time_limit = datetime.now().replace(hour=23, minute=59, second=59) - 1/4 * timedelta(days=day)
+    print(time_limit)
+    matches_all = MatchUpcoming.objects.filter(time__range=(time_limit, t_now)).order_by('time')
+    print(len(matches_all))
     result = []
     money = 10000
     pin_money = 0.0
     vp_money = 0.0
     for item in matches_all:
-        if item.match_id and item.winrate_a > 0 and item.winrate_b > 0:
-            pin_result_a = 0.0
-            pin_result_b = 0.0
-            vpgame = BetMatch.objects.filter(match_id=item.match_id)
-            match = Match.objects.filter(id=item.match_id)
-            ans = -1
-            for x in match:
-                if x.point_team_a - x.point_team_b > 0:
-                    ans = 1
-                if x.point_team_b - x.point_team_a > 0:
-                    ans = 0
-                break
-            if ans == 1 and item.suggestion_a > 0:
-                pin_money += item.suggestion_a * money * (item.bet_team_a - 1)
-                pin_result_a = item.suggestion_a * money * (item.bet_team_a - 1)
-            if ans == 1 and item.suggestion_a == 0:
-                pin_money -= item.suggestion_b * money
-                pin_result_b = -item.suggestion_b * money
-            if ans == 0 and item.suggestion_a > 0:
-                pin_money -= item.suggestion_a * money
-                pin_result_a = -item.suggestion_a * money
-            if ans == 0 and item.suggestion_a == 0:
-                pin_money += item.suggestion_b * money * (item.bet_team_b - 1)
-                pin_result_b = item.suggestion_b * money * (item.bet_team_b - 1)
+        # if item.match_id and item.winrate_a > 0 and item.winrate_b > 0:
+        #     pin_result_a = 0.0
+        #     pin_result_b = 0.0
+        #     match = Match.objects.filter(id=item.match_id)
+        #     ans = -1
+        #     for x in match:
+        #         if x.point_team_a - x.point_team_b > 0:
+        #             ans = 1
+        #         if x.point_team_b - x.point_team_a > 0:
+        #             ans = 0
+        #         break
+        #     if ans == 1 and item.suggestion_a > 0:
+        #         pin_money += item.suggestion_a * money * (item.bet_team_a - 1)
+        #         pin_result_a = item.suggestion_a * money * (item.bet_team_a - 1)
+        #     if ans == 1 and item.suggestion_a == 0:
+        #         pin_money -= item.suggestion_b * money
+        #         pin_result_b = -item.suggestion_b * money
+        #     if ans == 0 and item.suggestion_a > 0:
+        #         pin_money -= item.suggestion_a * money
+        #         pin_result_a = -item.suggestion_a * money
+        #     if ans == 0 and item.suggestion_a == 0:
+        #         pin_money += item.suggestion_b * money * (item.bet_team_b - 1)
+        #         pin_result_b = item.suggestion_b * money * (item.bet_team_b - 1)
 
-            result.append({
-                    "date": item.time.strftime("%d/%m/%Y"),
-                    "time": item.time.strftime("%H:%M"),
-                    "source": item.source,
-                    "a": 1,
-                    "team_a": item.team_a,
-                    "team_b": item.team_b,
+        result.append({
+                "date": item.time.strftime("%d/%m/%Y"),
+                "time": item.time.strftime("%H:%M"),
+                "source": item.source,
+                "a": 1,
+                "team_a": item.team_a,
+                "team_b": item.team_b,
 
-                    "vp_odds_team_a": 0.0,
-                    "vp_suggestion_team_a": "-",
-                    "vp_odds_team_b": 0.0,
-                    "vp_suggestion_team_b": "-",
+                "vp_odds_team_a": 0.0,
+                "vp_suggestion_team_a": "-",
+                "vp_odds_team_b": 0.0,
+                "vp_suggestion_team_b": "-",
 
-                    "5e_odds_team_a": str(item.bet_team_a_e),
-                    "5e_suggestion_team_a": str(round(item.suggestion_a_e * brankroll, 2)),
-                    "5e_odds_team_b": str(item.bet_team_b_e),
-                    "5e_suggestion_team_b": str(round(item.suggestion_b_e * brankroll, 2)),
+                "5e_odds_team_a": str(item.bet_team_a_e),
+                "5e_suggestion_team_a": str(round(item.suggestion_a_e * brankroll, 2)),
+                "5e_odds_team_b": str(item.bet_team_b_e),
+                "5e_suggestion_team_b": str(round(item.suggestion_b_e * brankroll, 2)),
 
-                    "pin_odds_team_a": str(item.bet_team_a),
-                    "pin_suggestion_team_a": str(round(item.suggestion_a * brankroll, 2)),
-                    "pin_odds_team_b": str(item.bet_team_b),
-                    "pin_suggestion_team_b": str(round(item.suggestion_b * brankroll, 2)),
+                "pin_odds_team_a": str(item.bet_team_a),
+                "pin_suggestion_team_a": str(round(item.suggestion_a * brankroll, 2)),
+                "pin_odds_team_b": str(item.bet_team_b),
+                "pin_suggestion_team_b": str(round(item.suggestion_b * brankroll, 2)),
 
-                    "manual_odds_team_a": str(round(1/item.winrate_a, 2)),
-                    "manual_suggestion_team_a": ans,
-                    "manual_odds_team_b": str(round(1/item.winrate_b, 2)),
-                    "manual_suggestion_team_b": 1-ans,
+                "manual_odds_team_a": str(round(1/item.winrate_a, 2)),
+                "manual_suggestion_team_a": 0,
+                "manual_odds_team_b": str(round(1/item.winrate_b, 2)),
+                "manual_suggestion_team_b": 0,
 
-                    "money_team_a": str(round(pin_result_a, 2)),
-                    "revenue_team_a": str(round(pin_money, 2)),
-                    "money_team_b": str(round(pin_result_b, 2)),
-                    "revenue_team_b": str(round(pin_money, 2)),
-                })
+                "money_team_a": 0,
+                "revenue_team_a": str(round(pin_money, 2)),
+                "money_team_b": 0,
+                "revenue_team_b": str(round(pin_money, 2)),
+            })
 
     result.reverse()
 
@@ -886,6 +887,8 @@ def over(request):
         }
 
     return render(request, 'bet/over.html', context)
+
+
 
 def egame(request):
     if not request.user.is_authenticated:

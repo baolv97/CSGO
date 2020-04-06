@@ -73,6 +73,7 @@
         <tbody>
         <tr>
             <input type="submit" value="Upcomming" id="btn_refresh">
+            <input type="submit" value="In Progress" id="btn_Progress">
             <input type="submit" value="Refresh Elo" id="btn_training_elo">
             <input type="submit" value="Result" id="btn_refresh_over">
             <input type="submit" value="Result-Vpgame" id="btn_vp">
@@ -87,21 +88,21 @@
         <tr>
             <th rowspan="2" class="col-md-2 vertical_middle">Time</th>
             <th rowspan="2" class="col-md-2 vertical_middle">Team</th>
+            <th colspan="2" class="col-md-2">Model</th>
             <th colspan="2" class="col-md-2">VP</th>
             <th colspan="2" class="col-md-2">5e</th>
             <th colspan="2" class="col-md-2">Pin</th>
-            <th colspan="2" class="col-md-2">Model</th>
             <th colspan="2" class="col-md-2">Money</th>
         </tr>
         <tr>
             <th class="col-md-1">odds</th>
-            <th class="col-md-1">bet</th>
-            <th class="col-md-1">odds</th>
-            <th class="col-md-1">bet</th>
-            <th class="col-md-1">odds</th>
-            <th class="col-md-1">bet</th>
-            <th class="col-md-1">odds</th>
             <th class="col-md-1">Result</th>
+            <th class="col-md-1">odds</th>
+            <th class="col-md-1">bet</th>
+            <th class="col-md-1">odds</th>
+            <th class="col-md-1">bet</th>
+            <th class="col-md-1">odds</th>
+            <th class="col-md-1">bet</th>
             <th class="col-md-1">Money</th>
             <th class="col-md-1">Total Money</th>
         </tr>
@@ -190,20 +191,9 @@ $(document).ready(function() {
         window.location.href = "/egame";
     });
 
-    var origin_suggestion = [];
-    $(".class-pin").each(function() {
-        origin_suggestion.push(parseFloat($(this).text()));
+     $("#btn_Progress").click(function() {
+        window.location.href = "/progress";
     });
 
-    $("#id-bank").change(function() {
-        var bank = $(this).val();
-        var i = 0;
-        $(".class-pin").each(function() {
-            val_pin = origin_suggestion[i];
-            i++;
-            var num = val_pin * bank
-            $(this).text(num.toFixed(4));
-        });
-    })
 });
 </script>
