@@ -494,8 +494,10 @@ def vpgame(request):
             continue
         if item.point_team_a - item.point_team_b > 0:
             ans = 1
-        else:
+        if item.point_team_b - item.point_team_a > 0:
             ans = 0
+        if item.point_team_b - item.point_team_a == 0:
+            ans = -1
         kel_p = -1
         acd_a = -1
         if item.w_a > 0 and item.w_a < 1:
