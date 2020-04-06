@@ -320,7 +320,7 @@ def crawler_over_5etop():
     s = 'https://www.5etop.com/api/match/list.do?status=end&page='
     s1 = '&game=csgo'
     # egame = BetMatchEGame.objects.all()
-    for i in range(1, 5):
+    for i in range(1, 400):
         s2 = s+str(i)+s1
         five_etop_url = s2
         r = requests.get(five_etop_url)

@@ -718,6 +718,7 @@ def over(request):
             vp_odds_team_b = 0.0
             vp_result_a = 0.0
             vp_result_b = 0.0
+            source_vp ="https://www.vpgame.com/prediction/match/csgo/parimutuel"
             # tinh kelly and suggets nha cai vpgame
             w_a_vp = -1
             ans_vp = -1
@@ -725,6 +726,7 @@ def over(request):
                 vp_odds_team_a = x.bet_team_a
                 vp_odds_team_b = x.bet_team_b
                 w_a_vp = x.w_a
+                source_vp = x.source
                 if x.point_team_a - x.point_team_b > 0:
                     ans_vp = 1
                 else:
@@ -770,7 +772,7 @@ def over(request):
             e_odds_team_b = 0.0
             e_result_a = 0.0
             e_result_b = 0.0
-
+            source_e = "https://www.5etop.com/match/index.do"
             # tinh kelly and suggets nha cai 5egane
             w_a_e = -1
             ans_e = -1
@@ -778,6 +780,7 @@ def over(request):
                 e_odds_team_a = x.bet_team_a
                 e_odds_team_b = x.bet_team_b
                 w_a_e = x.w_a
+                source_e = x.source
                 if x.point_team_a is None:
                     ans_e = -1
                 else:
@@ -848,6 +851,7 @@ def over(request):
                 "vp_suggestion_team_b": round(suggestion_b * money, 2),
                 "vp_result_b": round(vp_result_b, 2),
                 "vp_money_b": round(vp_money, 2),
+                "source_vp": source_vp,
 
 
                 "pin_odds_team_a": str(item.bet_team_a),
@@ -867,6 +871,7 @@ def over(request):
                 "e_suggestion_team_b": round(suggestion_b_e * money, 2),
                 "e_result_b": round(e_result_b, 2),
                 "e_money_b": round(e_money, 2),
+                "source_e": source_e,
             })
 
     result.reverse()
