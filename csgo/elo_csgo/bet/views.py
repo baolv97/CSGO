@@ -67,8 +67,18 @@ def resultmatch(request):
 
 def mapbet(request):
     call_command('crawler_8_add_column_bet_for_performance')
+    # call_command('crawler_9_train_elo_for_player')
+    result = 'Done Map bet match - click Refresh ELO'
+    context = {
+        "result": result
+    }
+
+    return render(request, 'bet/training.html', context)
+
+def refreshELO(request):
+    # call_command('crawler_8_add_column_bet_for_performance')
     call_command('crawler_9_train_elo_for_player')
-    result = 'Done Map bet match - Done training elo'
+    result = 'Done Training ELO'
     context = {
         "result": result
     }

@@ -78,6 +78,7 @@
             <input type="submit" value="ADD list Player" id="btn_listp">
             <input type="submit" value="ResultMatch" id="btn_result">
             <input type="submit" value="Add bet match" id="btn_addbet">
+            <input type="submit" value="Refresh ELO" id="btn_training">
         </tr>
         {% if result %}
         <tr>
@@ -115,6 +116,10 @@ $(document).ready(function() {
 
     $("#btn_addbet").click(function() {
         window.location.href = "/mapbet";
+    });
+
+     $("#btn_training").click(function() {
+        window.location.href = "/refreshELO";
     });
 
 

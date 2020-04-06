@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
 from bet.views import home_view, detail, refresh, training_elo, refresh_over, detail1, eloplayer,  listperformance
-from bet.views import vpgame, over, egame, crawlvp, crawlmatch, listplayer, resultmatch, mapbet
+from bet.views import vpgame, over, egame, crawlvp, crawlmatch, listplayer, resultmatch, mapbet, refreshELO
 from django.contrib.auth.views import LoginView
 from django.conf.urls.static import static
 from django.conf import settings
@@ -37,6 +37,7 @@ urlpatterns = [
           path('listplayer/', listplayer, name='listplayer'),
           path('resultmatch/', resultmatch, name='resultmatch'),
           path('mapbet/', mapbet, name='mapbet'),
+          path('refreshELO/', refreshELO, name='refreshELO'),
           path('egame/', egame, name='egame'),
           path('over/', over, name='over'),
           path('crawlvp/', crawlvp, name='crawlvp'),

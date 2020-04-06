@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
         performances = Performance.objects.all()
         for i in range(150000, len(performances)):
-            if performances[i].time:
+            if performances[i].time is not None:
                 continue
             else:
                 match = Match.objects.filter(id=performances[i].match_id).first()
