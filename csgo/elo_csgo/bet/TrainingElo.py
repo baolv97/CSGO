@@ -319,8 +319,8 @@ def crawler_over_5etop():
     """
     s = 'https://www.5etop.com/api/match/list.do?status=end&page='
     s1 = '&game=csgo'
-    egame = BetMatchEGame.objects.all()
-    for i in range(1, 100):
+    # egame = BetMatchEGame.objects.all()
+    for i in range(1, 5):
         s2 = s+str(i)+s1
         five_etop_url = s2
         r = requests.get(five_etop_url)
@@ -343,24 +343,25 @@ def crawler_over_5etop():
 
                     link = 'https://www.5etop.com/match/'+str(match.get("id"))+'/v2/show.do'
                     print(link)
-                    for x in egame:
-                        if x.team_a == team_a and x.team_b == team_b and x.time == time:
-                            x.source = link
-                            x.save()
-                            break
+                    # for x in egame:
+                    #     if x.team_a == team_a and x.team_b == team_b and x.time == time:
+                    #         x.source = link
+                    #         x.save()
+                    #         break
 
-                    # egame = BetMatchEGame.objects.filter(time=time, team_a=team_a, team_b=team_b)
-                    # if len(egame) > 0:
-                    #     continue
-                    # BetMatchEGame.objects.create(
-                    #     time=time,
-                    #     team_a=team_a,
-                    #     team_b=team_b,
-                    #     bet_team_a=odds_team_a,
-                    #     bet_team_b=odds_team_b,
-                    #     point_team_a=point_team_a,
-                    #     point_team_b=point_team_b,
-                    # )
+                    egame = BetMatchEGame.objects.filter(time=time, team_a=team_a, team_b=team_b)
+                    if len(egame) > 0:
+                        continue
+                    BetMatchEGame.objects.create(
+                        time=time,
+                        team_a=team_a,
+                        team_b=team_b,
+                        bet_team_a=odds_team_a,
+                        bet_team_b=odds_team_b,
+                        point_team_a=point_team_a,
+                        point_team_b=point_team_b,
+                        source=link,
+                    )
 
 
 
