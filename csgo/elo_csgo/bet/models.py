@@ -263,3 +263,63 @@ class BankRoll(models.Model):
         db_table = "d_cs_go_bank_roll"
         verbose_name = "Tổng tiền"
         verbose_name_plural = "Tổng tiền"
+
+
+class MatchUpcomingVpgame(models.Model):
+    time = models.DateTimeField(null=True, blank=True, verbose_name="Thời gian thi đấu")
+    type = models.CharField(max_length=10, null=True, blank=True, verbose_name="Thể thức chơi")
+    team_a = models.CharField(max_length=50, null=True, blank=True, verbose_name="Đội A")
+    id_team_a = models.IntegerField(null=True, blank=True, verbose_name="ID đội A")
+    team_b = models.CharField(max_length=50, null=True, blank=True, verbose_name="Đội B")
+    id_team_b = models.IntegerField(null=True, blank=True, verbose_name="ID đội B")
+    source = models.CharField(max_length=500, null=True, blank=True, verbose_name="Nguồn")
+    created_at = models.DateTimeField(null=True, blank=True, default=timezone.now)
+    match_id = models.IntegerField(null=True, blank=True)
+    round_id = models.IntegerField(null=True, blank=True)
+    bet_team_a = models.FloatField(null=True, blank=True, default=0.0)
+    bet_team_b = models.FloatField(null=True, blank=True, default=0.0)
+
+    def __str__(self):
+        result = "{} ({}) {}".format(self.team_a, self.time, self.team_b)
+        return result
+
+    class Meta:
+        db_table = "d_cs_go_match_upcoming_vp"
+        verbose_name = "Trận đấu sắp diễn ra"
+        verbose_name_plural = "Trận đấu sắp diễn ra"
+        indexes = [
+            models.Index(fields=['source', ]),
+            models.Index(fields=['time', ]),
+            models.Index(fields=['team_a', ]),
+            models.Index(fields=['team_b', ]),
+        ]
+
+
+class MatchUpcomingegame(models.Model):
+    time = models.DateTimeField(null=True, blank=True, verbose_name="Thời gian thi đấu")
+    type = models.CharField(max_length=10, null=True, blank=True, verbose_name="Thể thức chơi")
+    team_a = models.CharField(max_length=50, null=True, blank=True, verbose_name="Đội A")
+    id_team_a = models.IntegerField(null=True, blank=True, verbose_name="ID đội A")
+    team_b = models.CharField(max_length=50, null=True, blank=True, verbose_name="Đội B")
+    id_team_b = models.IntegerField(null=True, blank=True, verbose_name="ID đội B")
+    source = models.CharField(max_length=500, null=True, blank=True, verbose_name="Nguồn")
+    created_at = models.DateTimeField(null=True, blank=True, default=timezone.now)
+    match_id = models.IntegerField(null=True, blank=True)
+    round_id = models.IntegerField(null=True, blank=True)
+    bet_team_a = models.FloatField(null=True, blank=True, default=0.0)
+    bet_team_b = models.FloatField(null=True, blank=True, default=0.0)
+
+    def __str__(self):
+        result = "{} ({}) {}".format(self.team_a, self.time, self.team_b)
+        return result
+
+    class Meta:
+        db_table = "d_cs_go_match_upcoming_egame"
+        verbose_name = "Trận đấu sắp diễn ra"
+        verbose_name_plural = "Trận đấu sắp diễn ra"
+        indexes = [
+            models.Index(fields=['source', ]),
+            models.Index(fields=['time', ]),
+            models.Index(fields=['team_a', ]),
+            models.Index(fields=['team_b', ]),
+        ]

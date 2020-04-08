@@ -9,8 +9,8 @@ from django.core.management import call_command
 from .models import *
 import os
 import subprocess
-from .forms import crawl_upcomming
-from .TrainingElo import save_winrate_vp, crawler_over_5etop, save_winrate_5e
+from .forms import crawl_upcomming, crawl_upcomming_vp
+from .TrainingElo import save_winrate_vp,map_up_vp, crawler_over_5etop, save_winrate_5e, upcomming_vp, upcomming_5etop,map_up_5e
 brankroll = 10000.0
 def home_view(request):
     if request.user.is_authenticated:
@@ -227,8 +227,38 @@ def detail(request):
                 etop_odds_team_b = bet.bet_team_b
         print("pin ", pin_odds_team_a)
         print("pin ", pin_odds_team_b)
-        print("5e", etop_odds_team_a)
-        print("5e", etop_odds_team_b)
+
+        egame = MatchUpcomingegame.objects.filter(match_id=item.id).first()
+
+        if egame:
+            link_egame = egame.source
+            if egame.team_a == item.team_a:
+                etop_odds_team_a = egame.bet_team_a
+                etop_odds_team_b = egame.bet_team_b
+            else:
+                etop_odds_team_a = egame.bet_team_b
+                etop_odds_team_b = egame.bet_team_a
+        else:
+            link_egame = item.source
+            etop_odds_team_a = 0.0
+            etop_odds_team_b = 0.0
+
+        vpgame = MatchUpcomingVpgame.objects.filter(match_id=item.id).first()
+
+        if vpgame:
+            link_vp = vpgame.source
+            if vpgame.team_a == item.team_a:
+                vp_odds_team_a = vpgame.bet_team_a
+                vp_odds_team_b = vpgame.bet_team_b
+            else:
+                vp_odds_team_a = vpgame.bet_team_b
+                vp_odds_team_b = vpgame.bet_team_a
+        else:
+            link_vp = item.source
+            vp_odds_team_a = 0.0
+            vp_odds_team_b = 0.0
+
+
         # set up suggestion nha cai pin
         ev_a_pin = expectedValue(w_a, pin_odds_team_a - 1)
         ev_b_pin = expectedValue(w_b, pin_odds_team_b - 1)
@@ -294,22 +324,50 @@ def detail(request):
         matches_all[item.id-1].winrate_a = w_a
         matches_all[item.id-1].winrate_b = w_b
         matches_all[item.id-1].save()
+        # set up suggestion nha cai vp
+        ev_a_vp = expectedValue(w_a, vp_odds_team_a)
+        ev_b_vp = expectedValue(w_b, vp_odds_team_b)
+
+        acd_a_vp = according(ev_a_vp, ev_b_vp, vp_odds_team_a, vp_odds_team_b)
+
+        edge_a_vp = edge(w_a, vp_odds_team_a)
+        edge_b_vp = edge(w_b, vp_odds_team_b)
+
+        kel_vp = kelly(acd_a_vp, edge_a_vp, edge_b_vp, vp_odds_team_a, vp_odds_team_b)
+        print("pin ev ", ev_a_pin)
+        print("pin ev ", ev_b_pin)
+        print("pin acd ", acd_a)
+        print("pin edg ", edge_a_p)
+        print("pin edg ", edge_b_p)
+        print("pin kel ", kel_p / 16)
+        kelly_a_vp = 0
+        kelly_b_vp = 0
+
+        if kel_vp > 0:
+            if acd_a_vp == 1:
+                kelly_a_vp = kel_vp / 16
+                kelly_b_vp = 0
+            if acd_a_vp == 0:
+                kelly_a_vp = 0
+                kelly_b_vp = kel_vp / 16
         result.append({
             "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
             "time": item.time.strftime("%H:%M"),
             "source": item.source,
+            "source_vp": link_vp,
+            "source_egame": link_egame,
             "a": 1,
             "team_a": item.team_a,
             "team_b": item.team_b,
 
-            "vp_odds_team_a": vp_odds_team_a,
-            "vp_suggestion_team_a": "-",
-            "vp_odds_team_b": vp_odds_team_b,
-            "vp_suggestion_team_b": "-",
+            "vp_odds_team_a": str(round(vp_odds_team_a+1, 2)),
+            "vp_suggestion_team_a": str(round(kelly_a_vp * brankroll, 2)),
+            "vp_odds_team_b": str(round(vp_odds_team_b+1, 2)),
+            "vp_suggestion_team_b": str(round(kelly_b_vp * brankroll, 2)),
 
-            "5e_odds_team_a": str(etop_odds_team_a+1),
+            "5e_odds_team_a": str(round(etop_odds_team_a+1, 2)),
             "5e_suggestion_team_a": str(round(kelly_a_e * brankroll, 2)),
-            "5e_odds_team_b": str(etop_odds_team_b+1),
+            "5e_odds_team_b": str(round(etop_odds_team_b+1, 2)),
             "5e_suggestion_team_b": str(round(kelly_b_e * brankroll, 2)),
 
             "pin_odds_team_a": str(pin_odds_team_a),
@@ -985,3 +1043,16 @@ def crawlvp(request):
         call_command('crawler_2_bet', at=form.data['at'], cp=form.data['cp'], t=form.data['t'])
         return HttpResponseRedirect('/vpgame')
     return render(request, 'bet/crawlvp.html', {'form': form})
+
+
+def crawl_up(request):
+    form = crawl_upcomming_vp()
+    if request.method == 'POST':
+        form = crawl_upcomming_vp(request.POST)
+        upcomming_vp(form.data['link'])
+        upcomming_5etop()
+        map_up_5e()
+        map_up_vp()
+        # return HttpResponseRedirect('/vpgame')
+    return render(request, 'bet/crawlvp.html', {'form': form})
+

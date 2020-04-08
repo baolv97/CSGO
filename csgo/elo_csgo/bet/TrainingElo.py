@@ -395,3 +395,161 @@ def save_winrate_5e():
                 break
 
         item.save()
+
+
+def upcomming_vp(vp_api_link):
+    r = requests.get(vp_api_link)
+    if r.ok:
+        data = r.json().get("data")
+        for item in data:
+            try:
+                time = int(item.get("start_time"))
+                time = my_datetime.fromtimestamp(time)
+
+                team_a = item.get("teams").get("left").get("name")
+                team_b = item.get("teams").get("right").get("name")
+
+                match_winner = item.get("predictions")[0]
+                odds_team_a = match_winner.get("option").get("left").get("odds")
+                odds_team_b = match_winner.get("option").get("right").get("odds")
+
+                type = item.get("round")
+
+                id = item.get("predictions")[0]['id']
+
+                link = 'https://www.vpgame.com/match/'+str(item.get("predictions")[0]['id'])+'.html'
+                print(link)
+                vpgame = MatchUpcomingVpgame.objects.filter(round_id=id).first()
+
+                if vpgame:
+                    MatchUpcomingVpgame.objects.update_or_create(
+                        round_id=vpgame.round_id,
+                        defaults={
+                            'bet_team_a': odds_team_a,
+                            'bet_team_b': odds_team_b,
+                            'time': time,
+                            'team_a': team_a,
+                            'team_b': team_b,
+                            'source': link,
+                            'type': type,
+                        }
+                    )
+                else:
+                    MatchUpcomingVpgame.objects.create(
+                        time=time,
+                        team_a=team_a,
+                        team_b=team_b,
+                        bet_team_a=odds_team_a,
+                        bet_team_b=odds_team_b,
+                        source=link,
+                        round_id=id,
+                        type=type
+                    )
+
+
+
+            except Exception as e:
+                print('upcomming vpgame: {}'.format(str(e)))
+
+
+def upcomming_5etop():
+    five_etop_url = 'https://www.5etop.com/api/match/list.do?status=run&game=csgo'
+    r = requests.get(five_etop_url)
+    if r.ok:
+        data = r.json().get("datas").get("list")
+        for item in data:
+            try:
+                match = item.get("offerMatch")
+                time = int(match.get("time"))
+                time = my_datetime.fromtimestamp(time / 1000.0)
+
+                team_a = str(match.get("vs1").get("name"))
+                team_b = str(match.get("vs2").get("name"))
+
+                bet_team_a = float(match.get("vs1").get("odds"))
+                bet_team_b = float(match.get("vs2").get("odds"))
+
+                type = str(match.get("bo"))
+
+                round_id = int(match.get("id"))
+                link = 'https://www.5etop.com/match/'+str(match.get("id"))+'/v2/show.do'
+                print(link,team_a,time,round_id)
+
+                egame = MatchUpcomingegame.objects.filter(round_id=round_id).first()
+
+                if egame:
+                    MatchUpcomingegame.objects.update_or_create(
+                        round_id=egame.round_id,
+                        defaults={
+                            'bet_team_a': bet_team_a,
+                            'bet_team_b': bet_team_b,
+                            'time': time,
+                            'team_a': team_a,
+                            'team_b': team_b,
+                            'source': link,
+                            'type': type,
+                        }
+                    )
+                else:
+                    MatchUpcomingegame.objects.create(
+                        time=time,
+                        team_a=team_a,
+                        team_b=team_b,
+                        bet_team_a=bet_team_a,
+                        bet_team_b=bet_team_b,
+                        source=link,
+                        round_id=round_id,
+                        type=type
+                    )
+
+
+
+            except Exception as e:
+                print('5etop: {}'.format(str(e)))
+
+
+def map_up_5e():
+    match_upcoming = MatchUpcomingegame.objects.all()
+    # map id tu upcoming hltv sang 5rtop
+    for item in match_upcoming:
+        if item.match_id is not None:
+            continue
+        print(item.id)
+        t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
+        # print(t_now)
+        time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
+        time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
+        # print(time_limit)
+        match = MatchUpcoming.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+        for x in match:
+            if x.team_a.lower() == item.team_a.lower() and x.team_b.lower() == item.team_b.lower():
+                item.match_id = x.id
+                break
+            if x.team_a.lower() == item.team_b.lower() and x.team_b.lower() == item.team_a.lower():
+                item.match_id = x.id
+                break
+
+        item.save()
+
+def map_up_vp():
+    match_upcoming = MatchUpcomingVpgame.objects.all()
+    # map id tu upcoming hltv sang 5rtop
+    for item in match_upcoming:
+        if item.match_id is not None:
+            continue
+        print(item.id)
+        t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
+        # print(t_now)
+        time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
+        time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
+        # print(time_limit)
+        match = MatchUpcoming.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+        for x in match:
+            if x.team_a.lower() == item.team_a.lower() and x.team_b.lower() == item.team_b.lower():
+                item.match_id = x.id
+                break
+            if x.team_a.lower() == item.team_b.lower() and x.team_b.lower() == item.team_a.lower():
+                item.match_id = x.id
+                break
+
+        item.save()

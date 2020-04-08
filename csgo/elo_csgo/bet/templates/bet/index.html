@@ -80,6 +80,7 @@
             <input type="submit" value="Result-5eGame" id="btn_egame">
             <input type="submit" value="Ranking Player" id="btn_list_player">
             <input type="submit" value="Crawl Over VPGame" id="btn_crawlvp">
+            <input type="submit" value="Upcomming vp and 5e" id="btn_crawl">
         </tr>
         </tbody>
     </table>
@@ -117,9 +118,9 @@
             <td class="link_hl_tv"><a href="{{ item.source }}" target="_blank">{{ item.team_a }}</a></td>
             <td class="man-ai-odds">{{item.manual_odds_team_a }}</td>
             <td>{{ item.manual_suggestion_team_a }}</td>
-            <td>{{ item.vp_odds_team_a }}</td>
+            <td><a href="{{ item.source_vp }}" target="_blank">{{ item.vp_odds_team_a }}</a></td>
             <td>{{ item.vp_suggestion_team_a }}</td>
-            <td>{{ item.5e_odds_team_a }}</td>
+            <td><a href="{{ item.source_egame }}" target="_blank">{{ item.5e_odds_team_a }}</a></td>
             <td class="class-pin">{{ item.5e_suggestion_team_a }}</td>
             <td class="pin-odds">{{ item.pin_odds_team_a }}</td>
             <td class="class-pin">{{ item.pin_suggestion_team_a }}</td>
@@ -131,9 +132,9 @@
             <td class="link_hl_tv"><a href="{{ item.source }}" target="_blank">{{ item.team_b }}</a></td>
             <td class="man-ai-odds">{{item.manual_odds_team_b }}</td>
             <td>{{ item.manual_suggestion_team_b }}</td>
-            <td>{{ item.vp_odds_team_b }}</td>
+            <td><a href="{{ item.source_vp }}" target="_blank">{{ item.vp_odds_team_b }}</a></td>
             <td>{{ item.vp_suggestion_team_b }}</td>
-            <td>{{ item.5e_odds_team_b }}</td>
+            <td><a href="{{ item.source_egame }}" target="_blank">{{ item.5e_odds_team_b }}</a></td>
             <td class="class-pin">{{ item.5e_suggestion_team_b }}</td>
             <td class="pin-odds">{{ item.pin_odds_team_b }}</td>
             <td class="class-pin">{{ item.pin_suggestion_team_b }}</td>
@@ -193,6 +194,10 @@ $(document).ready(function() {
 
      $("#btn_Progress").click(function() {
         window.location.href = "/progress";
+    });
+
+    $("#btn_crawl").click(function() {
+        window.location.href = "/crawl_up";
     });
 
 });
