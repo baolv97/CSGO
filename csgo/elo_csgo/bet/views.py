@@ -1053,6 +1053,6 @@ def crawl_up(request):
         upcomming_5etop()
         map_up_5e()
         map_up_vp()
-        # return HttpResponseRedirect('/vpgame')
+        return HttpResponseRedirect('/bet')
     return render(request, 'bet/crawlvp.html', {'form': form})
 
