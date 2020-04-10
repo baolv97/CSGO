@@ -553,3 +553,22 @@ def map_up_vp():
                 break
 
         item.save()
+
+map_name = {
+    "mouz": "mousesports",
+    "Na'Vi": "Natus Vincere",
+    "VP": "Virtus.pro",
+    "Blood Sweat and Tears": "blood, sweat, and tears"
+
+}
+
+def map_team_egame():
+    match = BetMatchEGame.objects.all()
+    for item in match:
+        if map_name.get(item.team_a):
+            item.team_a = map_name.get(item.team_a)
+        if map_name.get(item.team_b):
+            item.team_b = map_name.get(item.team_b)
+        item.save()
+
+

@@ -1,17 +1,18 @@
 from django.core.management.base import BaseCommand
 from ...TrainingElo import trainingEloPlayer, save_winrate, save_winrate_vp, crawler_over_5etop, save_winrate_5e
-
+from ...TrainingElo import map_team_egame
 
 class Command(BaseCommand):
     help = 'Train elo for player.'
 
     def handle(self, *args, **options):
         print("Train elo for player ...")
-        trainingEloPlayer()
-        save_winrate()
+        # trainingEloPlayer()
+        # save_winrate()
+        map_team_egame()
         # save_winrate_vp()
         # crawler_over_5etop()
-        # save_winrate_5e()
+        save_winrate_5e()
         # 1. tính elo trung bình của cả đội (cộng lại / 5)
 
         # 2. chia elo cho các thành viên trong team
