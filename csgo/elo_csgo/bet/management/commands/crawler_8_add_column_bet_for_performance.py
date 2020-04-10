@@ -9,12 +9,9 @@ class Command(BaseCommand):
         print("Add column result starting...")
 
         performances = Performance.objects.all()
-        for i in range(150000, len(performances)):
-            if performances[i].time is not None:
-                continue
-            else:
-                match = Match.objects.filter(id=performances[i].match_id).first()
-                print(match.time)
-                performances[i].time = match.time
-                performances[i].save()
+        for i in range(15000, len(performances)):
+            match = Match.objects.filter(id=performances[i].match_id).first()
+            print(match.time)
+            performances[i].time = match.time
+            performances[i].save()
         print("Process is was done...")
