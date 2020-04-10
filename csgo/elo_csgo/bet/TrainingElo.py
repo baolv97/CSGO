@@ -336,6 +336,10 @@ def crawler_over_5etop():
 
                     team_a = match.get("vs1").get("name")
                     team_b = match.get("vs2").get("name")
+                    if map_name.get(team_a):
+                        team_a = map_name.get(team_a)
+                    if map_name.get(team_b):
+                        team_b = map_name.get(team_b)
 
                     odds_team_a = match.get("vs1").get("odds")
                     odds_team_b = match.get("vs2").get("odds")
