@@ -290,7 +290,7 @@ class Command(BaseCommand):
             offset = i * 100
             print("offset =", offset)
             request = session.get(url.format(offset=offset))
-            if offset == 500:
+            if offset > 500:
                 break
             try:
                 content = request.html.find(div_results, first=True)
