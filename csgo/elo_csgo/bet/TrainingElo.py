@@ -202,7 +202,8 @@ def trainingEloPlayer():
                     p[i].check = 1
                     # p[i].save()
             count += 10
-    p2 = sorted(p, key=lambda Performance: Performance.id)
+    p4 = Performance.objects.all()
+    p2 = sorted(p4, key=lambda Performance: Performance.id)
     p3 = Performance.objects.all()
     for i in range(len(p3)):
         if p3[i].check == 0:
