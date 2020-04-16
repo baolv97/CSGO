@@ -202,14 +202,14 @@ def trainingEloPlayer():
                     p[i].check = 1
                     # p[i].save()
             count += 10
-    # p2 = sorted(p, key=lambda Performance: Performance.id)
+    p2 = sorted(p, key=lambda Performance: Performance.id)
     p3 = Performance.objects.all()
-    for item in p3:
-        if item.check == 0:
-            # item.elo = p2[i].elo
-            # item.bet = p2[i].bet
-            item.check = 1
-            item.save()
+    for i in range(len(p3)):
+        if p3[i].elo == 0:
+            p3[i].elo = p2[i].elo
+            p3[i].bet = p2[i].bet
+            p3[i].check = 1
+            p3[i].save()
     Player.objects.bulk_update(e, ['elo'])
 
 
