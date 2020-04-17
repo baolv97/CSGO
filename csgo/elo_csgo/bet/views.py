@@ -761,18 +761,40 @@ def over(request):
                 if x.point_team_b - x.point_team_a > 0:
                     ans = 0
                 break
-            if ans == 1 and item.suggestion_a > 0:
-                pin_money += item.suggestion_a * money * (item.bet_team_a - 1)
-                pin_result_a = item.suggestion_a * money * (item.bet_team_a - 1)
-            if ans == 1 and item.suggestion_a == 0:
-                pin_money -= item.suggestion_b * money
-                pin_result_b = -item.suggestion_b * money
-            if ans == 0 and item.suggestion_a > 0:
-                pin_money -= item.suggestion_a * money
-                pin_result_a = -item.suggestion_a * money
-            if ans == 0 and item.suggestion_a == 0:
-                pin_money += item.suggestion_b * money * (item.bet_team_b - 1)
-                pin_result_b = item.suggestion_b * money * (item.bet_team_b - 1)
+            if item.winrate_a > 0 and item.winrate_a < 1:
+                ev_a_p = expectedValue(item.winrate_a, item.bet_team_a-1)
+                ev_b_p = expectedValue(1-item.winrate_a, item.bet_team_b-1)
+
+                acd_a_pin = according(ev_a_p, ev_b_p, item.bet_team_a-1, item.bet_team_b-1)
+
+                edge_a_pin = edge(item.winrate_a, item.bet_team_a-1)
+                edge_b_pin = edge(1 - item.winrate_a, item.bet_team_b-1)
+
+                kel_pin = kelly(acd_a_pin, edge_a_pin, edge_b_pin, item.bet_team_a-1,  item.bet_team_b-1)
+
+            suggestion_a_pin = 0.0
+            suggestion_b_pin = 0.0
+
+            if kel_pin > 0:
+                if acd_a_pin == 1:
+                    suggestion_a_pin = kel_pin / 16
+                    suggestion_b_pin = 0
+                if acd_a_pin == 0:
+                    suggestion_a_pin = 0
+                    suggestion_b_pin = kel_pin / 16
+
+            if ans == 1 and suggestion_a_pin > 0:
+                pin_money += suggestion_a_pin * money * (item.bet_team_a - 1)
+                pin_result_a = suggestion_a_pin * money * (item.bet_team_a - 1)
+            if ans == 1 and suggestion_a_pin == 0:
+                pin_money -= suggestion_b_pin * money
+                pin_result_b = -suggestion_b_pin * money
+            if ans == 0 and suggestion_a_pin > 0:
+                pin_money -= suggestion_a_pin * money
+                pin_result_a = -suggestion_a_pin * money
+            if ans == 0 and suggestion_a_pin == 0:
+                pin_money += suggestion_b_pin * money * (item.bet_team_b - 1)
+                pin_result_b = suggestion_b_pin * money * (item.bet_team_b - 1)
 
 
             vp_odds_team_a = 0.0
@@ -920,11 +942,11 @@ def over(request):
 
 
                 "pin_odds_team_a": str(item.bet_team_a),
-                "pin_suggestion_team_a": str(round(item.suggestion_a * money, 2)),
+                "pin_suggestion_team_a": str(round(suggestion_a_pin * money, 2)),
                 "pin_result_a": round(pin_result_a, 2),
                 "pin_money_a": round(pin_money, 2),
                 "pin_odds_team_b": str(item.bet_team_b),
-                "pin_suggestion_team_b": str(round(item.suggestion_b * money, 2)),
+                "pin_suggestion_team_b": str(round(suggestion_b_pin * money, 2)),
                 "pin_result_b": round(pin_result_b, 2),
                 "pin_money_b": round(pin_money, 2),
 
