@@ -549,7 +549,35 @@ def vpgame(request):
     for item in match_upcoming:
         if item.time < time1:
             continue
-        if item.point_team_a is None:
+        if item.match_id is None:
+            winA= 0
+            winB=0
+            if item.w_a > 0 and item.w_a < 1:
+                winA= 1/item.w_a
+                winB= 1/(1-item.w_a)
+            result.append({
+                "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
+                "time": item.time.strftime("%H:%M"),
+                "source": item.source,
+                "a": 1,
+                "team_a": item.team_a,
+                "team_b": item.team_b,
+
+                "vp_odds_team_a": item.bet_team_a + 1,
+                "vp_suggestion_team_a": '-',
+                "vp_odds_team_b": item.bet_team_b + 1,
+                "vp_suggestion_team_b": '-',
+
+                "manual_odds_team_a": str(round(winA, 2)),
+                "manual_suggestion_team_a": '-',
+                "manual_odds_team_b": str(round(winB, 2)),
+                "manual_suggestion_team_b": '-',
+
+                "money_team_a": '-',
+                "revenue_team_a": str(round(total, 2)),
+                "money_team_b": '-',
+                "revenue_team_b": str(round(total, 2)),
+            })
             continue
         if item.point_team_a - item.point_team_b > 0:
             ans = 1
@@ -985,7 +1013,65 @@ def egame(request):
     for item in match_upcoming:
         if item.time < time1:
             continue
+        if item.match_id is None:
+            winA = 0
+            winB = 0
+            if item.w_a > 0 and item.w_a < 1:
+                winA = 1 / item.w_a
+                winB = 1 / (1 - item.w_a)
+            result.append({
+                "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
+                "time": item.time.strftime("%H:%M"),
+                "source": item.source,
+                "a": 1,
+                "team_a": item.team_a,
+                "team_b": item.team_b,
+
+                "vp_odds_team_a": item.bet_team_a + 1,
+                "vp_suggestion_team_a": '-',
+                "vp_odds_team_b": item.bet_team_b + 1,
+                "vp_suggestion_team_b": '-',
+
+                "manual_odds_team_a": str(round(winA, 2)),
+                "manual_suggestion_team_a": '-',
+                "manual_odds_team_b": str(round(winB, 2)),
+                "manual_suggestion_team_b": '-',
+
+                "money_team_a": '-',
+                "revenue_team_a": str(round(total, 2)),
+                "money_team_b": '-',
+                "revenue_team_b": str(round(total, 2)),
+            })
+            continue
         if item.point_team_a is None:
+            winA = 0
+            winB = 0
+            if item.w_a > 0 and item.w_a < 1:
+                winA = 1 / item.w_a
+                winB = 1 / (1 - item.w_a)
+            result.append({
+                "date": "Today" if check_today(item.time) else item.time.strftime("%d/%m/%Y"),
+                "time": item.time.strftime("%H:%M"),
+                "source": item.source,
+                "a": 1,
+                "team_a": item.team_a,
+                "team_b": item.team_b,
+
+                "vp_odds_team_a": item.bet_team_a + 1,
+                "vp_suggestion_team_a": '-',
+                "vp_odds_team_b": item.bet_team_b + 1,
+                "vp_suggestion_team_b": '-',
+
+                "manual_odds_team_a": str(round(winA, 2)),
+                "manual_suggestion_team_a": '-',
+                "manual_odds_team_b": str(round(winB, 2)),
+                "manual_suggestion_team_b": '-',
+
+                "money_team_a": '-',
+                "revenue_team_a": str(round(total, 2)),
+                "money_team_b": '-',
+                "revenue_team_b": str(round(total, 2)),
+            })
             continue
         if item.point_team_a - item.point_team_b > 0:
             ans = 1
@@ -1059,22 +1145,15 @@ def egame(request):
     return render(request, 'bet/vpgame.html', context)
 
 def crawlvp(request):
-    form = crawl_upcomming()
-    if request.method == 'POST':
-        form = crawl_upcomming(request.POST)
-        call_command('crawler_2_bet', at=form.data['at'], cp=form.data['cp'], t=form.data['t'])
-        return HttpResponseRedirect('/vpgame')
-    return render(request, 'bet/crawlvp.html', {'form': form})
+    call_command('crawler_2_bet')
+    return HttpResponseRedirect('/vpgame')
 
 
 def crawl_up(request):
-    form = crawl_upcomming_vp()
-    if request.method == 'POST':
-        form = crawl_upcomming_vp(request.POST)
-        upcomming_vp(form.data['link'])
-        upcomming_5etop()
-        map_up_5e()
-        map_up_vp()
-        return HttpResponseRedirect('/bet')
-    return render(request, 'bet/crawlvp.html', {'form': form})
+    link="https://m.vpgame.com/prediction/api/prediction/matches?category=csgo&offset=0&limit=20&status=normal&order=asc"
+    upcomming_vp(link)
+    upcomming_5etop()
+    map_up_5e()
+    map_up_vp()
+    return HttpResponseRedirect('/bet')
 
