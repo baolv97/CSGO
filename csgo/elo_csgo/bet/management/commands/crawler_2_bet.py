@@ -33,7 +33,10 @@ class Command(BaseCommand):
             })
             link = 'https://m.vpgame.com/prediction/api/prediction/matches?category=&offset='+str(offset)+'&limit=20&status=close'
             print("(offset = {}) - {}".format(offset, link))
-            r = requests.get(link)
+            user_agent = 'Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1'
+            headers = {'User-Agent': user_agent}
+            r = requests.get(link, headers=headers)
+            print(r, "baobao123")
             if not r.ok:
                 print("(offset = {}) - Request failed.".format(offset))
                 break

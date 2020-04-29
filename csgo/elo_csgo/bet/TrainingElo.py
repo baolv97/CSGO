@@ -402,7 +402,9 @@ def save_winrate_5e():
 
 
 def upcomming_vp(vp_api_link):
-    r = requests.get(vp_api_link)
+    user_agent = 'Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1'
+    headers = {'User-Agent': user_agent}
+    r = requests.get(vp_api_link, headers=headers)
     if r.ok:
         data = r.json().get("data")
         for item in data:
