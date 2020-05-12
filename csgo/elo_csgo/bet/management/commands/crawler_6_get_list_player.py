@@ -8,9 +8,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Get list Player starting...")
 
-        performances = Performance.objects.all()
+        performances = Performance.objects.filter(check=0)
 
-        for i in range(160000, len(performances)):
+
+        for i in range(len(performances)):
             print(i)
             player = Player.objects.filter(id_player=performances[i].id_player).first()
             if player:

@@ -11,9 +11,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Add column result starting...")
 
-        performances = Performance.objects.all()
+        performances = Performance.objects.filter(check=0)
 
-        for i in range(160000, len(performances)):
+        for i in range(len(performances)):
             performances[i].result = 0
             print(performances[i].id)
             if performances[i].team == self.get_team_win(performances[i].match):

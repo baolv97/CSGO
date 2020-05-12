@@ -577,4 +577,93 @@ def map_team_egame():
             item.team_b = map_name.get(item.team_b)
         item.save()
 
+def trainingEloPlayer1():
+    per = Performance.objects.filter(check=0)
+    count = 0
+    count_game = len(per)
+    for i in range(count_game):
+        print(per[1].elo)
+        break
+    p = sorted(per, key=lambda Performance: Performance.time)
+    while count < count_game:
+        if p[count].check == 1:
+            count += 1
+            continue
+        for i in range(10):
+            for j in range(len(e)):
+                if count+i < count_game and p[count+i].id_player == e[j].id_player:
+                    p[count+i].elo = e[j].elo
+                    break
+        dem = 1
+        for i in range(1, 15):
+            if count + i < count_game and p[count].match_id == p[count + i].match_id and p[count].map == p[count + i].map:
+                dem += 1
+            else:
+                break
+        # print(dem, "baobao")
+        if dem != 10:
+            # print(p[count].match_id)
+            for i in range(count, count + dem):
+                if i < count_game:
+                    p[i].check = 1
+                    p[i].bet = 0
+                    # p[i].save()
+            count = count + dem
+            # print(count)
+
+        if dem == 10:
+            elo_a = 0.0
+            elo_b = 0.0
+            sum_rating_a = 0.0
+            sum_rating_b = 0.0
+            sum_rating_a_nd = 0.0
+            sum_rating_b_nd = 0.0
+            for i in range(5):
+                if count + i < count_game:
+                    elo_a += p[count + i].elo/5
+                    sum_rating_a += p[count + i].rating
+                    sum_rating_a_nd += 1 / p[count + i].rating
+            for i in range(5, 10):
+                if count + i < count_game:
+                    elo_b += p[count + i].elo/5
+                    sum_rating_b += p[count + i].rating
+                    sum_rating_b_nd += 1 / p[count + i].rating
+
+            w_a = winRate(elo_a, elo_b)
+            if p[count].result == 1:
+                ans = 1.0
+            else:
+                ans = 0.0
+            diff_elo_a = diffElo(w_a, ans, hs)
+            diff_elo_b = diffElo(1.0-w_a, 1.0-ans, hs)
+            print(p[count].match_id)
+
+            for i in range(5):
+                if count + i < count_game:
+                    p[count + i].elo += diffEloPlayer(p[count + i].rating, ans, diff_elo_a, sum_rating_a, sum_rating_a_nd)
+                    p[count + i].bet = w_a
+            for i in range(5, 10):
+                if count + i < count_game:
+                    p[count + i].elo += diffEloPlayer(p[count + i].rating, 1.0-ans, diff_elo_b, sum_rating_b, sum_rating_b_nd)
+                    p[count + i].bet = 1 - w_a
+            for i in range(10):
+                if count + i < count_game:
+                    update_elo(p[count + i].id_player, p[count + i].elo)
+            for i in range(count, count + 10):
+                if i < count_game:
+                    p[i].check = 1
+                    # p[i].save()
+            count += 10
+    p2 = sorted(p, key=lambda Performance: Performance.id)
+    p3 = Performance.objects.filter(check=0)
+    for i in range(len(p3)):
+        if p3[i].check == 0:
+            # print(p3[i].elo,"baobao")
+            p3[i].elo = p2[i].elo
+            p3[i].bet = p2[i].bet
+            p3[i].check = 1
+            p3[i].save()
+    Player.objects.bulk_update(e, ['elo'])
+
+
 

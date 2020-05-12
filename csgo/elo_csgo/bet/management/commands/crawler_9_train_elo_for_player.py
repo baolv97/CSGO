@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from ...TrainingElo import trainingEloPlayer, save_winrate, save_winrate_vp, crawler_over_5etop, save_winrate_5e
+from ...TrainingElo import trainingEloPlayer1, save_winrate, save_winrate_vp, crawler_over_5etop, save_winrate_5e
 from ...TrainingElo import map_team_egame
 
 class Command(BaseCommand):
@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print("Train elo for player ...")
-        trainingEloPlayer()
+        trainingEloPlayer1()
         save_winrate()
         # map_team_egame()
         # save_winrate_vp()
