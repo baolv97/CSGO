@@ -393,7 +393,7 @@ def detail1(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
     t_now = datetime.now()
-    time_limit = datetime.now().replace(hour=23, minute=59, second=59) - 1/4 * timedelta(days=day)
+    time_limit = datetime.now().replace(hour=23, minute=59, second=59) - timedelta(days=day)
     print(time_limit)
     matches_all = MatchUpcoming.objects.filter(time__range=(time_limit, t_now)).order_by('time')
     print(len(matches_all))
