@@ -294,8 +294,8 @@ def save_winrate_vp():
     match_upcoming = BetMatch.objects.all()
     # map winrate tu map sang bet mâp vpgame
     for item in match_upcoming:
-        if item.match_id is not None:
-            continue
+        # if item.match_id is not None:
+        #     continue
         print(item.id)
         t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
         # print(t_now)
@@ -379,8 +379,8 @@ def save_winrate_5e():
     match_upcoming = BetMatchEGame.objects.all()
     # map winrate tu map sang bet mâp vpgame
     for item in match_upcoming:
-        if item.match_id is not None:
-            continue
+        # if item.match_id is not None:
+        #     continue
         print(item.id)
         t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
         # print(t_now)
@@ -578,7 +578,9 @@ def map_team_egame():
         item.save()
 
 def trainingEloPlayer1():
-    per = Performance.objects.filter(check=0)
+    for i in range(count_player_id):
+        e[i].elo = 1800
+    per = Performance.objects.filter(check=1)
     count = 0
     count_game = len(per)
     for i in range(count_game):
@@ -586,9 +588,9 @@ def trainingEloPlayer1():
         break
     p = sorted(per, key=lambda Performance: Performance.time)
     while count < count_game:
-        if p[count].check == 1:
-            count += 1
-            continue
+        # if p[count].check == 1:
+        #     count += 1
+        #     continue
         for i in range(10):
             for j in range(len(e)):
                 if count+i < count_game and p[count+i].id_player == e[j].id_player:
@@ -655,10 +657,10 @@ def trainingEloPlayer1():
                     # p[i].save()
             count += 10
     p2 = sorted(p, key=lambda Performance: Performance.id)
-    p3 = Performance.objects.filter(check=0)
+    p3 = Performance.objects.filter(check=1)
     for i in range(len(p3)):
-        if p3[i].check == 0:
-            # print(p3[i].elo,"baobao")
+        print(i)
+        if p3[i].check == 1:
             p3[i].elo = p2[i].elo
             p3[i].bet = p2[i].bet
             p3[i].check = 1
