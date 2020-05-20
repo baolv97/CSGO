@@ -622,16 +622,16 @@ def trainingEloPlayer1():
             sum_rating_b_nd = 0.0
             for i in range(5):
                 if count + i < count_game:
-                    elo_a += p[count + i].elo * p[count + i].elo
+                    elo_a += p[count + i].elo/5
                     sum_rating_a += p[count + i].rating
                     sum_rating_a_nd += 1 / p[count + i].rating
             for i in range(5, 10):
                 if count + i < count_game:
-                    elo_b += p[count + i].elo * p[count + i].elo
+                    elo_b += p[count + i].elo/5
                     sum_rating_b += p[count + i].rating
                     sum_rating_b_nd += 1 / p[count + i].rating
-            elo_a = math.sqrt(elo_a)
-            elo_b = math.sqrt(elo_b)
+            # elo_a = math.sqrt(elo_a)
+            # elo_b = math.sqrt(elo_b)
             w_a = winRate(elo_a, elo_b)
             if p[count].result == 1:
                 ans = 1.0
