@@ -175,16 +175,16 @@ def detail(request):
 
             if p.team == item.team_a:
                 total_elo_a += player_elo
-                print(p.team, p.name, player_elo)
+                # print(p.team, p.name, player_elo)
                 d_team_a += 1
             else:
                 total_elo_b += player_elo
-                print(p.team, p.name, player_elo)
+                # print(p.team, p.name, player_elo)
                 d_team_b += 1
-        print("total_elo team A", total_elo_a)
-        print("total_elo team B", total_elo_b)
-        print("nguoi A", d_team_a)
-        print("nguoi B", d_team_b)
+        # print("total_elo team A", total_elo_a)
+        # print("total_elo team B", total_elo_b)
+        # print("nguoi A", d_team_a)
+        # print("nguoi B", d_team_b)
         if d_team_a != 0 and d_team_b !=0:
             elo_a = total_elo_a / d_team_a
             elo_b = total_elo_b / d_team_b
@@ -203,11 +203,10 @@ def detail(request):
             w_a = 3 * n * n - 2 * n * n * n
         if bo == 5:
             w_a = 6 * pow(n, 5) - 15 * pow(n, 4) + 10 * pow(n, 3)
-        else:
-            w_a = n
+        print(n, w_a, bo, "test")
         w_b = 1-w_a
-        print("win rate team A", w_a)
-        print("win rate team B", w_b)
+        # print("win rate team A", w_a)
+        # print("win rate team B", w_b)
         # set up suggestion nha cai pin
         pin_odds_team_a = 0.0
         pin_odds_team_b = 0.0
@@ -225,8 +224,8 @@ def detail(request):
             if bet.banker == five_etop:
                 etop_odds_team_a = bet.bet_team_a
                 etop_odds_team_b = bet.bet_team_b
-        print("pin ", pin_odds_team_a)
-        print("pin ", pin_odds_team_b)
+        # print("pin ", pin_odds_team_a)
+        # print("pin ", pin_odds_team_b)
 
         egame = MatchUpcomingegame.objects.filter(match_id=item.id).first()
 
@@ -269,12 +268,12 @@ def detail(request):
         edge_b_p = edge(w_b, pin_odds_team_b - 1)
 
         kel_p = kelly(acd_a, edge_a_p, edge_b_p, pin_odds_team_a - 1, pin_odds_team_b - 1)
-        print("pin ev ", ev_a_pin)
-        print("pin ev ", ev_b_pin)
-        print("pin acd ", acd_a)
-        print("pin edg ", edge_a_p)
-        print("pin edg ", edge_b_p)
-        print("pin kel ", kel_p / 16)
+        # print("pin ev ", ev_a_pin)
+        # print("pin ev ", ev_b_pin)
+        # print("pin acd ", acd_a)
+        # print("pin edg ", edge_a_p)
+        # print("pin edg ", edge_b_p)
+        # print("pin kel ", kel_p / 16)
         kelly_a_p = 0
         kelly_b_p = 0
 
@@ -289,7 +288,7 @@ def detail(request):
         matches_all[item.id-1].bet_team_b = pin_odds_team_b
         matches_all[item.id-1].suggestion_a = kelly_a_p
         matches_all[item.id-1].suggestion_b = kelly_b_p
-        print("baobao", matches_all[item.id-1].bet_team_a, pin_odds_team_a)
+        # print("baobao", matches_all[item.id-1].bet_team_a, pin_odds_team_a)
         # set up suggestion nha cai 5etop
         ev_a_e = expectedValue(w_a, etop_odds_team_a)
         ev_b_e = expectedValue(w_b, etop_odds_team_b)
@@ -303,12 +302,12 @@ def detail(request):
 
         kelly_a_e = 0
         kelly_b_e = 0
-        print("5e ev ", ev_a_e)
-        print("5e ev ", ev_b_e)
-        print("5e acd ", acd_a_e)
-        print("5e edg ", edge_a_e)
-        print("5e edg ", edge_b_e)
-        print("5e kel ", kel_e / 16)
+        # print("5e ev ", ev_a_e)
+        # print("5e ev ", ev_b_e)
+        # print("5e acd ", acd_a_e)
+        # print("5e edg ", edge_a_e)
+        # print("5e edg ", edge_b_e)
+        # print("5e kel ", kel_e / 16)
 
         if kel_e > 0:
             if acd_a == 1:
@@ -334,12 +333,12 @@ def detail(request):
         edge_b_vp = edge(w_b, vp_odds_team_b)
 
         kel_vp = kelly(acd_a_vp, edge_a_vp, edge_b_vp, vp_odds_team_a, vp_odds_team_b)
-        print("pin ev ", ev_a_pin)
-        print("pin ev ", ev_b_pin)
-        print("pin acd ", acd_a)
-        print("pin edg ", edge_a_p)
-        print("pin edg ", edge_b_p)
-        print("pin kel ", kel_p / 16)
+        # print("pin ev ", ev_a_pin)
+        # print("pin ev ", ev_b_pin)
+        # print("pin acd ", acd_a)
+        # print("pin edg ", edge_a_p)
+        # print("pin edg ", edge_b_p)
+        # print("pin kel ", kel_p / 16)
         kelly_a_vp = 0
         kelly_b_vp = 0
 

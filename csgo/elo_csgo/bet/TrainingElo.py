@@ -239,16 +239,12 @@ def save_winrate():
             if match[p1[i].match_id-1].type == "Best of 5":
                 bo = 5
             n = p1[i].bet
+            match[p1[i].match_id - 1].w_a = n
             if bo == 3:
                 match[p1[i].match_id - 1].w_a = 3 * n * n - 2 * n * n * n
             if bo == 5:
                 match[p1[i].match_id - 1].w_a = 6 * pow(n, 5) - 15 * pow(n, 4) + 10 * pow(n, 3)
-
-            else:
-                match[p1[i].match_id - 1].w_a = n
-
-            match[p1[i].match_id-1].w_a = p1[i].bet
-            print(match[p1[i].match_id-1].w_a)
+            print(n, match[p1[i].match_id-1].w_a, bo, "baobao")
     Match.objects.bulk_update(match, ['w_a'])
 
     # map cái win rate tu Match sang mat_upcomming de tinh loi lai
@@ -294,8 +290,8 @@ def save_winrate_vp():
     match_upcoming = BetMatch.objects.all()
     # map winrate tu map sang bet mâp vpgame
     for item in match_upcoming:
-        if item.match_id is not None:
-            continue
+        # if item.match_id is not None:
+        #     continue
         print(item.id)
         t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
         # print(t_now)
@@ -379,8 +375,8 @@ def save_winrate_5e():
     match_upcoming = BetMatchEGame.objects.all()
     # map winrate tu map sang bet mâp vpgame
     for item in match_upcoming:
-        if item.match_id is not None:
-            continue
+        # if item.match_id is not None:
+        #     continue
         print(item.id)
         t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
         # print(t_now)
