@@ -239,6 +239,10 @@ def save_winrate():
             if match[p1[i].match_id-1].type == "Best of 5":
                 bo = 5
             n = p1[i].bet
+            if n > 1-n:
+                n = n + 0.08
+            else:
+                n = n - 0.08
             match[p1[i].match_id - 1].w_a = n
             if bo == 3:
                 match[p1[i].match_id - 1].w_a = 3 * n * n - 2 * n * n * n
