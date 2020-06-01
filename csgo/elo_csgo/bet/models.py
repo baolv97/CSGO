@@ -196,6 +196,7 @@ class MatchUpcoming(models.Model):
     winrate_a = models.FloatField(null=True, blank=True, default=0.0)
     winrate_b = models.FloatField(null=True, blank=True, default=0.0)
     match_id = models.IntegerField(null=True, blank=True)
+    id_source = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         result = "{} ({}) {}".format(self.team_a, self.time, self.team_b)

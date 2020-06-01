@@ -20,17 +20,21 @@ def save_match_upcoming(req_detail, source):
 
     team_a = get_text_by_tag(req_detail, ".team1-gradient", "div", {"class": "teamName"})
     team_b = get_text_by_tag(req_detail, ".team2-gradient", "div", {"class": "teamName"})
-
+    s = ""
+    for i in range(29, 36):
+        s += source[i]
+    id_source = int(s)
     if team_a and team_b:
         m, created = MatchUpcoming.objects.update_or_create(
-            source=source,
-            type=txt_type.get("type_match"),
-            team_a=str(team_a).strip(),
-            id_team_a=id_team_a,
-            team_b=str(team_b).strip(),
-            id_team_b=id_team_b,
+            id_source=id_source,
             defaults={
-                'time': get_datetime_from_string(req_detail)
+                'time': get_datetime_from_string(req_detail),
+                'type': txt_type.get("type_match"),
+                'team_a': str(team_a).strip(),
+                'id_team_a': id_team_a,
+                'team_b': str(team_b).strip(),
+                'id_team_b': id_team_b,
+                'source': source,
             }
         )
         return m
@@ -180,7 +184,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print("Crawler data starting...")
-
+        MatchUpcomingPlayer.objects.all().delete()
         crawler_match_upcoming_hl_tv()
         # crawler_match_upcoming_vp_game()
         crawler_match_upcoming_5etop()
