@@ -26,7 +26,7 @@ def save_match_upcoming(req_detail, source):
     id_source = int(s)
     if team_a and team_b:
         m, created = MatchUpcoming.objects.update_or_create(
-            id_source=id_source,
+            id_source1=id_source,
             defaults={
                 'time': get_datetime_from_string(req_detail),
                 'type': txt_type.get("type_match"),
