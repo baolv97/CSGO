@@ -193,6 +193,17 @@ def detail(request):
             elo_b = 0
 
         w_a = winRate(elo_a, elo_b)
+        if w_a > 1 - w_a:
+            if w_a + 0.08 > 1:
+                w_a = w_a
+            else:
+                w_a = w_a + 0.08
+        else:
+            if w_a - 0.08 < 0:
+                w_a = w_a
+            else:
+                w_a = w_a - 0.08
+
         bo = 1
         if item.type == "Best of 3":
             bo = 3
