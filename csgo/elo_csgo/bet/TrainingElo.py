@@ -256,37 +256,32 @@ def save_winrate():
     for item in match_upcoming:
         print(item.id)
         t_now = item.time.strftime("%Y-%m-%d") + " 00:00:00"
-        # print(t_now)
         time = datetime.strptime(t_now, '%Y-%m-%d %H:%M:%S')
         time_limit = time.replace(hour=23, minute=59, second=59) + 1 / 2 * timedelta(days=day)
-        # print(time_limit)
         match = Match.objects.filter(time__range=(t_now, time_limit)).order_by('time')
         for x in match:
             if x.team_a == item.team_a and x.team_b == item.team_b:
-                n = x.w_a
-                item.winrate_a = n
-                item.winrate_b = 1 - item.winrate_a
                 item.match_id = x.id
                 break
-        ev_a_pin = expectedValue(item.winrate_a, item.bet_team_a - 1)
-        ev_b_pin = expectedValue(1 - item.winrate_a, item.bet_team_b - 1)
-
-        acd_a = according(ev_a_pin, ev_b_pin,  item.bet_team_a - 1, item.bet_team_b - 1)
-
-        edge_a_p = edge(item.winrate_a, item.bet_team_a - 1)
-        edge_b_p = edge(1 - item.winrate_a, item.bet_team_b - 1)
-
-        kel_p = kelly(acd_a, edge_a_p, edge_b_p, item.bet_team_a - 1, item.bet_team_b - 1)
-
-        if kel_p > 0:
-            if acd_a == 1:
-                item.suggestion_a = kel_p / 8
-                item.suggestion_b = 0
-            if acd_a == 0:
-                item.suggestion_a = 0
-                item.suggestion_b = kel_p / 8
-
-        item.save()
+        # ev_a_pin = expectedValue(item.winrate_a, item.bet_team_a - 1)
+        # ev_b_pin = expectedValue(1 - item.winrate_a, item.bet_team_b - 1)
+        #
+        # acd_a = according(ev_a_pin, ev_b_pin,  item.bet_team_a - 1, item.bet_team_b - 1)
+        #
+        # edge_a_p = edge(item.winrate_a, item.bet_team_a - 1)
+        # edge_b_p = edge(1 - item.winrate_a, item.bet_team_b - 1)
+        #
+        # kel_p = kelly(acd_a, edge_a_p, edge_b_p, item.bet_team_a - 1, item.bet_team_b - 1)
+        #
+        # if kel_p > 0:
+        #     if acd_a == 1:
+        #         item.suggestion_a = kel_p / 8
+        #         item.suggestion_b = 0
+        #     if acd_a == 0:
+        #         item.suggestion_a = 0
+        #         item.suggestion_b = kel_p / 8
+        #
+        # item.save()
 
 
 def save_winrate_vp():
@@ -668,5 +663,50 @@ def trainingEloPlayer1():
             p3[i].save()
     Player.objects.bulk_update(e, ['elo'])
 
+def winrateUpComming():
+    t_now = datetime.now()
+    time_limit = datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=day)
+    print(time_limit)
+    matches = MatchUpcoming.objects.filter(time__range=(t_now, time_limit)).order_by('time')
+    for item in matches:
+        total_elo_a = 0
+        total_elo_b = 0
+        d_team_a = 0
+        d_team_b = 0
+        players = MatchUpcomingPlayer.objects.filter(match_upcoming=item)
+        for p in players:
+            player = Player.objects.filter(name=p.name)
+            if player.count() > 1:
+                player = player.filter(id_player=p.id_player)
+            player = player.first()
+            player_elo = player.elo if player else 1800
 
-
+            if p.team == item.team_a:
+                total_elo_a += player_elo
+                print(p.team, p.name, player_elo)
+                d_team_a += 1
+            else:
+                total_elo_b += player_elo
+                print(p.team, p.name, player_elo)
+                d_team_b += 1
+        print("total_elo team A", total_elo_a)
+        print("total_elo team B", total_elo_b)
+        print("nguoi A", d_team_a)
+        print("nguoi B", d_team_b)
+        if d_team_a != 0 and d_team_b != 0:
+            elo_a = total_elo_a / d_team_a
+            elo_b = total_elo_b / d_team_b
+            w_a = winRate(elo_a, elo_b)
+            if w_a > 1 - w_a:
+                if w_a + 0.08 > 1:
+                    w_a = w_a
+                else:
+                    w_a = w_a + 0.08
+            else:
+                if w_a - 0.08 < 0:
+                    w_a = w_a
+                else:
+                    w_a = w_a - 0.08
+            item.winrate_a = w_a
+            item.winrate_b = 1 - w_a
+            item.save()

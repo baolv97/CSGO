@@ -156,43 +156,7 @@ def detail(request):
     for item in matches:
         # get odds of banker
         bets = BetUpcoming.objects.filter(match_id=item.id)
-        # if bets.count() == 0:
-        #     # if match have no bet -> continue
-        #     # else append bet to result
-        #     continue
-        # get total elo team_a and team_b
-        total_elo_a = 0
-        total_elo_b = 0
-        d_team_a = 0
-        d_team_b = 0
-        players = MatchUpcomingPlayer.objects.filter(match_upcoming=item)
-        for p in players:
-            player = Player.objects.filter(name=p.name)
-            if player.count() > 1:
-                player = player.filter(id_player=p.id_player)
-            player = player.first()
-            player_elo = player.elo if player else 1800
-
-            if p.team == item.team_a:
-                total_elo_a += player_elo
-                # print(p.team, p.name, player_elo)
-                d_team_a += 1
-            else:
-                total_elo_b += player_elo
-                # print(p.team, p.name, player_elo)
-                d_team_b += 1
-        # print("total_elo team A", total_elo_a)
-        # print("total_elo team B", total_elo_b)
-        # print("nguoi A", d_team_a)
-        # print("nguoi B", d_team_b)
-        if d_team_a != 0 and d_team_b !=0:
-            elo_a = total_elo_a / d_team_a
-            elo_b = total_elo_b / d_team_b
-        else:
-            elo_a = 0
-            elo_b = 0
-
-        w_a = winRate(elo_a, elo_b)
+        w_a = item.winrate_a
         if w_a > 1 - w_a:
             if w_a + 0.08 > 1:
                 w_a = w_a
@@ -295,10 +259,10 @@ def detail(request):
             if acd_a == 0:
                 kelly_a_p = 0
                 kelly_b_p = kel_p / 16
-        matches_all[item.id-1].bet_team_a = pin_odds_team_a
-        matches_all[item.id-1].bet_team_b = pin_odds_team_b
-        matches_all[item.id-1].suggestion_a = kelly_a_p
-        matches_all[item.id-1].suggestion_b = kelly_b_p
+        item.bet_team_a = pin_odds_team_a
+        item.bet_team_b = pin_odds_team_b
+        item.suggestion_a = kelly_a_p
+        item.suggestion_b = kelly_b_p
         # print("baobao", matches_all[item.id-1].bet_team_a, pin_odds_team_a)
         # set up suggestion nha cai 5etop
         ev_a_e = expectedValue(w_a, etop_odds_team_a)
@@ -327,13 +291,11 @@ def detail(request):
             if acd_a == 0:
                 kelly_a_e = 0
                 kelly_b_e = kel_e / 16
-        matches_all[item.id-1].bet_team_a_e = etop_odds_team_a
-        matches_all[item.id-1].bet_team_b_e = etop_odds_team_b
-        matches_all[item.id-1].suggestion_a_e = kelly_a_e
-        matches_all[item.id-1].suggestion_b_e = kelly_b_e
-        matches_all[item.id-1].winrate_a = w_a
-        matches_all[item.id-1].winrate_b = w_b
-        matches_all[item.id-1].save()
+        item.bet_team_a_e = etop_odds_team_a
+        item.bet_team_b_e = etop_odds_team_b
+        item.suggestion_a_e = kelly_a_e
+        item.suggestion_b_e = kelly_b_e
+        item.save()
         # set up suggestion nha cai vp
         ev_a_vp = expectedValue(w_a, vp_odds_team_a)
         ev_b_vp = expectedValue(w_b, vp_odds_team_b)

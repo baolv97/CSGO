@@ -5,6 +5,7 @@ from requests_html import HTMLSession
 from ...constant import *
 from ...models import *
 from .crawler_1_cs_go import get_text_by_tag, get_info_type_ban_pick, get_id_team_from_request, get_datetime_from_string
+from ...TrainingElo import winrateUpComming
 import logging
 import requests
 
@@ -25,10 +26,12 @@ def save_match_upcoming(req_detail, source):
         s += source[i]
     id_source = int(s)
     if team_a and team_b:
+        time = get_datetime_from_string(req_detail) - timedelta(hours=1)
+        print(time, "baobao123456")
         m, created = MatchUpcoming.objects.update_or_create(
             id_source1=id_source,
             defaults={
-                'time': get_datetime_from_string(req_detail),
+                'time': time,
                 'type': txt_type.get("type_match"),
                 'team_a': str(team_a).strip(),
                 'id_team_a': id_team_a,
@@ -185,8 +188,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Crawler data starting...")
         MatchUpcomingPlayer.objects.all().delete()
+        # MatchUpcoming.objects.all().delete()
         crawler_match_upcoming_hl_tv()
         # crawler_match_upcoming_vp_game()
-        crawler_match_upcoming_5etop()
-
+        # crawler_match_upcoming_5etop()
+        winrateUpComming()
         print("Process is was done...")
