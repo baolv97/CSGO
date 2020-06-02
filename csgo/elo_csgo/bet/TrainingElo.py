@@ -281,7 +281,7 @@ def save_winrate():
         #         item.suggestion_a = 0
         #         item.suggestion_b = kel_p / 8
         #
-        # item.save()
+        item.save()
 
 
 def save_winrate_vp():
