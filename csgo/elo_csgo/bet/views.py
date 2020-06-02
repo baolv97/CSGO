@@ -10,7 +10,8 @@ from .models import *
 import os
 import subprocess
 from .forms import crawl_upcomming, crawl_upcomming_vp
-from .TrainingElo import save_winrate_vp,map_up_vp, crawler_over_5etop, save_winrate_5e, upcomming_vp, upcomming_5etop,map_up_5e
+from .TrainingElo import save_winrate_vp, map_up_vp, crawler_over_5etop, save_winrate_5e, upcomming_vp, upcomming_5etop,map_up_5e
+from .management.commands.crawler_10_match_upcoming import crawlLiveMatches
 brankroll = 10000.0
 def home_view(request):
     if request.user.is_authenticated:
@@ -364,72 +365,37 @@ def detail(request):
 def detail1(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
-    t_now = datetime.now()
-    time_limit = datetime.now().replace(hour=23, minute=59, second=59) - timedelta(days=day)
-    print(time_limit)
-    matches_all = MatchUpcoming.objects.filter(time__range=(time_limit, t_now)).order_by('time')
-    print(len(matches_all))
     result = []
     money = 10000
     pin_money = 0.0
     vp_money = 0.0
-    for item in matches_all:
-        # if item.match_id and item.winrate_a > 0 and item.winrate_b > 0:
-        #     pin_result_a = 0.0
-        #     pin_result_b = 0.0
-        #     match = Match.objects.filter(id=item.match_id)
-        #     ans = -1
-        #     for x in match:
-        #         if x.point_team_a - x.point_team_b > 0:
-        #             ans = 1
-        #         if x.point_team_b - x.point_team_a > 0:
-        #             ans = 0
-        #         break
-        #     if ans == 1 and item.suggestion_a > 0:
-        #         pin_money += item.suggestion_a * money * (item.bet_team_a - 1)
-        #         pin_result_a = item.suggestion_a * money * (item.bet_team_a - 1)
-        #     if ans == 1 and item.suggestion_a == 0:
-        #         pin_money -= item.suggestion_b * money
-        #         pin_result_b = -item.suggestion_b * money
-        #     if ans == 0 and item.suggestion_a > 0:
-        #         pin_money -= item.suggestion_a * money
-        #         pin_result_a = -item.suggestion_a * money
-        #     if ans == 0 and item.suggestion_a == 0:
-        #         pin_money += item.suggestion_b * money * (item.bet_team_b - 1)
-        #         pin_result_b = item.suggestion_b * money * (item.bet_team_b - 1)
+    matches = crawlLiveMatches()
+    print(matches)
+    for i in range(len(matches)):
+        live = MatchUpcoming.objects.filter(id_source1=matches[i])
+        print(live)
+        for item in live:
+            result.append({
+                    "date": item.time.strftime("%d/%m/%Y"),
+                    "time": item.time.strftime("%H:%M"),
+                    "source": item.source,
+                    "a": 1,
+                    "team_a": item.team_a,
+                    "team_b": item.team_b,
+                    "manual_odds_team_a": str(round((1/item.winrate_a), 2)),
+                    "manual_odds_team_b": str(round((1 / item.winrate_b), 2)),
 
-        result.append({
-                "date": item.time.strftime("%d/%m/%Y"),
-                "time": item.time.strftime("%H:%M"),
-                "source": item.source,
-                "a": 1,
-                "team_a": item.team_a,
-                "team_b": item.team_b,
+                    "vp_odds_team_a": 0.0,
+                    "vp_suggestion_team_a": "-",
+                    "vp_odds_team_b": 0.0,
+                    "vp_suggestion_team_b": "-",
 
-                "vp_odds_team_a": 0.0,
-                "vp_suggestion_team_a": "-",
-                "vp_odds_team_b": 0.0,
-                "vp_suggestion_team_b": "-",
 
-                "5e_odds_team_a": str(item.bet_team_a_e),
-                "5e_suggestion_team_a": str(round(item.suggestion_a_e * brankroll, 2)),
-                "5e_odds_team_b": str(item.bet_team_b_e),
-                "5e_suggestion_team_b": str(round(item.suggestion_b_e * brankroll, 2)),
+                    "pin_odds_team_a": str(item.bet_team_a),
+                    "pin_suggestion_team_a": str(round(item.suggestion_a * brankroll, 2)),
+                    "pin_odds_team_b": str(item.bet_team_b),
+                    "pin_suggestion_team_b": str(round(item.suggestion_b * brankroll, 2)),
 
-                "pin_odds_team_a": str(item.bet_team_a),
-                "pin_suggestion_team_a": str(round(item.suggestion_a * brankroll, 2)),
-                "pin_odds_team_b": str(item.bet_team_b),
-                "pin_suggestion_team_b": str(round(item.suggestion_b * brankroll, 2)),
-
-                "manual_odds_team_a": str(round(1/item.winrate_a, 2)),
-                "manual_suggestion_team_a": 0,
-                "manual_odds_team_b": str(round(1/item.winrate_b, 2)),
-                "manual_suggestion_team_b": 0,
-
-                "money_team_a": 0,
-                "revenue_team_a": str(round(pin_money, 2)),
-                "money_team_b": 0,
-                "revenue_team_b": str(round(pin_money, 2)),
             })
 
     result.reverse()
@@ -439,6 +405,57 @@ def detail1(request):
     }
 
     return render(request, 'bet/index.html', context)
+ # result = []
+ #    time = "01-11-1997"
+ #    for i in range(0, 2):
+ #        result.append({
+ #            # "date": "Today" if check_today(time) else time.strftime("%d/%m/%Y"),
+ #            # "time": time.strftime("%H:%M"),
+ #            "date": "date",
+ #            "time": "time",
+ #            "source": "-",
+ #            "a": 1,
+ #            "team_a": "-",
+ #            "odds_a": "-",
+ #
+ #            "kq_1_a": "-",
+ #            "kq_2_a": "-",
+ #            "kq_3_a": "-",
+ #            "kq_4_a": "-",
+ #            "kq_5_a": "-",
+ #            "Dust2_a": "-",
+ #            "Mirage_a": "-",
+ #            "Inferno_a": "-",
+ #            "Nuke_a": "-",
+ #            "Train_a": "-",
+ #            "Overpass_a": "-",
+ #            "Vertigo_a": "-",
+ #
+ #
+ #            "team_b": "-",
+ #            "odds_b": "-",
+ #            "kq_1_b": "-",
+ #            "kq_2_b": "-",
+ #            "kq_3_b": "-",
+ #            "kq_4_b": "-",
+ #            "kq_5_b": "-",
+ #            "Dust2_b": "-",
+ #            "Mirage_b": "-",
+ #            "Inferno_b": "-",
+ #            "Nuke_b": "-",
+ #            "Train_b": "-",
+ #            "Overpass_b": "-",
+ #            "Vertigo_b": "-",
+ #
+ #        })
+ #
+ #    result.reverse()
+ #
+ #    context = {
+ #        "result": result
+ #    }
+ #
+ #    return render(request, 'bet/livematch.html', context)
 
 def eloplayer(request):
     if not request.user.is_authenticated:

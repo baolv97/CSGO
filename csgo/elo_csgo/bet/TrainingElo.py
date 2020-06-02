@@ -710,3 +710,5 @@ def winrateUpComming():
             item.winrate_a = w_a
             item.winrate_b = 1 - w_a
             item.save()
+
+

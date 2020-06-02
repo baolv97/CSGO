@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>BET</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<!-- add css here -->
+<style>
+    h2{
+        color: blue;
+    }
+    .table-bordered>tbody>tr>.border_bu_none {
+        border-top: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+    }
+    .table-bordered>tbody>tr>.border_none {
+        border: 1px solid #fff;
+    }
+    .table-bordered>tbody>tr>th>a {
+        color: #000;
+        padding: 12px 60px;
+    }
+    .btn_link:hover {
+        background: #3d7e9a;
+    }
+    .btn_link>a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+    th, td {
+        text-align: center;
+    }
+    .bg_gray {
+        background: #f1f1f1;
+    }
+    .table td {
+        border-top: none !important;
+        border-bottom: none !important;
+    }
+    .border_bottom_dashed {
+        border-bottom: 1px dashed #ddd;
+    }
+    .border_top_solid {
+        border-bottom: 1px solid #ddd;
+    }
+    .vertical_middle {
+        vertical-align: middle !important;
+    }
+    .link_hl_tv a:hover {
+        text-decoration: none;
+        color: #333;
+    }
+    #loading_img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0.3;
+        display: none;
+    }
+</style>
+
+<body>
+<div class="container">
+    <br>
+    <img src="../media/images/loading.gif" id="loading_img">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th rowspan="2" class="col-md-2 vertical_middle">Time</th>
+            <th rowspan="2" class="col-md-2 vertical_middle">Team</th>
+            <th colspan="6" class="col-md-2">Model</th>
+            <th colspan="7" class="col-md-2">Map</th>
+        </tr>
+        <tr>
+            <th class="col-md-1">odds</th>
+            <th class="col-md-1">Game1</th>
+            <th class="col-md-1">Game2</th>
+            <th class="col-md-1">Game3</th>
+            <th class="col-md-1">Game4</th>
+            <th class="col-md-1">Game5</th>
+            <th class="col-md-1">Dust2</th>
+            <th class="col-md-1">Mirage</th>
+            <th class="col-md-1">Inferno</th>
+            <th class="col-md-1">Nuke</th>
+            <th class="col-md-1">Train</th>
+            <th class="col-md-1">Overpass</th>
+            <th class="col-md-1">Vertigo</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% if result %}
+        {% for item in result %}
+
+        <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_bottom_dashed row_item">
+            <td>{{ item.date }}</td>
+            <td class="link_hl_tv"><a href="{{ item.source }}" target="_blank">{{ item.team_a }}</a></td>
+            <td>{{ item.odds_a }}</td>
+            <td>{{ item.kq_1_a }}</td>
+            <td>{{ item.kq_2_a }}</td>
+            <td>{{ item.kq_3_a }}</td>
+            <td>{{ item.kq_4_a }}</td>
+            <td>{{ item.kq_5_a }}</td>
+            <td>{{ item.Dust2_a }}</td>
+            <td>{{ item.Mirage_a }}</td>
+            <td>{{ item.Inferno_a }}</td>
+            <td>{{ item.Nuke_a }}</td>
+            <td>{{ item.Train_a }}</td>
+            <td>{{ item.Overpass_a }}</td>
+            <td>{{ item.Vertigo_a }}</td>
+
+        </tr>
+        <tr class="{% if forloop.counter|divisibleby:'2' %} bg_gray {% endif %} border_top_solid row_item">
+            <td>{{ item.time }}</td>
+            <td class="link_hl_tv"><a href="{{ item.source }}" target="_blank">{{ item.team_b }}</a></td>
+            <td>{{ item.odds_b }}</td>
+            <td>{{ item.kq_1_b }}</td>
+            <td>{{ item.kq_2_b }}</td>
+            <td>{{ item.kq_3_b }}</td>
+            <td>{{ item.kq_4_b }}</td>
+            <td>{{ item.kq_5_b }}</td>
+            <td>{{ item.Dust2_b }}</td>
+            <td>{{ item.Mirage_b }}</td>
+            <td>{{ item.Inferno_b }}</td>
+            <td>{{ item.Nuke_b }}</td>
+            <td>{{ item.Train_b }}</td>
+            <td>{{ item.Overpass_b }}</td>
+            <td>{{ item.Vertigo_b }}</td>
+        </tr>
+
+        {% endfor %}
+        {% endif %}
+
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
+
+<!-- add javascript here -->
+<script type="text/javascript">
+
+</script>

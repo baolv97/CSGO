@@ -125,6 +125,39 @@ def crawler_match_upcoming_hl_tv():
         logger.error('(Match_Upcoming) - Failed to request html HLTV: {}'.format(str(e)))
 
 
+def crawlLiveMatches():
+    request = session.get("https://www.hltv.org/matches")
+    result = []
+    try:
+        content = request.html.find('.live-matches', first=True)
+        soup = BeautifulSoup(content.html, 'html.parser')
+        matches_upcoming = soup.findAll("div", {"class": "live-match"})
+        # print(matches_upcoming)
+
+        for match in matches_upcoming:
+            source = match.findAll("a")
+            for item in source:
+                s = item['href']
+                s1 = ""
+                for i in range(9, 16):
+                    s1 += s[i]
+                print(s1, "baobao")
+                result.append(int(s1))
+                break
+            scores = match.findAll("span", {"class": "team-name"})
+            for item in scores:
+                print(item.string, "team")
+            header = match.findAll("tr", {"class": "header"})
+            for x in header:
+                map = x.findAll("td", {"class": "map"})
+                for item in map:
+                    print(item.string)
+
+    except Exception as e:
+        logger.error('(Match_Upcoming) - Failed to request html HLTV: {}'.format(str(e)))
+    return result
+
+
 def crawler_match_upcoming_vp_game():
     # TODO: chưa crawl tự động được, vì trang VPGame chặn crawl, phải cần có key cho mỗi lần crawl
     request = session.get(vp_game_url)
