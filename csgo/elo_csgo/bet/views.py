@@ -174,8 +174,8 @@ def detail(request):
                 w_a = w_a - 0.08
         if w_a > 0:
             odds_a = 1 / w_a
-        if w_b > 0:
-            odds_b = 1 / w_b
+        if 1 - w_a > 0:
+            odds_b = 1 / (1 - w_a)
 
         bo = 1
         if item.type == "Best of 3":
