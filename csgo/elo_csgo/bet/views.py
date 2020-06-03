@@ -781,10 +781,13 @@ def over(request):
             match = Match.objects.filter(id=item.match_id)
             ans = -1
             for x in match:
-                if x.point_team_a - x.point_team_b > 0:
-                    ans = 1
-                if x.point_team_b - x.point_team_a > 0:
-                    ans = 0
+                if x.point_team_a is None or x.point_team_b is None:
+                    ans = -1
+                else:
+                    if x.point_team_a - x.point_team_b > 0:
+                        ans = 1
+                    if x.point_team_b - x.point_team_a > 0:
+                        ans = 0
                 break
             if item.winrate_a > 0 and item.winrate_a < 1:
                 ev_a_p = expectedValue(item.winrate_a, item.bet_team_a-1)
