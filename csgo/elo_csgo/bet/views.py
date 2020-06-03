@@ -356,9 +356,9 @@ def detail(request):
             "pin_odds_team_b": str(pin_odds_team_b),
             "pin_suggestion_team_b": str(round(kelly_b_p * brankroll, 2)),
 
-            "manual_odds_team_a": str(round(1 / w_a, 2)),
+            "manual_odds_team_a": str(round(odds_a, 2)),
             "manual_suggestion_team_a": "-",
-            "manual_odds_team_b": str(round(1 / w_b, 2)),
+            "manual_odds_team_b": str(round(odds_b, 2)),
             "manual_suggestion_team_b": "-",
         })
 
