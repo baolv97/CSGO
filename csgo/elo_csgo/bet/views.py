@@ -160,6 +160,8 @@ def detail(request):
         # get odds of banker
         bets = BetUpcoming.objects.filter(match_id=item.id)
         w_a = item.winrate_a
+        odds_a = 0
+        odds_b = 0
         if w_a > 1 - w_a:
             if w_a + 0.08 > 1:
                 w_a = w_a
@@ -170,6 +172,10 @@ def detail(request):
                 w_a = w_a
             else:
                 w_a = w_a - 0.08
+        if w_a > 0:
+            odds_a = 1 / w_a
+        if w_b > 0:
+            odds_b = 1 / w_b
 
         bo = 1
         if item.type == "Best of 3":
