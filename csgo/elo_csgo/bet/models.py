@@ -122,6 +122,7 @@ class Result(models.Model):
     half = models.IntegerField(null=True, blank=True, verbose_name="Hiệp")
     team = models.CharField(max_length=50, null=True, blank=True, verbose_name="Đội")
     point = models.IntegerField(null=True, blank=True, verbose_name="Điểm")
+    check = models.FloatField(null=True, blank=True, default=0)
 
     class Meta:
         db_table = "d_cs_go_result"
