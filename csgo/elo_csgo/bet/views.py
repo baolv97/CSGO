@@ -127,8 +127,10 @@ def according(expected_value_a, expected_value_b, bet_team_a, bet_team_b):
 
 
 def edge(w_a, bet_a):
-    return (bet_a + 1) / (1 / w_a)
-
+    if w_a > 0:
+        return (bet_a + 1) / (1 / w_a)
+    else:
+        return 0
 
 def kelly(according, edge_a, edge_b, bet_a, bet_b):
     if according == 1:
