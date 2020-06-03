@@ -350,18 +350,20 @@ def crawler_over_5etop():
                     #         x.save()
                     #         break
 
-                    egame = BetMatchEGame.objects.filter(time=time, team_a=team_a, team_b=team_b)
-                    if len(egame) > 0:
-                        continue
-                    BetMatchEGame.objects.create(
+                    # egame = BetMatchEGame.objects.filter(time=time, team_a=team_a, team_b=team_b)
+                    # if len(egame) > 0:
+                    #     continue
+                    BetMatchEGame.objects.update_or_create(
                         time=time,
                         team_a=team_a,
                         team_b=team_b,
-                        bet_team_a=odds_team_a,
-                        bet_team_b=odds_team_b,
-                        point_team_a=point_team_a,
-                        point_team_b=point_team_b,
-                        source=link,
+                        defaults={
+                            "bet_team_a": odds_team_a,
+                            "bet_team_b": odds_team_b,
+                            "point_team_a": point_team_a,
+                            "point_team_b": point_team_b,
+                            "source": link,
+                        }
                     )
 
 
