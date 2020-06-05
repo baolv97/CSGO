@@ -535,7 +535,7 @@ def listperformance(request):
 def vpgame(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
-    save_winrate_vp()
+
     result = []
     match_upcoming1 = BetMatch.objects.all()
     total = 0.0
@@ -1001,8 +1001,6 @@ def over(request):
 def egame(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
-    crawler_over_5etop()
-    save_winrate_5e()
     result = []
     match_upcoming1 = BetMatchEGame.objects.all()
     total = 0.0
