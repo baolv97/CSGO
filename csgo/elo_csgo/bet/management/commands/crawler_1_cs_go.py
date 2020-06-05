@@ -199,6 +199,50 @@ def get_info_results(match, request):
         logger.error('(match_id={})Failed to request html Results: {}'.format(match.id, str(e)))
 
 
+def get_result_bo_game(request):
+    try:
+        content = request.html.find(".flexbox-column", first=True)
+        soup = BeautifulSoup(content.html, 'html.parser')
+        results = soup.find_all("div", {"class": "mapholder"})
+        kq = []
+        for item in results:
+            map_name = item.findAll("div", {"class": "mapname"})
+            team = item.findAll("div", {"class": "results-teamname text-ellipsis"})
+            if team:
+                team_a = team[0].string
+                team_b = team[1].string
+            if map_name:
+                map = map_name[0].string
+            # print(map)
+            # print(team_a, team_b)
+            result = item.findAll("div", {"class": "results-team-score"})
+            if result[0].string != '-' and result[1].string != '-':
+                ans = int(result[0].string) - int(result[1].string)
+                # print(ans)
+                if ans < 0:
+                    ans = 0
+                    kq.append({
+                        "map": map,
+                        "result_a": ans,
+                        "team_a": team_a,
+                        "result_b": 1-ans,
+                        "team_b": team_b,
+                    })
+                else:
+                    ans = 1
+                    kq.append({
+                        "map": map,
+                        "result_a": ans,
+                        "team_a": team_a,
+                        "result_b": 1 - ans,
+                        "team_b": team_b,
+                    })
+        return kq
+
+    except Exception as e:
+        logger.error('(match_id={})Failed to request html Results: {}')
+
+
 def save_result(match, objects):
     for obj in objects:
         try:
@@ -219,8 +263,9 @@ def get_id_player_from_href(href):
     return id_player[0:id_player.find('/')]
 
 
-def save_info_table_performance(match, map_name, team, table):
+def save_info_table_performance(match, map_name, team, table, kq):
     tr = table.find_all("tr", {"class": ""})
+    print(kq)
     for item in tr:
         nick_player = item.find("span", {"class": "player-nick"}).text
         k_d = item.find("td", {"class": "kd"}).text.split('-')
@@ -232,7 +277,12 @@ def save_info_table_performance(match, map_name, team, table):
 
         href = item.find('a')['href']
         id_player = get_id_player_from_href(href)
-
+        for x in kq:
+            if map_name == x['map']:
+                if team == x['team_a']:
+                    result = int(x['result_a'])
+                if team == x['team_b']:
+                    result = int(x['result_b'])
         try:
             Performance.objects.create(
                 match=match,
@@ -244,7 +294,8 @@ def save_info_table_performance(match, map_name, team, table):
                 death=death,
                 adr=adr,
                 kast=kast,
-                rating=rating
+                rating=rating,
+                result=result
             )
         except Exception as e:
             logger.error('(match_id={})Failed to save Performance: {}'.format(match.id, str(e)))
@@ -253,6 +304,7 @@ def save_info_table_performance(match, map_name, team, table):
 
 def save_performance(match, request):
     try:
+        kq = get_result_bo_game(request)
         content = request.html.find(".matchstats", first=True)
         soup = BeautifulSoup(content.html, 'html.parser')
 
@@ -270,8 +322,8 @@ def save_performance(match, request):
                 tables = performances[i].find_all("table", {"class": "table totalstats"})
 
                 if len(tables) == 2:
-                    save_info_table_performance(match, map_name, team_a, tables[0])
-                    save_info_table_performance(match, map_name, team_b, tables[1])
+                    save_info_table_performance(match, map_name, team_a, tables[0], kq)
+                    save_info_table_performance(match, map_name, team_b, tables[1], kq)
 
         else:
             logger.error('else - performance: (match_id={})Failed to request html Performance'.format(match.id))

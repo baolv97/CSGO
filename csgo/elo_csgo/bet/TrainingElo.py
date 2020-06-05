@@ -655,7 +655,7 @@ def trainingEloPlayer1():
                     # p[i].save()
             count += 10
     p2 = sorted(p, key=lambda Performance: Performance.id)
-    p3 = Performance.objects.filter(check=1)
+    p3 = Performance.objects.filter(check=0)
     for i in range(len(p3)):
         print(i)
         if p3[i].check == 0:
