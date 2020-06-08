@@ -1158,7 +1158,7 @@ def crawl_up(request):
 def vpgameDown(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
-    save_winrate_vp()
+    # save_winrate_vp()
     result = []
     match_upcoming1 = BetMatch.objects.all()
     total = 0.0
