@@ -145,6 +145,37 @@ def kelly(according, edge_a, edge_b, bet_a, bet_b):
 def detail(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
+    result = []
+    matches = crawlLiveMatches()
+    print(matches)
+    for i in range(len(matches)):
+        live = MatchUpcoming.objects.filter(id_source1=matches[i])
+        print(live)
+        for item in live:
+            result.append({
+                "date": item.time.strftime("%d/%m/%Y"),
+                "time": item.time.strftime("%H:%M"),
+                "source": item.source,
+                "a": 1,
+                "team_a": item.team_a,
+                "team_b": item.team_b,
+                "manual_odds_team_a": str(round((1 / item.winrate_a), 2)),
+                "manual_odds_team_b": str(round((1 / item.winrate_b), 2)),
+
+                "vp_odds_team_a": 0.0,
+                "vp_suggestion_team_a": "-",
+                "vp_odds_team_b": 0.0,
+                "vp_suggestion_team_b": "-",
+
+                "pin_odds_team_a": str(item.bet_team_a),
+                "pin_suggestion_team_a": str(round(item.suggestion_a * brankroll, 2)),
+                "pin_odds_team_b": str(item.bet_team_b),
+                "pin_suggestion_team_b": str(round(item.suggestion_b * brankroll, 2)),
+
+                "type": item.type,
+                "status": "Live"
+
+            })
     # set limit time for query: in 2 next day
     t_now = datetime.now()
     time_limit = datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=day)
@@ -154,7 +185,6 @@ def detail(request):
     matches_all = MatchUpcoming.objects.all()
     for i in range(len(matches_all)):
         break
-    result = []
     e = Player.objects.all()
     for item in matches:
         # get odds of banker
@@ -360,6 +390,9 @@ def detail(request):
             "manual_suggestion_team_a": "-",
             "manual_odds_team_b": str(round(odds_b, 2)),
             "manual_suggestion_team_b": "-",
+
+            "type": item.type,
+            "status": "UpComming"
         })
 
     context = {
@@ -374,9 +407,6 @@ def detail1(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login/')
     result = []
-    money = 10000
-    pin_money = 0.0
-    vp_money = 0.0
     matches = crawlLiveMatches()
     print(matches)
     for i in range(len(matches)):
