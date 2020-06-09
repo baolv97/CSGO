@@ -72,6 +72,7 @@
     <table class="table table-bordered">
         <tbody>
         <tr>
+            <input type="submit" value="Home" id="btn_home">
             <input type="submit" value="Upcomming" id="btn_refresh">
 <!--            <input type="submit" value="In Progress" id="btn_Progress">-->
 <!--            <input type="submit" value="Refresh Elo" id="btn_training_elo">-->
@@ -174,6 +175,10 @@ $(document).ready(function() {
 
     $("#btn_training_elo").click(function() {
          window.location.href = "/training_elo";
+    });
+
+    $("#btn_home").click(function() {
+         window.location.href = "/bet";
     });
 
     $("#btn_list_player").click(function() {
