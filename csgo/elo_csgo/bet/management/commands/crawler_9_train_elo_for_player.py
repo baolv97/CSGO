@@ -10,9 +10,9 @@ class Command(BaseCommand):
         trainingEloPlayer1()
         save_winrate()
         # map_team_egame()
-        # save_winrate_vp()
+        save_winrate_vp()
         # crawler_over_5etop()
-        # save_winrate_5e()
+        save_winrate_5e()
         # 1. tính elo trung bình của cả đội (cộng lại / 5)
 
         # 2. chia elo cho các thành viên trong team
