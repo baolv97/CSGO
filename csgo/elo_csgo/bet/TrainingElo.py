@@ -575,8 +575,8 @@ def map_team_egame():
         item.save()
 
 def trainingEloPlayer1():
-    for i in range(count_player_id):
-        e[i].elo = 1800
+    # for i in range(count_player_id):
+    #     e[i].elo = 1800
     per = Performance.objects.filter(check=0)
     count = 0
     count_game = len(per)
