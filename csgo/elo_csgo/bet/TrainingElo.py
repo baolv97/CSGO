@@ -577,7 +577,7 @@ def map_team_egame():
 def trainingEloPlayer1():
     for i in range(count_player_id):
         e[i].elo = 1800
-    per = Performance.objects.filter(check=0)
+    per = Performance.objects.filter(check=1)
     count = 0
     count_game = len(per)
     for i in range(count_game):
@@ -585,7 +585,7 @@ def trainingEloPlayer1():
         break
     p = sorted(per, key=lambda Performance: Performance.time)
     while count < count_game:
-        if p[count].check == 1:
+        if p[count].check == 0:
             count += 1
             continue
         for i in range(10):
@@ -655,13 +655,13 @@ def trainingEloPlayer1():
                     # p[i].save()
             count += 10
     p2 = sorted(p, key=lambda Performance: Performance.id)
-    p3 = Performance.objects.filter(check=0)
+    p3 = Performance.objects.filter(check=1)
     for i in range(len(p3)):
         print(i)
-        if p3[i].check == 0:
+        if p3[i].check == 1:
             p3[i].elo = p2[i].elo
             p3[i].bet = p2[i].bet
-            p3[i].check = 1
+            p3[i].check = 0
             p3[i].save()
     Player.objects.bulk_update(e, ['elo'])
 
